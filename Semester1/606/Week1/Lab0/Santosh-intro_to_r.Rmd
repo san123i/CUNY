@@ -118,8 +118,9 @@ arbuthnot$boys
 
 This command will only show the number of boys baptized each year.
 
+
 1.  What command would you use to extract just the counts of girls baptized? Try
-    it!
+    it! Answer: arbuthnot$girls
 
 Notice that the way R has printed these data is different. When we looked at the
 complete data frame, we saw 82 rows, one on each line of the display. These data
@@ -164,7 +165,7 @@ Notice that the help file replaces the plot  in the lower right panel. You can
 toggle between plots and help files using the tabs at the top of that panel.
 
 2.  Is there an apparent trend in the number of girls baptized over the years?  
-    How would you describe it?
+    How would you describe it? Answer: There was decline in number of baptized girls from 1640 to 1660, but rose again from 1660 hitting a max around 1700's
 
 Now, suppose we want to plot the total number of baptisms.  To compute this, we 
 could use the fact that R is really just a big calculator. We can type in 
@@ -230,6 +231,10 @@ If you use the up and down arrow keys, you can scroll through your previous
 commands, your so-called command history. You can also access it by clicking on 
 the history tab in the upper right panel.  This will save you a lot of typing in
 the future.
+```{r}
+plot(arbuthnot$year, arbuthnot$boys / (arbuthnot$boys + arbuthnot$girls), type="l")
+```
+
 
 Finally, in addition to simple mathematical operators like subtraction and 
 division, you can ask R to make comparisons like greater than, `>`, less than,
@@ -272,20 +277,37 @@ source("more/present.R")
 
 The data are stored in a data frame called `present`.
 
--   What years are included in this data set? What are the dimensions of the 
-    data frame and what are the variable or column names?
+### **Q1. What years are included in this data set? What are the dimensions of the data frame and what are the variable or column names?**
 
--   How do these counts compare to Arbuthnot's? Are they on a similar scale?
+```{r}
+years_data <- c(present$year)
+years_data
 
--   Make a plot that displays the boy-to-girl ratio for every year in the data 
-    set. What do you see? Does Arbuthnot's observation about boys being born in
-    greater proportion than girls hold up in the U.S.? Include the plot in your 
-    response.
+dim(present)
 
--   In what year did we see the most total number of births in the U.S.? You can
-    refer to the help files or the R reference card 
-    [http://cran.r-project.org/doc/contrib/Short-refcard.pdf](http://cran.r-project.org/doc/contrib/Short-refcard.pdf)
-    to find helpful commands.
+names(present)
+```
+    
+
+### **Q2. How do these counts compare to Arbuthnot's? Are they on a similar scale?**
+We cannot compare between `Arbuthnot` data and `Present` data since the data period doesn't match. However, the count of baptized boys and girls significantly lower when compared to the count in Present data.
+
+
+### **Q3. Make a plot that displays the boy-to-girl ratio for every year in the data set. What do you see? Does Arbuthnot's observation about boys being born in greater proportion than girls hold up in the U.S.? Include the plot in your response.**
+`Arbuthnot` and `Present` data set both present an observation where boys ratio is slightly higher than girls. However, there is clear visible downtrend in boys ratio in `Present` data
+``` {r}
+plot(present$year, present$boys/present$girls, type = "l", main  = "Boys to Girls ratio (Present)", xlab = "Years", ylab = "Boys")
+
+plot(arbuthnot$year, arbuthnot$boys/arbuthnot$girls, type = "l", main  = "Boys to Girls ratio (Arbuthnot)", xlab = "Years", ylab = "Boys")
+```
+
+### **Q4. In what year did we see the most total number of births in the U.S.? You can refer to the help files or the R reference card [http://cran.r-project.org/doc/contrib/Short-refcard.pdf](http://cran.r-project.org/doc/contrib/Short-refcard.pdf) to find helpful commands.**
+
+```{r}
+present$total_birth <- present$boys + present$girls
+max_birth_year <- present[which.max(present$total_birth),]$year
+max_birth_year
+```
 
 These data come from a report by the Centers for Disease Control 
 [http://www.cdc.gov/nchs/data/nvsr/nvsr53/nvsr53_20.pdf](http://www.cdc.gov/nchs/data/nvsr/nvsr53/nvsr53_20.pdf). 
