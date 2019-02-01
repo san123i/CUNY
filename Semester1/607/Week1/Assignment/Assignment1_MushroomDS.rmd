@@ -12,9 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Retrieve dataset from uci site and create a dataframe
 ```{r}
 url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data"
-rawData <- readLines(url)
+#rawData <- readLines(url)
+#mushroomDF <- read.csv(textConnection(rawData), header = F, stringsAsFactors = F)
 
-mushroomDF <- read.csv(textConnection(rawData), header = F, stringsAsFactors = F)
+mushroomDF <- read.csv(url, header = F, stringsAsFactors = F)
+
 summary(mushroomDF)
 ```
 

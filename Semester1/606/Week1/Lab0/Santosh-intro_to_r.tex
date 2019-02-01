@@ -162,6 +162,22 @@ To get you started, enter the following command at the R prompt
 (i.e.~right after \texttt{\textgreater{}} on the console). You can
 either type it in manually or copy and paste it from this document.
 
+\begin{verbatim}
+## Installing package into 'C:/Users/Chandini/Documents/R/win-library/3.5'
+## (as 'lib' is unspecified)
+\end{verbatim}
+
+\begin{verbatim}
+## package 'tinytex' successfully unpacked and MD5 sums checked
+## 
+## The downloaded binary packages are in
+##  C:\Users\Chandini\AppData\Local\Temp\RtmpQdF7ol\downloaded_packages
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tinytex' was built under R version 3.5.2
+\end{verbatim}
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{source}\NormalTok{(}\StringTok{"more/arbuthnot.R"}\NormalTok{)}
@@ -363,7 +379,7 @@ This command will only show the number of boys baptized each year.
 \tightlist
 \item
   What command would you use to extract just the counts of girls
-  baptized? Try it!
+  baptized? Try it! \textbf{Answer: arbuthnot\$girls}
 \end{enumerate}
 
 Notice that the way R has printed these data is different. When we
@@ -433,7 +449,9 @@ that panel.
 \item
   Is there an apparent trend in the number of girls baptized over the
   years?\\
-  How would you describe it?
+  How would you describe it? \textbf{Answer: There was decline in number
+  of baptized girls from 1640 to 1660, but rose again from 1660 hitting
+  a max around 1700's}
 \end{enumerate}
 
 Now, suppose we want to plot the total number of baptisms. To compute
@@ -579,6 +597,14 @@ something that is not a proportion.
   This will save you a lot of typing in the future.
 \end{enumerate}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(}\DataTypeTok{x=}\NormalTok{arbuthnot}\OperatorTok{$}\NormalTok{year, }\DataTypeTok{y=}\NormalTok{arbuthnot}\OperatorTok{$}\NormalTok{boys }\OperatorTok{/}\StringTok{ }\NormalTok{(arbuthnot}\OperatorTok{$}\NormalTok{boys }\OperatorTok{+}\StringTok{ }\NormalTok{arbuthnot}\OperatorTok{$}\NormalTok{girls), }\DataTypeTok{ylab =} \StringTok{"Boys proportion"}\NormalTok{, }\DataTypeTok{type=}\StringTok{"l"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Santosh-intro_to_r_files/figure-latex/unnamed-chunk-2-1.pdf}
+
 Finally, in addition to simple mathematical operators like subtraction
 and division, you can ask R to make comparisons like greater than,
 \texttt{\textgreater{}}, less than, \texttt{\textless{}}, and equality,
@@ -637,24 +663,100 @@ United States. Load up the present day data with the following command.
 
 The data are stored in a data frame called \texttt{present}.
 
-\begin{itemize}
-\item
-  What years are included in this data set? What are the dimensions of
-  the data frame and what are the variable or column names?
-\item
-  How do these counts compare to Arbuthnot's? Are they on a similar
-  scale?
-\item
-  Make a plot that displays the boy-to-girl ratio for every year in the
-  data set. What do you see? Does Arbuthnot's observation about boys
-  being born in greater proportion than girls hold up in the U.S.?
-  Include the plot in your response.
-\item
-  In what year did we see the most total number of births in the U.S.?
-  You can refer to the help files or the R reference card
-  \url{http://cran.r-project.org/doc/contrib/Short-refcard.pdf} to find
-  helpful commands.
-\end{itemize}
+\subsubsection{\texorpdfstring{\textbf{Q1. What years are included in
+this data set? What are the dimensions of the data frame and what are
+the variable or column
+names?}}{Q1. What years are included in this data set? What are the dimensions of the data frame and what are the variable or column names?}}\label{q1.-what-years-are-included-in-this-data-set-what-are-the-dimensions-of-the-data-frame-and-what-are-the-variable-or-column-names}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{years_data <-}\StringTok{ }\KeywordTok{c}\NormalTok{(present}\OperatorTok{$}\NormalTok{year)}
+\NormalTok{years_data}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] 1940 1941 1942 1943 1944 1945 1946 1947 1948 1949 1950 1951 1952 1953
+## [15] 1954 1955 1956 1957 1958 1959 1960 1961 1962 1963 1964 1965 1966 1967
+## [29] 1968 1969 1970 1971 1972 1973 1974 1975 1976 1977 1978 1979 1980 1981
+## [43] 1982 1983 1984 1985 1986 1987 1988 1989 1990 1991 1992 1993 1994 1995
+## [57] 1996 1997 1998 1999 2000 2001 2002
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(present)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 63  3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{names}\NormalTok{(present)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "year"  "boys"  "girls"
+\end{verbatim}
+
+\subsubsection{\texorpdfstring{\textbf{Q2. How do these counts compare
+to Arbuthnot's? Are they on a similar
+scale?}}{Q2. How do these counts compare to Arbuthnot's? Are they on a similar scale?}}\label{q2.-how-do-these-counts-compare-to-arbuthnots-are-they-on-a-similar-scale}
+
+We cannot compare between \texttt{Arbuthnot} data and \texttt{Present}
+data since the data time period (16th vs 19th century) doesn't match.
+However, the count of baptized boys and girls is significantly lower
+when compared to the count in Present data.
+
+\subsubsection{\texorpdfstring{\textbf{Q3. Make a plot that displays the
+boy-to-girl ratio for every year in the data set. What do you see? Does
+Arbuthnot's observation about boys being born in greater proportion than
+girls hold up in the U.S.? Include the plot in your
+response.}}{Q3. Make a plot that displays the boy-to-girl ratio for every year in the data set. What do you see? Does Arbuthnot's observation about boys being born in greater proportion than girls hold up in the U.S.? Include the plot in your response.}}\label{q3.-make-a-plot-that-displays-the-boy-to-girl-ratio-for-every-year-in-the-data-set.-what-do-you-see-does-arbuthnots-observation-about-boys-being-born-in-greater-proportion-than-girls-hold-up-in-the-u.s.-include-the-plot-in-your-response.}
+
+\textbf{\texttt{Arbuthnot} and \texttt{Present} data set both present an
+observation where boys ratio is slightly higher than girls. However,
+there is a clear visible downtrend in boys ratio in \texttt{Present}
+data}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(present}\OperatorTok{$}\NormalTok{year, present}\OperatorTok{$}\NormalTok{boys}\OperatorTok{/}\NormalTok{present}\OperatorTok{$}\NormalTok{girls, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{, }\DataTypeTok{main  =} \StringTok{"Boys to Girls ratio (Present)"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"Years"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Boys/Girls"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Santosh-intro_to_r_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(arbuthnot}\OperatorTok{$}\NormalTok{year, arbuthnot}\OperatorTok{$}\NormalTok{boys}\OperatorTok{/}\NormalTok{arbuthnot}\OperatorTok{$}\NormalTok{girls, }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{, }\DataTypeTok{main  =} \StringTok{"Boys to Girls ratio (Arbuthnot)"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"Years"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Boys/Girls"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Santosh-intro_to_r_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+\subsubsection{\texorpdfstring{\textbf{Q4. In what year did we see the
+most total number of births in the U.S.? You can refer to the help files
+or the R reference card
+\url{http://cran.r-project.org/doc/contrib/Short-refcard.pdf} to find
+helpful
+commands.}}{Q4. In what year did we see the most total number of births in the U.S.? You can refer to the help files or the R reference card http://cran.r-project.org/doc/contrib/Short-refcard.pdf to find helpful commands.}}\label{q4.-in-what-year-did-we-see-the-most-total-number-of-births-in-the-u.s.-you-can-refer-to-the-help-files-or-the-r-reference-card-httpcran.r-project.orgdoccontribshort-refcard.pdf-to-find-helpful-commands.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{present}\OperatorTok{$}\NormalTok{total_birth <-}\StringTok{ }\NormalTok{present}\OperatorTok{$}\NormalTok{boys }\OperatorTok{+}\StringTok{ }\NormalTok{present}\OperatorTok{$}\NormalTok{girls}
+\NormalTok{max_birth_year <-}\StringTok{ }\NormalTok{present[}\KeywordTok{which.max}\NormalTok{(present}\OperatorTok{$}\NormalTok{total_birth),]}\OperatorTok{$}\NormalTok{year}
+\NormalTok{max_birth_year}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1961
+\end{verbatim}
 
 These data come from a report by the Centers for Disease Control
 \url{http://www.cdc.gov/nchs/data/nvsr/nvsr53/nvsr53_20.pdf}. Check it

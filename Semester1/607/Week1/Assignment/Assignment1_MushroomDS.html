@@ -195,9 +195,11 @@ $(document).ready(function () {
 <div id="retrieve-dataset-from-uci-site-and-create-a-dataframe" class="section level3">
 <h3>Retrieve dataset from uci site and create a dataframe</h3>
 <pre class="r"><code>url &lt;- &quot;https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data&quot;
-rawData &lt;- readLines(url)
+#rawData &lt;- readLines(url)
+#mushroomDF &lt;- read.csv(textConnection(rawData), header = F, stringsAsFactors = F)
 
-mushroomDF &lt;- read.csv(textConnection(rawData), header = F, stringsAsFactors = F)
+mushroomDF &lt;- read.csv(url, header = F, stringsAsFactors = F)
+
 summary(mushroomDF)</code></pre>
 <pre><code>##       V1                 V2                 V3           
 ##  Length:8124        Length:8124        Length:8124       

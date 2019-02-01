@@ -3,6 +3,8 @@ title: "Introduction to R and RStudio"
 output:
   html_document:
     css: ./lab.css
+    fig_height: 5
+    fig_width: 5
     highlight: pygments
     theme: cerulean
   pdf_document: default
@@ -38,6 +40,7 @@ to access data and organize, describe, and invoke statistical computations.
 To get you started, enter the following command at the R prompt (i.e. right after
 `>` on the console).  You can either type it in manually or copy and paste it
 from this document.
+
 
 ```{r load-abrbuthnot-data, eval=TRUE}
 source("more/arbuthnot.R")
@@ -120,7 +123,7 @@ This command will only show the number of boys baptized each year.
 
 
 1.  What command would you use to extract just the counts of girls baptized? Try
-    it! Answer: arbuthnot$girls
+    it! </br></br> **Answer: arbuthnot$girls**
 
 Notice that the way R has printed these data is different. When we looked at the
 complete data frame, we saw 82 rows, one on each line of the display. These data
@@ -165,7 +168,8 @@ Notice that the help file replaces the plot  in the lower right panel. You can
 toggle between plots and help files using the tabs at the top of that panel.
 
 2.  Is there an apparent trend in the number of girls baptized over the years?  
-    How would you describe it? Answer: There was decline in number of baptized girls from 1640 to 1660, but rose again from 1660 hitting a max around 1700's
+    How would you describe it? </br></br>
+    **Answer: There was decline in number of baptized girls from 1640 to 1660, but rose again from 1660 hitting a max around 1700's**
 
 Now, suppose we want to plot the total number of baptisms.  To compute this, we 
 could use the fact that R is really just a big calculator. We can type in 
@@ -232,7 +236,7 @@ commands, your so-called command history. You can also access it by clicking on
 the history tab in the upper right panel.  This will save you a lot of typing in
 the future.
 ```{r}
-plot(arbuthnot$year, arbuthnot$boys / (arbuthnot$boys + arbuthnot$girls), type="l")
+plot(x=arbuthnot$year, y=arbuthnot$boys / (arbuthnot$boys + arbuthnot$girls), ylab = "Boys proportion", type="l")
 ```
 
 
@@ -290,15 +294,15 @@ names(present)
     
 
 ### **Q2. How do these counts compare to Arbuthnot's? Are they on a similar scale?**
-We cannot compare between `Arbuthnot` data and `Present` data since the data period doesn't match. However, the count of baptized boys and girls significantly lower when compared to the count in Present data.
+We cannot compare between `Arbuthnot` data and `Present` data since the data time period (16th vs 19th century) doesn't match. However, the count of baptized boys and girls is significantly lower when compared to the count in Present data.
 
 
 ### **Q3. Make a plot that displays the boy-to-girl ratio for every year in the data set. What do you see? Does Arbuthnot's observation about boys being born in greater proportion than girls hold up in the U.S.? Include the plot in your response.**
-`Arbuthnot` and `Present` data set both present an observation where boys ratio is slightly higher than girls. However, there is clear visible downtrend in boys ratio in `Present` data
+**`Arbuthnot` and `Present` data set both present an observation where boys ratio is slightly higher than girls. However, there is a clear visible downtrend in boys ratio in `Present` data**
 ``` {r}
-plot(present$year, present$boys/present$girls, type = "l", main  = "Boys to Girls ratio (Present)", xlab = "Years", ylab = "Boys")
+plot(present$year, present$boys/present$girls, type = "l", main  = "Boys to Girls ratio (Present)", xlab = "Years", ylab = "Boys/Girls")
 
-plot(arbuthnot$year, arbuthnot$boys/arbuthnot$girls, type = "l", main  = "Boys to Girls ratio (Arbuthnot)", xlab = "Years", ylab = "Boys")
+plot(arbuthnot$year, arbuthnot$boys/arbuthnot$girls, type = "l", main  = "Boys to Girls ratio (Arbuthnot)", xlab = "Years", ylab = "Boys/Girls")
 ```
 
 ### **Q4. In what year did we see the most total number of births in the U.S.? You can refer to the help files or the R reference card [http://cran.r-project.org/doc/contrib/Short-refcard.pdf](http://cran.r-project.org/doc/contrib/Short-refcard.pdf) to find helpful commands.**
