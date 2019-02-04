@@ -1,0 +1,37 @@
+---
+title: "607_Week1_AssignmentMovieRatings"
+author: "SantoshCheruku"
+date: "February 2, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("RMySQL", repos="http://cran.us.r-project.org")
+library(RMySQL)
+install.packages("ggplot2", repos='http://cran.us.r-project.org')
+library(ggplot2)
+```
+
+### Connect to a local MySQL DB and fetch data
+```{r}
+dbConnection <- dbConnect(MySQL(), dbname="cuny_607", user="root", password="root", host="localhost")
+```
+
+### Fetch the result set from MySQL
+```{r}
+resultSet <- dbSendQuery(dbConnection, "select movies.*, ratings.rating, ratings.overall_Feel, ratings.recommend_others from cuny_607.popular_movies_2018 as movies inner join cuny_607.viewer_ratings as ratings on movies.movie_id = ratings.movie_id")
+movieUserRatings <- dbFetch(resultSet, n=1000)
+movieUserRatings
+```
+
+
+### Create a barplot to show the total box office collections of popular 2018 movies
+```{r}
+ggplot(movieUserRatings, aes(title, box_office)) + geom_bar(stat = "identity")
+```
+
+### Create a barplot to show the avg ratings received for these movies
+``` {r}
+ggplot(movieUserRatings, aes(x=factor(title), y=rating)) + stat_summary(fun.y="mean", geom="bar")
+```
