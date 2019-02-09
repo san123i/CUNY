@@ -157,10 +157,10 @@ __*Answer: The survival time(days) is much higher for patients who underwent a t
 (c) What proportion of patients in the treatment group and what proportion of patients in the
 control group died?</br>
 ```{r}
-survived_controlGroup <- 4/34
-survived_treatmentGroup <- 24/69
+dead_controlGroup <- 30/34
+dead_treatmentGroup <- 45/69
 ```
-__*Control group survival proportion is `survived_controlGroup` and treatment group survival proportion is  `survived_treatmentGroup`*__
+__*Control group proportion of died patients is `r dead_controlGroup` and treatment group the proportion is  `r dead_treatmentGroup`*__
 
 
 (d) One approach for investigating whether or not the treatment is effective is to use a randomization
