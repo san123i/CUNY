@@ -1,28 +1,28 @@
 ---
-title: "607_Week1_AssignmentMovieRatings"
+title: "607_Week2_AssignmentMovieRatings"
 author: "SantoshCheruku"
 date: "February 2, 2019"
 output: html_document
 ---
-
-```{r setup, include=FALSE}
+### Install RMySQL and ggplot2 packages
+```{r setup, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-install.packages("RMySQL", repos="http://cran.us.r-project.org")
+install.packages("RMySQL", repos="http://cran.us.r-project.org", quiet = T)
 library(RMySQL)
-install.packages("ggplot2", repos='http://cran.us.r-project.org')
+install.packages("ggplot2", repos='http://cran.us.r-project.org', quiet = T)
 library(ggplot2)
 ```
 
 ### Connect to a local MySQL DB and fetch data
-```{r}
+```{r message=TRUE, include=TRUE}
 dbConnection <- dbConnect(MySQL(), dbname="cuny_607", user="root", password="root", host="localhost")
 ```
 
 ### Fetch the result set from MySQL
-```{r}
+```{r message=TRUE, include=TRUE}
 resultSet <- dbSendQuery(dbConnection, "select movies.*, ratings.rating, ratings.overall_Feel, ratings.recommend_others from cuny_607.popular_movies_2018 as movies inner join cuny_607.viewer_ratings as ratings on movies.movie_id = ratings.movie_id")
 movieUserRatings <- dbFetch(resultSet, n=1000)
-movieUserRatings
+head(movieUserRatings)
 ```
 
 
