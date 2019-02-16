@@ -20,11 +20,12 @@ raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Ti
 
 # Extract only full names and unlist them into a character
 names <- unlist(str_extract_all(raw.data, "[[:alpha:]., ]{2,}")) 
+names
 
 ```
 
 ## Questions {.tabset}
-### **1. Only first and last names**
+### **1. First and Last name**
 ```{r}
 
 # Replace Dr., Rev., C. and any commas to get only first and last names
@@ -32,19 +33,7 @@ str_names_only <- str_replace_all(names, "Dr.\\s+|Rev.\\s+|C.\\s+|,", "")
 
 # Split the String into a list of full names
 str_names_list <- str_split(noquote(str_names_only), "\\W+")
-#name1 <- str_split(str_names_split, "\\s+")
-#unlist(name1[1], recursive = FALSE)
-#Create two empty vectors to hold first and last names
-first_names_vector <- c()
-last_names_vector <- c()
-
-#Use a for loop to iterate over the List of full names and extract first and last names into vectors
-for (full_name in str_names_list) { 
-    first_names_vector <- c(first_names_vector, full_name[1])  
-    last_names_vector <- c(last_names_vector, full_name[2])
-}
-first_names_vector
-last_names_vector
+noquote(str_names_list)
 ```
 
 ### **2. Has a title (i.e., Rev. and Dr.)**
@@ -74,6 +63,28 @@ for(full_title_name in str_names_second) {
 }
 
 logical_vector_secondName
+```
+
+### **4. First and Last name vectors (Extra)**
+```{r}
+
+# Replace Dr., Rev., C. and any commas to get only first and last names
+str_names_only <- str_replace_all(names, "Dr.\\s+|Rev.\\s+|C.\\s+|,", "")
+
+# Split the String into a list of full names
+str_names_list <- str_split(noquote(str_names_only), "\\W+")
+str_names_list
+#Create two empty vectors to hold first and last names
+first_names_vector <- c()
+last_names_vector <- c()
+
+#Use a for loop to iterate over the List of full names and extract first and last names into vectors
+for (full_name in str_names_list) { 
+    first_names_vector <- c(first_names_vector, full_name[1])  
+    last_names_vector <- c(last_names_vector, full_name[2])
+}
+first_names_vector
+last_names_vector
 ```
 
 ##Describe the types of strings that conform to the following regular expressions and construct an example that is matched by the regular expression.  {.tabset}
@@ -107,4 +118,14 @@ Below Regular expression will match a literal '<' followed by any chars until > 
 ```{r}
 sample_string <- "This text having <sometag>value</sometag> is a sample xml tag"
 str_extract_all(sample_string, "<(.+?)>.+?</\\1>")
+```
+
+
+##Decrypting String
+When tested using upper predefined character class following message reveals 'CONGRATULATIONSYOURARESUPERNERD'
+```{r}
+encrypted <- "clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0TanwoUwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigOd6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr"
+
+unencrypted <- unlist(str_extract_all(encrypted, "[:upper:]"))
+unencrypted
 ```

@@ -196,6 +196,7 @@ $(document).ready(function () {
 <li><a href="#create-raw-data">Create Raw data</a></li>
 <li><a href="#questions">Questions</a></li>
 <li><a href="#describe-the-types-of-strings-that-conform-to-the-following-regular-expressions-and-construct-an-example-that-is-matched-by-the-regular-expression.">Describe the types of strings that conform to the following regular expressions and construct an example that is matched by the regular expression.</a></li>
+<li><a href="#decrypting-string">Decrypting String</a></li>
 </ul>
 </div>
 
@@ -205,33 +206,38 @@ $(document).ready(function () {
 raw.data &lt;-&quot;555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert&quot;
 
 # Extract only full names and unlist them into a character
-names &lt;- unlist(str_extract_all(raw.data, &quot;[[:alpha:]., ]{2,}&quot;)) </code></pre>
+names &lt;- unlist(str_extract_all(raw.data, &quot;[[:alpha:]., ]{2,}&quot;)) 
+names</code></pre>
+<pre><code>## [1] &quot;Moe Szyslak&quot;          &quot;Burns, C. Montgomery&quot; &quot;Rev. Timothy Lovejoy&quot;
+## [4] &quot;Ned Flanders&quot;         &quot;Simpson, Homer&quot;       &quot;Dr. Julius Hibbert&quot;</code></pre>
 </div>
 <div id="questions" class="section level2 tabset">
 <h2>Questions</h2>
-<div id="only-first-and-last-names" class="section level3">
-<h3><strong>1. Only first and last names</strong></h3>
+<div id="first-and-last-name" class="section level3">
+<h3><strong>1. First and Last name</strong></h3>
 <pre class="r"><code># Replace Dr., Rev., C. and any commas to get only first and last names
 str_names_only &lt;- str_replace_all(names, &quot;Dr.\\s+|Rev.\\s+|C.\\s+|,&quot;, &quot;&quot;)
 
 # Split the String into a list of full names
 str_names_list &lt;- str_split(noquote(str_names_only), &quot;\\W+&quot;)
-#name1 &lt;- str_split(str_names_split, &quot;\\s+&quot;)
-#unlist(name1[1], recursive = FALSE)
-#Create two empty vectors to hold first and last names
-first_names_vector &lt;- c()
-last_names_vector &lt;- c()
-
-#Use a for loop to iterate over the List of full names and extract first and last names into vectors
-for (full_name in str_names_list) { 
-    first_names_vector &lt;- c(first_names_vector, full_name[1])  
-    last_names_vector &lt;- c(last_names_vector, full_name[2])
-}
-first_names_vector</code></pre>
-<pre><code>## [1] &quot;Moe&quot;     &quot;Burns&quot;   &quot;Timothy&quot; &quot;Ned&quot;     &quot;Simpson&quot; &quot;Julius&quot;</code></pre>
-<pre class="r"><code>last_names_vector</code></pre>
-<pre><code>## [1] &quot;Szyslak&quot;    &quot;Montgomery&quot; &quot;Lovejoy&quot;    &quot;Flanders&quot;   &quot;Homer&quot;     
-## [6] &quot;Hibbert&quot;</code></pre>
+noquote(str_names_list)</code></pre>
+<pre><code>## [[1]]
+## [1] Moe     Szyslak
+## 
+## [[2]]
+## [1] Burns      Montgomery
+## 
+## [[3]]
+## [1] Timothy Lovejoy
+## 
+## [[4]]
+## [1] Ned      Flanders
+## 
+## [[5]]
+## [1] Simpson Homer  
+## 
+## [[6]]
+## [1] Julius  Hibbert</code></pre>
 </div>
 <div id="has-a-title-i.e.-rev.and-dr." class="section level3">
 <h3><strong>2. Has a title (i.e., Rev. and Dr.)</strong></h3>
@@ -258,6 +264,46 @@ for(full_title_name in str_names_second) {
 
 logical_vector_secondName</code></pre>
 <pre><code>## [1] FALSE  TRUE FALSE FALSE FALSE FALSE</code></pre>
+</div>
+<div id="first-and-last-name-vectors-extra" class="section level3">
+<h3><strong>4. First and Last name vectors (Extra)</strong></h3>
+<pre class="r"><code># Replace Dr., Rev., C. and any commas to get only first and last names
+str_names_only &lt;- str_replace_all(names, &quot;Dr.\\s+|Rev.\\s+|C.\\s+|,&quot;, &quot;&quot;)
+
+# Split the String into a list of full names
+str_names_list &lt;- str_split(noquote(str_names_only), &quot;\\W+&quot;)
+str_names_list</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;Moe&quot;     &quot;Szyslak&quot;
+## 
+## [[2]]
+## [1] &quot;Burns&quot;      &quot;Montgomery&quot;
+## 
+## [[3]]
+## [1] &quot;Timothy&quot; &quot;Lovejoy&quot;
+## 
+## [[4]]
+## [1] &quot;Ned&quot;      &quot;Flanders&quot;
+## 
+## [[5]]
+## [1] &quot;Simpson&quot; &quot;Homer&quot;  
+## 
+## [[6]]
+## [1] &quot;Julius&quot;  &quot;Hibbert&quot;</code></pre>
+<pre class="r"><code>#Create two empty vectors to hold first and last names
+first_names_vector &lt;- c()
+last_names_vector &lt;- c()
+
+#Use a for loop to iterate over the List of full names and extract first and last names into vectors
+for (full_name in str_names_list) { 
+    first_names_vector &lt;- c(first_names_vector, full_name[1])  
+    last_names_vector &lt;- c(last_names_vector, full_name[2])
+}
+first_names_vector</code></pre>
+<pre><code>## [1] &quot;Moe&quot;     &quot;Burns&quot;   &quot;Timothy&quot; &quot;Ned&quot;     &quot;Simpson&quot; &quot;Julius&quot;</code></pre>
+<pre class="r"><code>last_names_vector</code></pre>
+<pre><code>## [1] &quot;Szyslak&quot;    &quot;Montgomery&quot; &quot;Lovejoy&quot;    &quot;Flanders&quot;   &quot;Homer&quot;     
+## [6] &quot;Hibbert&quot;</code></pre>
 </div>
 </div>
 <div id="describe-the-types-of-strings-that-conform-to-the-following-regular-expressions-and-construct-an-example-that-is-matched-by-the-regular-expression." class="section level2 tabset">
@@ -308,6 +354,16 @@ str_extract_all(sample_string, &quot;&lt;(.+?)&gt;.+?&lt;/\\1&gt;&quot;)</code><
 <pre><code>## [[1]]
 ## [1] &quot;&lt;sometag&gt;value&lt;/sometag&gt;&quot;</code></pre>
 </div>
+</div>
+<div id="decrypting-string" class="section level2">
+<h2>Decrypting String</h2>
+<p>When tested using upper predefined character class following message reveals ‘CONGRATULATIONSYOURARESUPERNERD’</p>
+<pre class="r"><code>encrypted &lt;- &quot;clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0TanwoUwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigOd6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr&quot;
+
+unencrypted &lt;- unlist(str_extract_all(encrypted, &quot;[:upper:]&quot;))
+unencrypted</code></pre>
+<pre><code>##  [1] &quot;C&quot; &quot;O&quot; &quot;N&quot; &quot;G&quot; &quot;R&quot; &quot;A&quot; &quot;T&quot; &quot;U&quot; &quot;L&quot; &quot;A&quot; &quot;T&quot; &quot;I&quot; &quot;O&quot; &quot;N&quot; &quot;S&quot; &quot;Y&quot; &quot;O&quot;
+## [18] &quot;U&quot; &quot;A&quot; &quot;R&quot; &quot;E&quot; &quot;A&quot; &quot;S&quot; &quot;U&quot; &quot;P&quot; &quot;E&quot; &quot;R&quot; &quot;N&quot; &quot;E&quot; &quot;R&quot; &quot;D&quot;</code></pre>
 </div>
 
 
