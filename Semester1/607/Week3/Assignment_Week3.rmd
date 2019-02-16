@@ -103,7 +103,7 @@ str_extract_all(sample_string, "\\b[a-z]{1,4}\\b")
 ```
 ### 3 .*?\\.txt$
 ```{r}
-# Below regular expression will match words having any characters and ending with a .txt
+# Below regular expression will match words having any or no characters and ending with a .txt
 sample_text_names <- c('filename', 'file.txt', 'file.xml')
 str_extract_all(sample_text_names, ".*?\\.txt$")
 ```
