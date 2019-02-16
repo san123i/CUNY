@@ -1,0 +1,110 @@
+---
+title: "Assignment_607_Week3"
+author: "SantoshCheruku"
+date: "February 16, 2019"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stringr)
+```
+
+##Create Raw data
+```{r warning=FALSE}
+#Raw Data
+raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"
+
+# Extract only full names and unlist them into a character
+names <- unlist(str_extract_all(raw.data, "[[:alpha:]., ]{2,}")) 
+
+```
+
+## Questions {.tabset}
+### **1. Only first and last names**
+```{r}
+
+# Replace Dr., Rev., C. and any commas to get only first and last names
+str_names_only <- str_replace_all(names, "Dr.\\s+|Rev.\\s+|C.\\s+|,", "")
+
+# Split the String into a list of full names
+str_names_list <- str_split(noquote(str_names_only), "\\W+")
+#name1 <- str_split(str_names_split, "\\s+")
+#unlist(name1[1], recursive = FALSE)
+#Create two empty vectors to hold first and last names
+first_names_vector <- c()
+last_names_vector <- c()
+
+#Use a for loop to iterate over the List of full names and extract first and last names into vectors
+for (full_name in str_names_list) { 
+    first_names_vector <- c(first_names_vector, full_name[1])  
+    last_names_vector <- c(last_names_vector, full_name[2])
+}
+first_names_vector
+last_names_vector
+```
+
+### **2. Has a title (i.e., Rev. and Dr.)**
+```{r}
+
+str_names_titles <- str_replace_all(names, "C.\\s+|,", "")
+logical_vector_title <- c()
+
+str_names_titles <- str_split(str_names_titles, '\\"')
+for(full_title_name in str_names_titles) {
+  logical_vector_title <- c(logical_vector_title, str_detect(full_title_name, "Dr.|Rev."))
+}
+
+logical_vector_title
+
+```
+
+###**3. Has a second name**
+```{r}
+
+str_names_second <- str_replace_all(names, "Dr.|Rev.|,", "")
+logical_vector_secondName<- c()
+
+str_names_second <- str_split(str_names_second, '\\"')
+for(full_title_name in str_names_second) {
+  logical_vector_secondName <- c(logical_vector_secondName, str_detect(full_title_name, "\\."))
+}
+
+logical_vector_secondName
+```
+
+##Describe the types of strings that conform to the following regular expressions and construct an example that is matched by the regular expression.  {.tabset}
+### **1. [0-9]+\\$ **
+Below regular expression will match numbers ending with a $ sign
+```{r}
+sample_string <- "220$ is the price of this jacket bought on date 10/12/2018"
+str_extract_all(sample_string, "[0-9]+\\$")
+```
+
+### **2  \\b[a-z]{1,4}\\b**
+Below regular expression will match words starting with small alphabets with a count of letters b/w 1 to 4 ending with a $ sign
+```{r}
+sample_string <- "220$ is the price of this jacket bought on date 10/12/2018."
+str_extract_all(sample_string, "\\b[a-z]{1,4}\\b")
+```
+### 3 .*?\\.txt$
+```{r}
+# Below regular expression will match words having any characters and ending with a .txt
+sample_text_names <- c('filename', 'file.txt', 'file.xml')
+str_extract_all(sample_text_names, ".*?\\.txt$")
+```
+### **4 \\d{2}/\\d{2}/\\d{4}**
+Below regular expression will match numbers in the format of dd/dd/dddd usually a date format 
+```{r}
+sample_string <- "220$ is the price of this jacket bought on date 10/12/2018"
+str_extract_all(sample_string, " \\d{2}/\\d{2}/\\d{4}")
+```
+### **5 <(.+?)>.+?</\\1> **
+Below Regular expression will match a literal '<' followed by any chars until > having an optional chars before matching '</' followed a match which is a back reference to first match. Usualy used to extract xml tags and values
+```{r}
+sample_string <- "This text having <sometag>value</sometag> is a sample xml tag"
+str_extract_all(sample_string, "<(.+?)>.+?</\\1>")
+```
