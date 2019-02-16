@@ -326,7 +326,7 @@ str_extract_all(sample_string, &quot;\\b[a-z]{1,4}\\b&quot;)</code></pre>
 </div>
 <div id="txt" class="section level3">
 <h3>3 .*?\.txt$</h3>
-<pre class="r"><code># Below regular expression will match words having any characters and ending with a .txt
+<pre class="r"><code># Below regular expression will match words having any or no characters and ending with a .txt
 sample_text_names &lt;- c('filename', 'file.txt', 'file.xml')
 str_extract_all(sample_text_names, &quot;.*?\\.txt$&quot;)</code></pre>
 <pre><code>## [[1]]
