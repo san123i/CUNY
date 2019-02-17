@@ -79,7 +79,7 @@ occurrence).
 1.  What does a streak length of 1 mean, i.e. how many hits and misses are in a 
     streak of 1? What about a streak length of 0?
     
-    A streak length of 1 says it was single hit event followed by a miss. 
+    Answer: A streak length of 1 says it was single hit event followed by a miss. 
     A streak length of 0 means it was miss.
 
 The custom function `calc_streak`, which was loaded in with the data, may be 
@@ -98,7 +98,7 @@ discrete -- counts -- instead of continuous.
 2.  Describe the distribution of Kobe's streak lengths from the 2009 NBA finals. 
     What was his typical streak length? How long was his longest streak of baskets?
     
-    The distribution of Kobe's streak length is unimodal and right skewed.
+    Answer: The distribution of Kobe's streak length is unimodal and right skewed.
     His typical streak length was 0 and his longest streak of baskets was 4
 
 ## Compared to What?
@@ -298,7 +298,7 @@ barplot(table(sim_streaks))
     comparison, do you have evidence that the hot hand model fits Kobe's 
     shooting patterns? Explain.
     
-    Comparing the Kobe Bryant's and Simulated shooter's distribution of streak length, it is visible that  there is not evidence of hot hand, since the number of success streaks is max at 1 and 2 is no where closer to it. Which means the probability of consecutive hits is independent.
+    Comparing the Kobe Bryant's and Simulated shooter's distribution of streak length, it is visible that  there is no evidence of hot hand, since the number of success streaks is max at 1 and 2 is no where closer to it. Which means the probability of consecutive hits is independent.
     
 <div id="license">
 This is a product of OpenIntro that is released under a 
