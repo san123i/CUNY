@@ -41,7 +41,7 @@ head(fullData_Long)
     6. mutate -> Modify the column data or create new columns
     7. left_join  -> Apply left join on different datasets
     
-    
+
 ```{r}
 airline_city_total <- fullData_Long %>% select(Airline, City, FlightCount) %>% group_by(Airline, City) %>% summarize(totalcount=sum(FlightCount))
 
@@ -50,6 +50,10 @@ head(fullData_long_totalcount)
 
 city_airline_ontimeRatio <- fullData_long_totalcount %>% select(Airline, Status, City, FlightCount, totalcount) %>% mutate(ratio=FlightCount/totalcount) %>% filter(Status=='on time') %>% group_by(City, Airline) %>% select(City, Airline, ratio)
 city_airline_ontimeRatio
+```
+
+##Below is the transformed data with few summarized data elements
+```{r}
 
 final_transformed_data <- mutate(city_airline_ontimeRatio, ontime_ratio=ratio, delay_ratio=1-ratio) %>% select(City, Airline, ontime_ratio, delay_ratio)
 final_transformed_data
@@ -75,4 +79,9 @@ ggplot(final_transformed_data, aes(x=City, y = delay_ratio, fill=Airline)) + geo
 
 
 ```
+
+##<u>**Observations:**</u>
+
+  * In overall, ALASKA airlines seems to be more punctual in running it's operations as it's delays are lower compared to AM WEST
+  * AM WEST runs disproportionately high number of flights to Phoenix, but it's ontime arrival ratio is on par with ALASKA airlines (which runs significantly lower flights)
 
