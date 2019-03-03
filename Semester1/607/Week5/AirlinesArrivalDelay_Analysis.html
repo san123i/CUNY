@@ -193,7 +193,7 @@ $(document).ready(function () {
 
 <div id="retrieve-the-data-from-a-csv-file" class="section level2">
 <h2>Retrieve the data from a CSV file</h2>
-<pre class="r"><code>fullData &lt;- read.csv2(file = &quot;C://CUNY//GIT//CUNY//Semester1//607//Week4//data.csv&quot;, header = T, sep = &quot;,&quot;,  na.strings = c(&quot;&quot;,&quot;NA&quot;), blank.lines.skip = TRUE, stringsAsFactors = F)
+<pre class="r"><code>fullData &lt;- read.csv2(file = &quot;https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week5/data.csv&quot;, header = T, sep = &quot;,&quot;,  na.strings = c(&quot;&quot;,&quot;NA&quot;), blank.lines.skip = TRUE, stringsAsFactors = F)
 names(fullData)[1] &lt;- 'Airline'</code></pre>
 </div>
 <div id="convert-the-data-from-wide-into-a-long-format-for-ease-of-analysis" class="section level2">

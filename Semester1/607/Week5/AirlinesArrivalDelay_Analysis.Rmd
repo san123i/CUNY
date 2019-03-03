@@ -21,7 +21,7 @@ library(ggplot2)
 
 ##Retrieve the data from a CSV file
 ```{r}
-fullData <- read.csv2(file = "C://CUNY//GIT//CUNY//Semester1//607//Week4//data.csv", header = T, sep = ",",  na.strings = c("","NA"), blank.lines.skip = TRUE, stringsAsFactors = F)
+fullData <- read.csv2(file = "https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week5/data.csv", header = T, sep = ",",  na.strings = c("","NA"), blank.lines.skip = TRUE, stringsAsFactors = F)
 names(fullData)[1] <- 'Airline'
 ```
 
