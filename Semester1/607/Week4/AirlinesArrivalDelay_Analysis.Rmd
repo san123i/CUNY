@@ -1,0 +1,78 @@
+---
+title: "Airlines_arrivalDelay_Analysis"
+author: "SantoshCheruku"
+date: "March 2, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyr", repos = "http://cran.us.r-project.org" )
+#install.packages("dplyr", repos = "http://cran.us.r-project.org")
+#install.packages("dplyr", repos = "http://cran.us.r-project.org")
+
+#devtools::install_github("hadley/tidyr")
+
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+##Retrieve the data from a CSV file
+```{r}
+fullData <- read.csv2(file = "C://CUNY//GIT//CUNY//Semester1//607//Week4//data.csv", header = T, sep = ",",  na.strings = c("","NA"), blank.lines.skip = TRUE, stringsAsFactors = F)
+names(fullData)[1] <- 'Airline'
+```
+
+##Convert the data from 'Wide' into a 'Long' format for ease of analysis
+```{r}
+fullData_Long <- gather(fullData, key="City", value="FlightCount", 3:7)
+head(fullData_Long)
+
+```
+
+##Transform the data using tidyr and dplyr functions
+    1. gather -> Convert data from Wide format to Long format 
+    2. select -> Select only a limited set of columns
+    3. group_by -> Group the data in a tbl/df mentioning selected columns
+    4. summarize -> Generate sumarized stats
+    5. filter -> Filter the tbl/df by applying conditions on columns
+    6. mutate -> Modify the column data or create new columns
+    7. left_join  -> Apply left join on different datasets
+    
+    
+```{r}
+airline_city_total <- fullData_Long %>% select(Airline, City, FlightCount) %>% group_by(Airline, City) %>% summarize(totalcount=sum(FlightCount))
+
+fullData_long_totalcount <- left_join(fullData_Long, airline_city_total, by=c("Airline","City"))
+head(fullData_long_totalcount)
+
+city_airline_ontimeRatio <- fullData_long_totalcount %>% select(Airline, Status, City, FlightCount, totalcount) %>% mutate(ratio=FlightCount/totalcount) %>% filter(Status=='on time') %>% group_by(City, Airline) %>% select(City, Airline, ratio)
+city_airline_ontimeRatio
+
+final_transformed_data <- mutate(city_airline_ontimeRatio, ontime_ratio=ratio, delay_ratio=1-ratio) %>% select(City, Airline, ontime_ratio, delay_ratio)
+final_transformed_data
+
+```
+
+##<u>**Number of operating flights**</u> by City and Airline
+```{r}
+ggplot(fullData_long_totalcount, aes(x=City, y = FlightCount, fill=Airline)) + geom_bar(stat="identity", position = position_dodge())
+
+```
+
+##Ratio of flights coming <u>**on time**</u> by City and Airline
+```{r}
+
+ggplot(final_transformed_data, aes(x=City, y = ontime_ratio, fill=Airline)) + geom_bar(stat="identity", position = position_dodge())
+```
+
+##Ratio of flights <u>**delayed**</u> by City and Airline
+```{r}
+
+ggplot(final_transformed_data, aes(x=City, y = delay_ratio, fill=Airline)) + geom_bar(stat="identity", position = position_dodge())
+
+
+```
+
