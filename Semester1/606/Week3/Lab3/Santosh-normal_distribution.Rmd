@@ -287,16 +287,8 @@ sum(fdims$wgt>60)/length(fdims$wgt)
     
     **Answer:** Below plot shows that the plot for female knee diameter is 'Right skewed'
 ```{r}
+qqnorm(fdims$kne.di)
+qqline(fdims$kne.di)
+
 hist(x = fdims$kne.di, probability = T)
 ```
-    
-
-
-![histQQmatch](more/histQQmatch.png)
-
-<div id="license">
-This is a product of OpenIntro that is released under a 
-[Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
-This lab was adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel
-from a lab written by Mark Hansen of UCLA Statistics.
-</div>
