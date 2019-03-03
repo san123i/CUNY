@@ -3,32 +3,37 @@ title: "606_Week3_Homework"
 author: "SantoshCheruku"
 date: "February 27, 2019"
 output: html_document
+  
 ---
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #devtools::install_github("jbryer/DATA606")
 library(DATA606)
+
+#output: html_document
 ```
 
 3.2 Area under the curve, Part II. What percent of a standard normal distribution N(?? =
 0, ! = 1) is found in each region? Be sure to draw a graph.
 
-    (a) Z > -1.13
+(a) Z > -1.13
 
 ```{r}
 normalPlot(mean=0,sd = 1, bounds = c(-1.13, 4))
 ```
 
 
-    (b) Z < 0.18
+(b) Z < 0.18
 
 ```{r}
 normalPlot(mean=0,sd = 1, bounds = c(-4, .18))
 ```
 
     
-    (c) Z > 8
+(c) Z > 8
 
     Below probability will be zero since the value of 8 is considered as an outlier.
 ```{r}
@@ -37,7 +42,7 @@ normalPlot(mean=0,sd = 1, bounds = c(8, 8))
 
     
     
-    (d) |Z| < 0.5
+(d) |Z| < 0.5
 
 ```{r}
 normalPlot(mean=0,sd = 1, bounds = c(-.5, .5))
@@ -61,15 +66,17 @@ wSD <- 807
 ```
 </br></br>
 
-    (a) Write down the short-hand for these two normal distributions.
+(a) Write down the short-hand for these two normal distributions.
     
-```{r}
-
-```
+   ![Men Race Distribution](Normal1.png)
+    
+    
+  ![Women Race Distribution](Normal2.png)
+    
 </br></br>
     
-    (b) What are the Z-scores for Leo's and Mary's finishing times? What do these Z-scores tell you?
-**<u>Answer:</u>** Below z scores tell us that Leo has done better in his group since his zscore is higher than Mary's. 
+(b) What are the Z-scores for Leo's and Mary's finishing times? What do these Z-scores tell you?
+    **<u>Answer:</u>** Below z scores tell us that Leo has done better in his group since his zscore is higher than Mary's. 
 ```{r}
 leoScore <- 4948
 maryScore <- 5513
@@ -82,34 +89,34 @@ zMary
 ```
 </br></br>
     
-    (c) Did Leo or Mary rank better in their respective groups? Explain your reasoning.
-**<u>Answer:</u>** Leo ranked better when compared to Mary in their respective groups. This is because the zscore of Leo is higher.
-</br></br>
-    
-    (d) What percent of the triathletes did Leo finish faster than in his group?
-**<u>Answer:</u>** Leo ranked better than 86.19% of his group.
+(c) Did Leo or Mary rank better in their respective groups? Explain your reasoning.</br>
+    **<u>Answer:</u>** Leo ranked better when compared to Mary in their respective groups. This is because the zscore of Leo is higher.
+</br>
+(d) What percent of the triathletes did Leo finish faster than in his group?
+
 
 ```{r}
-pnorm(leoScore, mMeanValue, mSD)
+1 - pnorm(leoScore, mMeanValue, mSD)
 ```
 </br></br>
 
-    (e) What percent of the triathletes did Mary finish faster than in her group?
-**<u>Answer:</u>** Mary ranked better than 62.2% of his group.
+(e) What percent of the triathletes did Mary finish faster than in her group?
+
     ```{r}
-pnorm(maryScore, wMeanValue, wSD)
+1 - pnorm(maryScore, wMeanValue, wSD)
 ```
 </br></br>
 
-    (f) If the distributions of finishing times are not nearly normal, would your answers to parts
+(f) If the distributions of finishing times are not nearly normal, would your answers to parts
         (b) - (e) change? Explain your reasoning.
-    
+        
+    <u>**Answer:**</u> Yes, if the distributions are not normal, then they would change.
     
 **3.18 Heights of female college students. Below are heights of 25 female college students.
 (a) The mean height is 61.52 inches with a standard deviation of 4.58 inches. Use this information
 to determine if the heights approximately follow the 68-95-99.7% Rule.
     
-    Answer: Looking at the below normal plots it's visible that the data falls within 68-95-99.7% Rule
+    <u>**Answer:**</u> Looking at the below normal plots it's visible that the data falls within 68-95-99.7% Rule
 ```{r}
 heightSD <- 4.58
 heightMean <- 61.52
@@ -128,22 +135,25 @@ normalPlot(heightMean, heightSD, bounds = c(heightMean - 3*4.58 , heightMean + 3
 (b) Do these data appear to follow a normal distribution? Explain your reasoning using the graphs
 provided below.
 
-    Answer: Yes, the data below follows normal distribution model. The plot on the right indicates that most of the data points lie closer to the normal line. 
+    <u>**Answer:**</u> Yes, the data below follows normal distribution model. The plot on the right indicates that most of the data points lie closer to the normal line. 
     
     
 ** 3.22 Defective rate. A machine that produces a special type of transistor (a component of computers) has a 2% defective rate. The production is considered a random process where each transistor is independent of the others. **
 
-    (a) What is the probability that the 10th transistor produced is the first with a defect?
+(a) What is the probability that the 10th transistor produced is the first with a defect?
     
-      Answer: 0.01667
+     <u>**Answer:**</u> 0.01667
 ```{r}
 ((1 -.02)^(10-1))*.02
 ```
     
     (b) What is the probability that the machine produces no defective transistors in a batch of 100?
-      .98
+```{r}
+((1-.02)^100)
+```
+      
 
-    (c) On average, how many transistors would you expect to be produced before the first with a defect? What is the standard deviation?
+(c) On average, how many transistors would you expect to be produced before the first with a defect? What is the standard deviation?
 ```{r}
 p <- .02
 avgTransistors <- 1/p
@@ -154,7 +164,7 @@ transistorSD <- sqrt((1-p)/ (p^2))
 ```
     
     
-    (d) Another machine that also produces transistors has a 5% defective rate where each transistor is produced independent of the others. On average how many transistors would   you expect to be produced with this machine before the first with a defect? What is the standard deviation?
+(d) Another machine that also produces transistors has a 5% defective rate where each transistor is produced independent of the others. On average how many transistors would   you expect to be produced with this machine before the first with a defect? What is the standard deviation?
 ```{r}
 p <- .05
 avgTransistors <- 1/p
@@ -164,39 +174,47 @@ transistorSD <- sqrt((1-p)/ (p^2))
 (transistorSD)
 ```
 
-    (e) Based on your answers to parts (c) and (d), how does increasing the probability of an event  affect the mean and standard deviation of the wait time until success?
+(e) Based on your answers to parts (c) and (d), how does increasing the probability of an event  affect the mean and standard deviation of the wait time until success?
+    
+    <u>**Answer:**</u> From the above answers, increased probability of an event decreases the mean and standard deviation of the wait time until success.
 </br>
     
-    3.38 Male children. While it is often assumed that the probabilities of having a boy or a girl  are the same, the actual probability of having a boy is slightly higher at 0.51. Suppose a couple plans to have 3 kids.
+**3.38 Male children. While it is often assumed that the probabilities of having a boy or a girl  are the same, the actual probability of having a boy is slightly higher at 0.51. Suppose a couple plans to have 3 kids.**
     
-    (a) Use the binomial model to calculate the probability that two of them will be boys.
+(a) Use the binomial model to calculate the probability that two of them will be boys.
 ```{r}
 p <- .51
 (factorial(3)/factorial(2)) * (((1-.51)^(3-2))*.51^2)
 ```
     
-    (b) Write out all possible orderings of 3 children, 2 of whom are boys. Use these scenarios to calculate the same probability from part (a) but using the addition rule for disjoint outcomes. Confirm that your answers from parts (a) and (b) match.
+(b) Write out all possible orderings of 3 children, 2 of whom are boys. Use these scenarios to calculate the same probability from part (a) but using the addition rule for disjoint outcomes. Confirm that your answers from parts (a) and (b) match.
+
+    <u>**Answer:**</u>Below possibilities show that both answers (a) and (b) match
 ```{r}
+#Possible combinations: BBG, BGB, GBB
+possibility <- .51*.51*.49 + .51*.49*.51 + .49*.51*.51
+
+possibility
 
 ```
     
-    
-    (c) If we wanted to calculate the probability that a couple who plans to have 8 kids will have 3 boys, briefly describe why the approach from part (b) would be more tedious than the approach from part (a)
+(c) If we wanted to calculate the probability that a couple who plans to have 8 kids will have 3 boys, briefly describe why the approach from part (b) would be more tedious than the approach from part (a)
     
     **<u>Answer:</u>** The approach from part (b) will involve writing down all possible combinations which will be quite huge making it error prone.
     
     
-    3.42 Serving in volleyball. A not-so-skilled volleyball player has a 15% chance of making the serve, which involves hitting the ball so it passes over the net on a trajectory such that it will land in the opposing team's court. Suppose that her serves are independent of each other.
+**3.42 Serving in volleyball. A not-so-skilled volleyball player has a 15% chance of making the serve, which involves hitting the ball so it passes over the net on a trajectory such that it will land in the opposing team's court. Suppose that her serves are independent of each other.**
     
-    (a) What is the probability that on the 10th try she will make her 3rd successful serve?
+(a) What is the probability that on the 10th try she will make her 3rd successful serve?
 ```{r}
 (((factorial(9)/(factorial(9-2)*factorial(2))) * ((1-.15)^(9-2)) * (.15^2))*.15)
 ```
     
-    (b) Suppose she has made two successful serves in nine attempts. What is the probability that her 10th serve will be successful?
+(b) Suppose she has made two successful serves in nine attempts. What is the probability that her 10th serve will be successful?
 ```{r}
 (.15)
 ```
   
-    (c) Even though parts (a) and (b) discuss the same scenario, the probabilities you calculated should be different. Can you explain the reason for this discrepancy?
-    Answer: Question (a) we need to consider possibilities of having 3 success attempts in all 10 attempts, where as (b) mentions the 2 events are already success, only 10th event is under question.
+(c) Even though parts (a) and (b) discuss the same scenario, the probabilities you calculated should be different. Can you explain the reason for this discrepancy?
+    
+    <u>**Answer:**</u> Question (a) we need to consider possibilities of having 3 success attempts in all 10 attempts, where as (b) mentions the 2 events are already success, only 10th event is under question.
