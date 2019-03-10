@@ -1,0 +1,38 @@
+---
+title: "GooglePlayStore_Data"
+author: "SantoshCheruku"
+date: "March 7, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r ReadData}
+play <- read.csv("C://CUNY//GIT//CUNY//Semester1//607/Week5//project2//googleplaystore.csv")
+head(play)
+```
+
+```{r SanitizeAndFilterData} 
+playFiltered <- play %>% filter(!is.na(Rating), !Rating<0, !Rating>5) %>% unique()
+#Filtering removed almost 500 records which are duplicate or dirty
+```
+
+```{r}
+
+ggplot(playFiltered, aes(x=Rating, y=as.numeric(Installs))) + geom_bar(stat = "identity") + labs(y = "Install count")
+
+ggplot(playFiltered, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + labs(y = "Review count")
+
+```
+
+```{r}
+ggplot(playFiltered, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + facet_wrap( ~ Category, ncol = 4)
+```
+
+
+

@@ -1,0 +1,18 @@
+---
+title: "Movies"
+author: "SantoshCheruku"
+date: "March 8, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+```{r}
+movie_raw <- read.csv("C://CUNY//GIT//CUNY//Semester1//607//Week5//project2//movies_metadata.csv", stringsAsFactors = F)
+movie_eng %>% filter(status='Released', original_language='en') %>% select(adult, imdb_id, title, production_companies, release_date, runtime, popularity, vote_average, vote_count)
+```
+

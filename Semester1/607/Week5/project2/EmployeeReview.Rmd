@@ -1,0 +1,56 @@
+---
+title: "employeeFeedback"
+author: "SantoshCheruku"
+date: "March 6, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r loadPrimaryData}
+empFeedback_data<- read.csv("C://CUNY//GIT//CUNY//Semester1//607//Week5//project2//employee_reviews_modified.csv", header = T, sep = ",", stringsAsFactors = F, strip.white = T)
+head(empFeedback_data)
+```
+ 
+```{r convertToLongData}
+empFeedback_long <- gather(empFeedback_data, key="Ratings", value="Rated", 6:12)
+head(empFeedback_long)
+```
+
+```{r} 
+overall.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == "overall.ratings") %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(overall.mean = mean(as.numeric(Rated), na.rm = T))
+
+```
+```{r} 
+workbalance.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'work.balance.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(workbalance.mean = mean(as.numeric(Rated), na.rm = T))
+
+culturevalues.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'culture.values.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(culturevalues.mean = mean(as.numeric(Rated), na.rm = T))
+```
+
+```{r} 
+carreropportunities.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'carrer.opportunities.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(carreropportunities.mean = mean(as.numeric(Rated), na.rm = T))
+
+compbenefit.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'comp.benefit.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(compbenefit.mean = mean(as.numeric(Rated), na.rm = T))
+
+```
+
+```{r} 
+seniormanagement.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'senior.mangemnet.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(seniormangemnet.mean = mean(as.numeric(Rated), na.rm = T))
+
+ratings_table <- inner_join(overall.mean, workbalance.mean, "company") %>% inner_join(culturevalues.mean, "company") %>% inner_join(carreropportunities.mean, "company") %>% inner_join(compbenefit.mean, "company") %>% inner_join(seniormanagement.mean, "company")
+
+ratings_long <- gather(ratings_table, key="rating.type",value="rating.mean", 2:7)
+ggplot(ratings_long, aes(x=company, y=rating.mean, fill=rating.type)) + geom_bar(stat="identity", position = position_dodge())
+```
+
+```{r} 
+ggplot(ratings_table, aes(x=company, y=overall.mean)) + geom_col(position = position_dodge())
+ggplot(ratings_table, aes(x=company, y=workbalance.mean)) + geom_col(position = position_dodge())
+
+```
+

@@ -1,0 +1,176 @@
+---
+title: "Project2_3DataSets"
+author: "SantoshCheruku"
+date: "March 9, 2019"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+#Overview
+  As part of 607 project2, I have selected below 3 datasets provided in my class discussions.
+
+#SnP 500 Financial Data
+
+# {.tabset}
+
+##Raw Data
+```{r warning=F}
+
+snp_data <- read.csv("C://CUNY//GIT//CUNY//Semester1//607//Week5//project2//SnP500-financials.csv", header = T, sep = ",", stringsAsFactors = F, strip.white = T)
+head(snp_data)
+```
+
+## Tidy Data
+```{r warning=F}
+
+snp_longdata <- gather(data = snp_data, key = "Attribute", value="values",3:12)
+head(snp_longdata)
+
+snp_sector_data <- snp_longdata %>% filter(Attribute == 'Sector')
+head(snp_sector_data)
+```
+
+## DPlyr Operations
+```{r warning=F}
+#Calculate the stock fluctuations (for 52 week values) as a percentage
+snp_data <- mutate(snp_data, "fluct_perc" = abs(100*((X52.Week.High - X52.Week.Low)/X52.Week.Low)) )
+
+#Calculate the highest PE sectors
+pe_data <- select(snp_data, Sector, Price.Earnings) %>% group_by(Sector) %>% summarise(meanPE = mean(Price.Earnings, na.rm = T))
+
+#Calculate the highest dividend yield sectors 
+yield_data <- select(snp_data, Sector, Dividend.Yield) %>% group_by(Sector) %>% summarise(meanDividendYield = mean(Dividend.Yield, na.rm = T))
+
+#Calculate the premium stocks in each sector
+premium_stocks <- select(snp_data, Sector, Name, Price.Earnings) %>% group_by(Sector) %>% filter(Price.Earnings==max(Price.Earnings, na.rm = T))
+```
+
+##Pictorial Analysis
+```{r warning=F}
+
+#Number of companies by sector in snp 500
+ggplot(snp_sector_data, aes(x=values)) + geom_bar() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
+
+#Sectors which experienced most fluctuations
+ggplot(arrange(snp_data, desc(fluct_perc)) %>% top_n(100), aes(x=Sector, y=fluct_perc)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) + geom_text(aes(label=round(fluct_perc,2)), vjust=1.6, color="white", size=3.5)
+
+#Highest PE sectors
+ggplot(pe_data, aes(x=Sector, y=meanPE)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) + geom_text(aes(label=round(meanPE,2)), vjust=1.6, color="white", size=3.5)
+
+#Highest dividend yield sectors 
+ggplot(yield_data, aes(x=Sector, y=meanDividendYield)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ geom_text(aes(label=round(meanDividendYield,2)), vjust=1.6, color="white", size=3.5)
+
+#Print the premium stocks in each sector
+ggplot(premium_stocks, aes(x=Name, y=Price.Earnings, fill=Sector)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) + geom_text(aes(label=round(Price.Earnings,2)), vjust=1.6, color="white", size=3.5)
+
+```
+
+
+## Conclusions
+    1.  Maximum number of companies in the SnP 500 are from 'consumer discretionary' sector
+    2.   'Consumer discretionary' sector is the one which experienced the most fluctuations in its stock prices
+    3.   'Telecommunication services' sector is the sector which experienced the least fluctuations in stock prices 
+    4.   'Information Technology' and 'Energy' sector companies have the highest PE(price/Earning) ratio amongst all sectors 
+    5.   'Telecommunication Services' sector offers the highest divident yield amongst all the sectors and 'Healthcare' offers the least
+ 
+# Employee Review Dataset
+# {.tabset}
+
+
+##Raw Data
+```{r warning=F}
+empFeedback_data<- read.csv("C://CUNY//GIT//CUNY//Semester1//607//Week5//project2//employee_reviews_modified.csv", header = T, sep = ",", stringsAsFactors = F, strip.white = T)
+head(empFeedback_data)
+```
+
+## Tidy Data
+```{r warning=F}
+
+empFeedback_long <- gather(empFeedback_data, key="Ratings", value="Rated", 6:12)
+head(empFeedback_long)
+```
+
+## DPlyr Operations
+```{r warning=F}
+
+#Calculate the overall mean
+overall.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == "overall.ratings") %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(overall.mean = mean(as.numeric(Rated), na.rm = T)) 
+
+#Calculate the mean of workbalance
+workbalance.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'work.balance.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(workbalance.mean = mean(as.numeric(Rated), na.rm = T))
+
+#Calculate the mean of the cultural values
+culturevalues.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'culture.values.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(culturevalues.mean = mean(as.numeric(Rated), na.rm = T))
+
+#Calculate the mean of career opportunities
+carreropportunities.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'carrer.opportunities.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(carreropportunities.mean = mean(as.numeric(Rated), na.rm = T))
+
+#Calculate the mean of compenstation benefits review
+compbenefit.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'comp.benefit.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(compbenefit.mean = mean(as.numeric(Rated), na.rm = T))
+
+#Calculate the mean of senior management reviews
+seniormanagement.mean <- select(empFeedback_long, company, Ratings, Rated)%>% subset(Ratings == 'senior.mangemnet.stars') %>% subset(!is.na(Rated)) %>% group_by(company) %>% summarise(seniormangemnet.mean = mean(as.numeric(Rated), na.rm = T))
+
+#Join all the mean of all different reviews
+ratings_table <- inner_join(overall.mean, workbalance.mean, "company") %>% inner_join(culturevalues.mean, "company") %>% inner_join(carreropportunities.mean, "company") %>% inner_join(compbenefit.mean, "company") %>% inner_join(seniormanagement.mean, "company")
+
+#Convert the wide ratings table into a long table
+ratings_long <- gather(ratings_table, key="rating.type",value="rating.mean", 2:7)
+```
+
+## Pictorial Analysis
+```{r warning=F}
+
+ggplot(ratings_long, aes(x=company, y=rating.mean, fill=rating.type)) + geom_bar(stat="identity", position = position_dodge()) + geom_text(aes(label=round(rating.mean,2)), vjust=1.6, color="white", size=3.5)
+ggplot(ratings_table, aes(x=company, y=overall.mean)) + geom_col(position = position_dodge()) + geom_text(aes(label=round(overall.mean,2)), vjust=1.6, color="white", size=3.5)
+ggplot(ratings_table, aes(x=company, y=workbalance.mean)) + geom_col(position = position_dodge()) + geom_text(aes(label=round(workbalance.mean,2)), vjust=1.6, color="white", size=3.5)
+```
+
+## Conclusions
+  1. Facebook leads the rest of companies in most of the ratings
+  2. Google maintains the highest mean in worklife balance
+  
+
+# Google playstore dataset
+
+
+# {.tabset}
+
+##Raw Data
+```{r}
+
+play <- read.csv("C://CUNY//GIT//CUNY//Semester1//607/Week5//project2//googleplaystore.csv")
+head(play)
+```
+
+## Tidy Data
+```{r}
+
+playFiltered <- play %>% filter(!is.na(Rating), !Rating<0, !Rating>5) %>% unique()
+#Filtering removed almost 500 records which are duplicate or dirty
+```
+
+## Analysis
+```{r}
+ggplot(playFiltered, aes(x=Rating, y=as.numeric(Installs))) + geom_bar(stat = "identity") + labs(y = "Install count") + geom_text(aes(label=round(as.numeric(Installs),2)), vjust=1.6, color="white", size=3.5)
+
+ggplot(playFiltered, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + labs(y = "Review count") + geom_text(aes(label=round(as.numeric(Reviews),2)), vjust=1.6, color="white", size=3.5)
+
+ggplot(playFiltered, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + facet_wrap( ~ Category, ncol = 4) + geom_text(aes(label=round(as.numeric(Reviews),2)), vjust=1.6, color="white", size=3.5)
+```
+
+## Conclusions
+
+# References:
+  https://stackoverflow.com/questions/15629192/making-a-bar-chart-in-ggplot-with-vertical-labels-in-x-axis
