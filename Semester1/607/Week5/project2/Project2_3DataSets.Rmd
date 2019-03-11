@@ -90,6 +90,7 @@ ggplot(premium_stocks, aes(x=Name, y=Price.Earnings, fill=Sector)) + geom_col() 
  
 # Employee Review Dataset
 **This data set contains reviews collected from Glassdoor. It has reviews belonging to former and current employees of top 5 tech companies i.e, Google, Facebook, Microsoft, Apple, Amazon and Netflix. The data set provides the ratings submitted on different counts such as work balance, compensation etc. **
+
 # {.tabset}
 
 
@@ -148,7 +149,6 @@ ggplot(ratings_table, aes(x=company, y=workbalance.mean)) + geom_col(position = 
   
 
 # Google playstore dataset
-
 **This data set contains about 10K different apps related info collected from Google play store. It provides info about the apps size, category, updated date, and the reviews it received from its users.**
 
 
