@@ -1,5 +1,5 @@
 ---
-title: "Project2_3DataSets"
+title: "Project2_607_3DataSets"
 author: "SantoshCheruku"
 date: "March 9, 2019"
 output:
@@ -8,7 +8,7 @@ output:
     toc_float:
       collapsed: true
       smooth_scroll: true
-    toc_depth: 2
+    toc_depth: 1
 ---
 
 ```{r setup, include=FALSE}
@@ -18,16 +18,20 @@ library(dplyr)
 library(ggplot2)
 ```
 #Overview
-  As part of 607 project2, I have selected below 3 datasets provided in my class discussions.
+  As part of 607 project2, I have selected below 3 datasets provided in my class discussions.</br>
+    1. **SnP 500 Financial Data</br>**
+    2. **Employee Review on companies (Facebook, Google, Netflix, Amazon, Microsoft, Apple)</br>**
+    3. **Google play dataset </br>**
 
 #SnP 500 Financial Data
+**List of companies in the S&P 500 (Standard and Poor's 500). The S&P 500 is a free-float, capitalization-weighted index of the top 500 publicly listed stocks in the US (top 500 by market cap). **
 
 # {.tabset}
 
 ##Raw Data
 ```{r warning=F}
 
-snp_data <- read.csv("C://CUNY//GIT//CUNY//Semester1//607//Week5//project2//SnP500-financials.csv", header = T, sep = ",", stringsAsFactors = F, strip.white = T)
+snp_data <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week5/project2/SnP500-financials.csv", header = T, sep = ",", stringsAsFactors = F, strip.white = T)
 head(snp_data)
 ```
 
@@ -77,20 +81,21 @@ ggplot(premium_stocks, aes(x=Name, y=Price.Earnings, fill=Sector)) + geom_col() 
 ```
 
 
-## Conclusions
-    1.  Maximum number of companies in the SnP 500 are from 'consumer discretionary' sector
+## Observations
+    1.    Maximum number of companies in the SnP 500 are from 'consumer discretionary' sector
     2.   'Consumer discretionary' sector is the one which experienced the most fluctuations in its stock prices
     3.   'Telecommunication services' sector is the sector which experienced the least fluctuations in stock prices 
     4.   'Information Technology' and 'Energy' sector companies have the highest PE(price/Earning) ratio amongst all sectors 
     5.   'Telecommunication Services' sector offers the highest divident yield amongst all the sectors and 'Healthcare' offers the least
  
 # Employee Review Dataset
+**This data set contains reviews collected from Glassdoor. It has reviews belonging to former and current employees of top 5 tech companies i.e, Google, Facebook, Microsoft, Apple, Amazon and Netflix. The data set provides the ratings submitted on different counts such as work balance, compensation etc. **
 # {.tabset}
 
 
 ##Raw Data
 ```{r warning=F}
-empFeedback_data<- read.csv("C://CUNY//GIT//CUNY//Semester1//607//Week5//project2//employee_reviews_modified.csv", header = T, sep = ",", stringsAsFactors = F, strip.white = T)
+empFeedback_data<- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week5/project2/employee_reviews_modified.csv", header = T, sep = ",", stringsAsFactors = F, strip.white = T)
 head(empFeedback_data)
 ```
 
@@ -137,12 +142,14 @@ ggplot(ratings_table, aes(x=company, y=overall.mean)) + geom_col(position = posi
 ggplot(ratings_table, aes(x=company, y=workbalance.mean)) + geom_col(position = position_dodge()) + geom_text(aes(label=round(workbalance.mean,2)), vjust=1.6, color="white", size=3.5)
 ```
 
-## Conclusions
+## Observations
   1. Facebook leads the rest of companies in most of the ratings
   2. Google maintains the highest mean in worklife balance
   
 
 # Google playstore dataset
+
+**This data set contains about 10K different apps related info collected from Google play store. It provides info about the apps size, category, updated date, and the reviews it received from its users.**
 
 
 # {.tabset}
@@ -150,27 +157,29 @@ ggplot(ratings_table, aes(x=company, y=workbalance.mean)) + geom_col(position = 
 ##Raw Data
 ```{r}
 
-play <- read.csv("C://CUNY//GIT//CUNY//Semester1//607/Week5//project2//googleplaystore.csv")
+play <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week5/project2/googleplaystore.csv")
 head(play)
 ```
-
 ## Tidy Data
 ```{r}
 
-playFiltered <- play %>% filter(!is.na(Rating), !Rating<0, !Rating>5) %>% unique()
+cleansedData <- play %>% filter(!is.na(Rating), !Rating<0, !Rating>5) %>% unique()
 #Filtering removed almost 500 records which are duplicate or dirty
 ```
 
 ## Analysis
 ```{r}
-ggplot(playFiltered, aes(x=Rating, y=as.numeric(Installs))) + geom_bar(stat = "identity") + labs(y = "Install count") + geom_text(aes(label=round(as.numeric(Installs),2)), vjust=1.6, color="white", size=3.5)
+ggplot(cleansedData, aes(x=Rating, y=as.numeric(Installs))) + geom_bar(stat = "identity") + labs(y = "Install count") + geom_text(aes(label=round(as.numeric(Installs),2)), vjust=1.6, color="white", size=3.5)
 
-ggplot(playFiltered, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + labs(y = "Review count") + geom_text(aes(label=round(as.numeric(Reviews),2)), vjust=1.6, color="white", size=3.5)
+ggplot(cleansedData, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + labs(y = "Review count") + geom_text(aes(label=round(as.numeric(Reviews),2)), vjust=1.6, color="white", size=3.5)
 
-ggplot(playFiltered, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + facet_wrap( ~ Category, ncol = 4) + geom_text(aes(label=round(as.numeric(Reviews),2)), vjust=1.6, color="white", size=3.5)
+ggplot(cleansedData, aes(x=Rating, y=as.numeric(Reviews))) + geom_bar(stat = "identity") + facet_wrap( ~ Category, ncol = 4) + geom_text(aes(label=round(as.numeric(Reviews),2)), vjust=1.6, color="white", size=3.5)
 ```
 
-## Conclusions
+## Observations
+  1.  The higher the installation count the higher the ratings, which could imply that people install an app mostly after they see a better rating app
+  2.  Majority of the apps installed are under the FAMILY and GAME segment
+  3.  Majortiy of the installed apps received a rating in a range of 4.3 - 4.8
 
 # References:
   https://stackoverflow.com/questions/15629192/making-a-bar-chart-in-ggplot-with-vertical-labels-in-x-axis
