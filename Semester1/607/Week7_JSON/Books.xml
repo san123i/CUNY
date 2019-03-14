@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<catalog>
+   <book id="bk101">
+	  <authors>
+		<author1>Kathy, Sierra</author1>
+		<author2>Bert, Bates</author2>
+	  </authors>
+      <title>Head First Java, 2nd Edition</title>
+      <genre>Programming</genre>
+      <price>27</price>
+      <publish_date>2000-10-01</publish_date>
+      <description>An in-depth look at creating applications in Java.</description>
+   </book>  
+   <book id="bk102">
+	  <authors>
+		<author1>Craig, Walls</author1>
+	  </authors>
+      <title>Spring in Action</title>
+      <genre>Programming</genre>
+      <price>39.99</price>
+      <publish_date>2002-04-04</publish_date>
+      <description>In detailed explaination about using Spring framework to develop Java applications</description>
+   </book> 
+   <book id="bk103">
+	  <authors>
+		<author1>Fostor, Provost</author1>
+		<author2>Tom, Fawcett</author2>
+	  </authors>
+      <title>Data Science for Business</title>
+      <genre>Programming</genre>
+      <price>33.15</price>
+      <publish_date>2013-08-16</publish_date>
+      <description>What you need to know about data mining and data-analytic thinking</description>
+   </book> 
+</catalog>
