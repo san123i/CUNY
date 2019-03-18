@@ -1,7 +1,7 @@
 #install.packages("rjson")
 library(rjson)
 
-jsonResult <- fromJSON(file="C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.json") %>% as.data.frame()
+jsonResult <- fromJSON(txt="C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.json") %>% as.data.frame()
 jsonResult
 as.data.frame(jsonResult)
 

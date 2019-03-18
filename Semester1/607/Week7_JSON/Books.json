@@ -1,6 +1,6 @@
 [ {
 		"bookid": "bk101",
-		"authors": [ "Kathy Sierra", "Bert Bates" ],
+		"authors": ["Kathy Sierra", "Bert Bates"],
 		"title": "Head First Java, 2nd Edition",
 		"genre": "Programming",
 		"price":27,
@@ -8,7 +8,7 @@
 		"description": "An in-depth look at creating applications in Java."
 		},{
 		"bookid": "bk102",
-		"authors": [ "Craig, Walls"],
+		"authors": ["Craig, Walls"],
 		"title": "Spring in Action",
 		"genre": "Programming",
 		"price": 393.99,
@@ -16,7 +16,7 @@
 		"description": "In detailed explaination about using Spring framework to develop Java applications"
 		}, {
 		"bookid": "bk103",
-		"authors": [ "Fostor, Provost", "Tom, Fawcett" ],
+		"authors": ["Fostor, Provost", "Tom, Fawcett"],
 		"title": "Data Science for Business",
 		"genre": "Programming",
 		"price":33.15,
