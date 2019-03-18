@@ -301,7 +301,6 @@ library(RCurl)</code></pre>
 <div id="load-json-into-r-dataframe" class="section level1">
 <h1>Load JSON into R DataFrame</h1>
 <pre class="r"><code>json_df &lt;- fromJSON(&quot;https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.json&quot;)
-json_df$authors &lt;- json_df$authors
 kable(json_df)</code></pre>
 <table>
 <thead>
@@ -451,8 +450,6 @@ kable(html_df)</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>#html_final_df &lt;- do.call(rbind, lapply(html_df, data.frame))
-#kable(html_final_df)</code></pre>
 </div>
 
 

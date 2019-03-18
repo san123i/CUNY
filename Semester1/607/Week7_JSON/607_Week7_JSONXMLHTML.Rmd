@@ -18,7 +18,6 @@ library(RCurl)
 # Load JSON into R DataFrame
 ```{r JSON}
 json_df <- fromJSON("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.json")
-json_df$authors <- json_df$authors
 kable(json_df)
 
 ```
@@ -38,8 +37,6 @@ kable(xml_df)
 html_data <- getURL("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.html")
 html_df <- readHTMLTable(html_data)
 kable(html_df)
-#html_final_df <- do.call(rbind, lapply(html_df, data.frame))
-#kable(html_final_df)
 
 ```
 
