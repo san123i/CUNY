@@ -1,0 +1,56 @@
+---
+title: "607_Week7_JSONXMLHTML"
+author: "SantoshCheruku"
+date: "March 17, 2019"
+output: html_document
+---
+
+
+```{r}
+#install.packages("rjson")
+#install.packages("xml2")
+library(xml2)
+#library(rjson)
+library(XML)
+library(methods)
+library(knitr)
+#HTML
+#install.packages("rvest")
+#install.packages("RJSONIO")
+
+
+```
+# Load JSON into R DataFrame
+```{r JSON}
+library(jsonlite)  
+json_df <- fromJSON("C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.json")
+kable(json_df)
+
+```
+
+# Load XML into R DataFrame
+```{r XML}
+
+library(XML)
+
+xml_data <- xmlParse("C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.xml")
+root <- xmlRoot(xml_data)
+xml_df <- xmlToDataFrame(root)
+kable(xml_df)
+```
+
+# Load HTML into R DataFrame
+```{r HTML}
+library(XML)
+library(RCurl)
+html_data <- getURL("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.html")
+html_df <- readHTMLTable(html_data)
+html_final_df <- do.call(rbind, lapply(html_df, data.frame))
+kable(html_final_df)
+
+```
+
+
+
+
+

@@ -1,7 +1,6 @@
-{
-	"books": [ {
+[ {
 		"bookid": "bk101",
-		"authors": [ "Kathy, Sierra", "Bert, Bates" ],
+		"authors": [ "Kathy Sierra", "Bert Bates" ],
 		"title": "Head First Java, 2nd Edition",
 		"genre": "Programming",
 		"price":27,
@@ -25,4 +24,3 @@
 		"description": "What you need to know about data mining and data-analytic thinking"
 	}
 	]
-}
