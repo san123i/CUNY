@@ -6,7 +6,7 @@ output: html_document
 ---
 
 
-```{r}
+```{r warning=FALSE}
 #install.packages("rjson")
 #install.packages("xml2")
 library(xml2)
@@ -23,7 +23,7 @@ library(knitr)
 # Load JSON into R DataFrame
 ```{r JSON}
 library(jsonlite)  
-json_df <- fromJSON("C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.json")
+json_df <- fromJSON("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.json")
 kable(json_df)
 
 ```
@@ -32,8 +32,9 @@ kable(json_df)
 ```{r XML}
 
 library(XML)
-
-xml_data <- xmlParse("C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.xml")
+library(RCurl)
+xml_data <- getURL("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.xml")
+xml_data <- xmlParse(xml_data)
 root <- xmlRoot(xml_data)
 xml_df <- xmlToDataFrame(root)
 kable(xml_df)

@@ -194,22 +194,19 @@ $(document).ready(function () {
 
 <pre class="r"><code>#install.packages(&quot;rjson&quot;)
 #install.packages(&quot;xml2&quot;)
-library(xml2)</code></pre>
-<pre><code>## Warning: package 'xml2' was built under R version 3.5.2</code></pre>
-<pre class="r"><code>#library(rjson)
-library(XML)</code></pre>
-<pre><code>## Warning: package 'XML' was built under R version 3.5.2</code></pre>
-<pre class="r"><code>library(methods)
-library(knitr)</code></pre>
-<pre><code>## Warning: package 'knitr' was built under R version 3.5.2</code></pre>
-<pre class="r"><code>#HTML
+library(xml2)
+#library(rjson)
+library(XML)
+library(methods)
+library(knitr)
+#HTML
 #install.packages(&quot;rvest&quot;)
 #install.packages(&quot;RJSONIO&quot;)</code></pre>
 <div id="load-json-into-r-dataframe" class="section level1">
 <h1>Load JSON into R DataFrame</h1>
 <pre class="r"><code>library(jsonlite)  </code></pre>
 <pre><code>## Warning: package 'jsonlite' was built under R version 3.5.2</code></pre>
-<pre class="r"><code>json_df &lt;- fromJSON(&quot;C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.json&quot;)
+<pre class="r"><code>json_df &lt;- fromJSON(&quot;https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.json&quot;)
 kable(json_df)</code></pre>
 <table>
 <thead>
@@ -257,8 +254,12 @@ kable(json_df)</code></pre>
 <div id="load-xml-into-r-dataframe" class="section level1">
 <h1>Load XML into R DataFrame</h1>
 <pre class="r"><code>library(XML)
-
-xml_data &lt;- xmlParse(&quot;C://CUNY//GIT//CUNY//Semester1//607//Week7_JSON//Books.xml&quot;)
+library(RCurl)</code></pre>
+<pre><code>## Warning: package 'RCurl' was built under R version 3.5.2</code></pre>
+<pre><code>## Loading required package: bitops</code></pre>
+<pre><code>## Warning: package 'bitops' was built under R version 3.5.2</code></pre>
+<pre class="r"><code>xml_data &lt;- getURL(&quot;https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.xml&quot;)
+xml_data &lt;- xmlParse(xml_data)
 root &lt;- xmlRoot(xml_data)
 xml_df &lt;- xmlToDataFrame(root)
 kable(xml_df)</code></pre>
@@ -308,11 +309,8 @@ kable(xml_df)</code></pre>
 <div id="load-html-into-r-dataframe" class="section level1">
 <h1>Load HTML into R DataFrame</h1>
 <pre class="r"><code>library(XML)
-library(RCurl)</code></pre>
-<pre><code>## Warning: package 'RCurl' was built under R version 3.5.2</code></pre>
-<pre><code>## Loading required package: bitops</code></pre>
-<pre><code>## Warning: package 'bitops' was built under R version 3.5.2</code></pre>
-<pre class="r"><code>html_data &lt;- getURL(&quot;https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.html&quot;)
+library(RCurl)
+html_data &lt;- getURL(&quot;https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/607/Week7_JSON/Books.html&quot;)
 html_df &lt;- readHTMLTable(html_data)
 html_final_df &lt;- do.call(rbind, lapply(html_df, data.frame))
 kable(html_final_df)</code></pre>
