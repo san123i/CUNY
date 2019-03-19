@@ -37,15 +37,29 @@ variable `Gr.Liv.Area`.
 ```{r sample, eval=TRUE}
 population <- ames$Gr.Liv.Area
 samp <- sample(population, 60)
+n<- 60
 ```
 
 1.  Describe the distribution of your sample. What would you say is the 
 "typical" size within your sample? Also state precisely what you interpreted 
 "typical" to mean.
+```{r}
+
+summary(samp)
+meanValue <- mean(samp)
+```
+
+
+**Answer: The sample being a random sample can give you different values each time you pull a sample. Bu the sample generated previously was a unimodal with  a right skew. The typical value of a sample can be denoted as a mean value which in this case is `r meanValue`**
+```{r}
+hist(samp)
+```
+
 
 2.  Would you expect another student's distribution to be identical to yours? 
 Would you expect it to be similar? Why or why not?
 
+**Answer: It is a possibility for another student's distribution to be similar to mine. As previously mentioned the sample are picked randomly, so there may be another student who may have similar values to mine, and also none may get values similar to mine.**
 ## Confidence intervals
 
 One of the most common ways to describe the typical or central value of a 
@@ -84,9 +98,16 @@ There are a few conditions that must be met for this interval to be valid.
 distributed and have standard error $s / \sqrt{n}$. What conditions must be 
 met for this to be true?
 
+**Answer:**
+  1. The sample should be larger than 30 and less than 10% of total population
+  2. The sample should not be extremely skewed
+  3. The events should be independent of each other.
+
 ## Confidence levels
 
 4.  What does "95% confidence" mean? If you're not sure, see Section 4.2.2.
+
+**Answer: A 95% confidence means that there is a 95% chance the sample means picked will conain an actual mean value.**
 
 In this case we have the luxury of knowing the true population mean since we 
 have data on the entire population. This value can be calculated using the 
@@ -99,6 +120,20 @@ mean(population)
 5.  Does your confidence interval capture the true average size of houses in 
 Ames? If you are working on this lab in a classroom, does your neighbor's 
 interval capture this value? 
+```{r}
+n <- 60
+sampleSD <- sd(samp)
+sampleSE <- sampleSD/sqrt(n)
+upper <- as.numeric(mean(samp) + 1.96*sampleSE)
+lower <- as.numeric(mean(samp) - 1.96*sampleSE)
+popMean <- mean(population)
+if(popMean >lower && popMean<upper) {
+  ("Mean falls under 95% Confidence Interval")
+} else { 
+  ("Mean doesn't fall under 95% Confidence Interval")
+}
+```
+
 
 6.  Each student in your class should have gotten a slightly different 
 confidence interval. What proportion of those intervals would you expect to 
@@ -106,6 +141,7 @@ capture the true population mean? Why? If you are working in this lab in a
 classroom, collect data on the intervals created by other students in the 
 class and calculate the proportion of intervals that capture the true 
 population mean.
+**Answer: These are independent events and cannot be guaged. But going by CI, there is a 95% probability of those students values capture actual mean.**
 
 Using R, we're going to recreate many samples to learn more about how sample 
 means and confidence intervals vary from one sample to another. *Loops* come 
@@ -165,9 +201,25 @@ c(lower_vector[1], upper_vector[1])
     ```{r plot-ci, eval=TRUE}
     plot_ci(lower_vector, upper_vector, mean(population))
     ```
+    
+```{r}
+pVal <- 1-2/50
+pVal
+```
+    
 
 -   Pick a confidence level of your choosing, provided it is not 95%. What is 
     the appropriate critical value?
+
+Answer: Selecting a 99% CI
+```{r}
+cl <- 99
+alp <- 1 - cl/100
+value <- 1 - alp/2 #Each tail 1/2
+cv <- qnorm(value)
+cv
+```
+    
 
 -   Calculate 50 confidence intervals at the confidence level you chose in the 
     previous question. You do not need to obtain new samples, simply calculate 
@@ -176,5 +228,14 @@ c(lower_vector[1], upper_vector[1])
     calculate the proportion of intervals that include the true population 
     mean. How does this percentage compare to the confidence level selected for
     the intervals?
+
+Answer: I see a match with 99% CI matching the value provided.
+```{r}
+
+lower_vector <- samp_mean - cv * samp_sd / sqrt(n) 
+upper_vector <- samp_mean + cv* samp_sd / sqrt(n)
+plot_ci(lower_vector, upper_vector, mean(population))
+
+```
 
 
