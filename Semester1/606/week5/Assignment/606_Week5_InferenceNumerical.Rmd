@@ -1,0 +1,173 @@
+---
+title: "606_Week5_InferenceNumerical"
+author: "SantoshCheruku"
+date: "March 24, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+5.6 Working backwards, Part II. A 90% confidence interval for a population mean is (65,
+77). The population distribution is approximately normal and the population standard deviation
+is unknown. This confidence interval is based on a simple random sample of 25 observations.
+Calculate the sample mean, the margin of error, and the sample standard deviation.
+
+Sample mean can be calculated as mean of the confidence interval values i.e., 65, 77
+
+```{r}
+n <- 25
+x1 <- 65
+x2 <- 77
+xMean <- (x1 + x2)/2
+```
+
+Margin of error can be calculated as (x2 - x1)/2. 
+```{r}
+me <- (x2 - x1) / 2
+```
+
+Standard Deviation can be derived from the ME formula i.e. ME = t* . SE, where SE is the standard error and t is the critical value
+Standard Error (SE) can be derived from the formula i.e., SE = SD / $\sqrt { n } \\
+Hence, SD = SE* $\sqrt { n } \\
+```{r}
+df <- n - 1
+p <- 1 - (1-0.9)/2
+t  <-  qt(p, df)
+se <- me / t
+sd <- sqrt(n) * se
+sd
+```
+
+
+
+5.14 SAT scores. SAT scores of students at an Ivy League college are distributed with a
+standard deviation of 250 points. Two statistics students, Raina and Luke, want to estimate the
+average SAT score of students at this college as part of a class project. They want their margin of
+error to be no more than 25 points.
+(a) Raina wants to use a 90% confidence interval. How large a sample should she collect?
+(b) Luke wants to use a 99% confidence interval. Without calculating the actual sample size,
+determine whether his sample should be larger or smaller than Raina’s, and explain your
+reasoning.
+(c) Calculate the minimum required sample size for Luke.
+
+
+
+(a) Raina wants to use a 90% confidence interval. How large a sample should she collect?
+ 
+ ME = z* SD/sqrt(n)
+ n = (z* SD/ME)^2
+
+```{r}
+SD <- 250
+ME <- 25
+p <- 1 - (1-0.9)/2
+z <- qnorm(p)
+n = (z * SD/ME)^2
+
+
+```
+
+(b) Luke wants to use a 99% confidence interval. Without calculating the actual sample size,
+determine whether his sample should be larger or smaller than Raina’s, and explain your
+reasoning.
+
+Answer: Luke's sample should be larger than Raina's since the larger the sample the higher the confidence.
+
+
+(c) Calculate the minimum required sample size for Luke.
+
+```{r}
+SD <- 250
+ME <- 25
+p <- 1 - (1-0.99)/2
+z <- qnorm(p)
+n = (z * SD/ME)^2
+```
+
+5.20 High School and Beyond, Part I. The National Center of Education Statistics conducted
+a survey of high school seniors, collecting test data on reading, writing, and several other subjects.
+Here we examine a simple random sample of 200 students from this survey. Side-by-side box plots
+of reading and writing scores as well as a histogram of the di↵erences in scores are shown below.
+
+
+(a) Is there a clear di↵erence in the average reading and writing scores?
+    Yes, the average writing scores are higher than reading.
+    
+
+(b) Are the reading and writing scores of each student independent of each other?
+    No, from the histogram chart it shows that more number of students have least difference in reading and writing scores. It signifies that they are dependent and the student who reads well also writes well and vice versa.
+    
+
+(c) Create hypotheses appropriate for the following research question: is there an evident di↵erence in the average scores of students in the reading and writing exam?
+    H0 - There is no difference in the avg score of reading and writing exam for the students
+    H1 - There is a  difference in the avg score of reading and writing exam for the students
+
+(d) Check the conditions required to complete this test.
+    1. The sample size should be greater than 10% of the overall population  - Pass
+    2. The sample is normally distributed ( or atleast near normal) - Pass
+
+(e) The average observed di↵erence in scores is ¯xread−write = −0.545, and the standard deviation of the di↵erences is 8.887 points. Do these data provide convincing evidence of a di↵erence between the average scores on the two exams?
+```{r}
+n <- 200
+xmean <- -.545
+sd <- 8.887
+se <- sd/sqrt(200)
+z <- (xmean - 0)/se
+df <- n - 1
+pt(z, df)
+```
+Since p value is greater than .05, we fail to reject null hypothesis.
+
+(f) What type of error might we have made? Explain what the error means in the context of the application.
+  We may have failed to reject null hypothesis, which is a type2 error. Here, the error in the application context means there is a difference b/w average reading and writing scores.
+
+(g) Based on the results of this hypothesis test, would you expect a confidence interval for the average di↵erence between the reading and writing scores to include 0? Explain your reasoning.
+    Yes, going per the null hypothesis that avg difference is 0, we can expect the confidence interval to contain 0.
+    
+
+5.32 Fuel efficiency of manual and automatic cars, Part I. Each year the US Environmental
+Protection Agency (EPA) releases fuel economy data on cars manufactured in that year.
+Below are summary statistics on fuel efficiency (in miles/gallon) from random samples of cars with
+manual and automatic transmissions manufactured in 2012. Do these data provide strong evidence
+of a di↵erence between the average fuel efficiency of cars with manual and automatic transmissions
+in terms of their average city mileage? Assume that conditions for inference are satisfied.
+
+```{r}
+xA <- 16.12
+xM <- 19.85
+sdA <- 3.58
+sdB <- 4.51
+n <- 26
+t <- (xA- xM)/sqrt((sdA)^2/n + (sdB)^2/n)
+
+df <- n -1
+pt(t, df)
+```
+Since PValue is less than .05, we reject null hypothesis. Therefore, there is an evidence to suggest difference in avg fuel efficiency of manual and automatic vars.
+
+5.48 Work hours and education. The General Social Survey collects data on demographics,
+education, and work, among many other characteristics of US residents.47 Using ANOVA, we can
+consider educational attainment levels for all 1,172 respondents at once. Below are the distributions
+of hours worked by educational attainment and relevant summary statistics that will be helpful in
+carrying out this analysis.
+
+(a) Write hypotheses for evaluating whether the average number of hours worked varies across the five groups.
+    H0 <- The avg number of hours worked across five different groups is same i.e., no difference
+    HA <- The avg number of hours worked across five different groups is not same.
+    
+(b) Check conditions and describe any assumptions you must make to proceed with the test.
+    1. The observations are independent within and across groups - Pass
+    2. The data within each group are nearly normal - Pass
+    3. The variability across the groups is about equal - Pass
+
+(c) Below is part of the output associated with this test. Fill in the empty cells.
+                Df  SumSq  MeanSq  Fvalue Pr(>F)
+                
+      Degree
+      Residual
+      Total
+      
+  (d) What is the conclusion of the test?
+
