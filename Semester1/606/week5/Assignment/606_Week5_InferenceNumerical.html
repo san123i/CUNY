@@ -192,15 +192,19 @@ $(document).ready(function () {
 </div>
 
 
-<p>5.6 Working backwards, Part II. A 90% confidence interval for a population mean is (65, 77). The population distribution is approximately normal and the population standard deviation is unknown. This confidence interval is based on a simple random sample of 25 observations. Calculate the sample mean, the margin of error, and the sample standard deviation.</p>
+<p><strong>5.6 Working backwards, Part II. A 90% confidence interval for a population mean is (65, 77). The population distribution is approximately normal and the population standard deviation is unknown. This confidence interval is based on a simple random sample of 25 observations. Calculate the sample mean, the margin of error, and the sample standard deviation.</strong></p>
 <p>Sample mean can be calculated as mean of the confidence interval values i.e., 65, 77</p>
 <pre class="r"><code>n &lt;- 25
 x1 &lt;- 65
 x2 &lt;- 77
-xMean &lt;- (x1 + x2)/2</code></pre>
+xMean &lt;- (x1 + x2)/2
+xMean</code></pre>
+<pre><code>## [1] 71</code></pre>
 <p>Margin of error can be calculated as (x2 - x1)/2.</p>
-<pre class="r"><code>me &lt;- (x2 - x1) / 2</code></pre>
-<p>Standard Deviation can be derived from the ME formula i.e. ME = t* . SE, where SE is the standard error and t is the critical value Standard Error (SE) can be derived from the formula i.e., SE = SD / $ \ Hence, SD = SE* $ \</p>
+<pre class="r"><code>me &lt;- (x2 - x1) / 2
+me</code></pre>
+<pre><code>## [1] 6</code></pre>
+<p>Standard Deviation can be derived from the ME formula i.e. ME = t* . SE, where SE is the standard error and t is the critical value Standard Error (SE) can be derived from the formula i.e., SE = SD / sqrt(n) Hence, SD = SE*sqrt(n)</p>
 <pre class="r"><code>df &lt;- n - 1
 p &lt;- 1 - (1-0.9)/2
 t  &lt;-  qt(p, df)
@@ -208,40 +212,34 @@ se &lt;- me / t
 sd &lt;- sqrt(n) * se
 sd</code></pre>
 <pre><code>## [1] 17.53481</code></pre>
-<p>5.14 SAT scores. SAT scores of students at an Ivy League college are distributed with a standard deviation of 250 points. Two statistics students, Raina and Luke, want to estimate the average SAT score of students at this college as part of a class project. They want their margin of error to be no more than 25 points. (a) Raina wants to use a 90% confidence interval. How large a sample should she collect? (b) Luke wants to use a 99% confidence interval. Without calculating the actual sample size, determine whether his sample should be larger or smaller than Raina’s, and explain your reasoning. (c) Calculate the minimum required sample size for Luke.</p>
-<ol style="list-style-type: lower-alpha">
-<li>Raina wants to use a 90% confidence interval. How large a sample should she collect?</li>
-</ol>
-<p>ME = z* SD/sqrt(n) n = (z* SD/ME)^2</p>
+<p><strong>5.14 SAT scores. SAT scores of students at an Ivy League college are distributed with a standard deviation of 250 points. Two statistics students, Raina and Luke, want to estimate the average SAT score of students at this college as part of a class project. They want their margin of error to be no more than 25 points. </strong></p>
+<p><strong>(a) Raina wants to use a 90% confidence interval. How large a sample should she collect?</strong></p>
+<p>ME = z* SD/sqrt(n)</br> n = (z* SD/ME)^2</p>
 <pre class="r"><code>SD &lt;- 250
 ME &lt;- 25
 p &lt;- 1 - (1-0.9)/2
 z &lt;- qnorm(p)
-n = (z * SD/ME)^2</code></pre>
-<ol start="2" style="list-style-type: lower-alpha">
-<li>Luke wants to use a 99% confidence interval. Without calculating the actual sample size, determine whether his sample should be larger or smaller than Raina’s, and explain your reasoning.</li>
-</ol>
+n = (z * SD/ME)^2
+n</code></pre>
+<pre><code>## [1] 270.5543</code></pre>
+<p>The sample size to be collected for a CI of 90% is 270.5543454</p>
+<p><strong>(b) Luke wants to use a 99% confidence interval. Without calculating the actual sample size, determine whether his sample should be larger or smaller than Raina’s, and explain your reasoning.</strong></p>
 <p>Answer: Luke’s sample should be larger than Raina’s since the larger the sample the higher the confidence.</p>
-<ol start="3" style="list-style-type: lower-alpha">
-<li>Calculate the minimum required sample size for Luke.</li>
-</ol>
+<p><strong>(c) Calculate the minimum required sample size for Luke.</strong></p>
 <pre class="r"><code>SD &lt;- 250
 ME &lt;- 25
 p &lt;- 1 - (1-0.99)/2
 z &lt;- qnorm(p)
-n = (z * SD/ME)^2</code></pre>
-<p>5.20 High School and Beyond, Part I. The National Center of Education Statistics conducted a survey of high school seniors, collecting test data on reading, writing, and several other subjects. Here we examine a simple random sample of 200 students from this survey. Side-by-side box plots of reading and writing scores as well as a histogram of the di↵erences in scores are shown below.</p>
-<ol style="list-style-type: lower-alpha">
-<li><p>Is there a clear di↵erence in the average reading and writing scores? Yes, the average writing scores are higher than reading.</p></li>
-<li><p>Are the reading and writing scores of each student independent of each other? No, from the histogram chart it shows that more number of students have least difference in reading and writing scores. It signifies that they are dependent and the student who reads well also writes well and vice versa.</p></li>
-<li><p>Create hypotheses appropriate for the following research question: is there an evident di↵erence in the average scores of students in the reading and writing exam? H0 - There is no difference in the avg score of reading and writing exam for the students H1 - There is a difference in the avg score of reading and writing exam for the students</p></li>
-<li>Check the conditions required to complete this test.
-<ol style="list-style-type: decimal">
-<li>The sample size should be greater than 10% of the overall population - Pass</li>
-<li>The sample is normally distributed ( or atleast near normal) - Pass</li>
-</ol></li>
-<li><p>The average observed di↵erence in scores is ¯xread−write = −0.545, and the standard deviation of the di↵erences is 8.887 points. Do these data provide convincing evidence of a di↵erence between the average scores on the two exams?</p></li>
-</ol>
+n = (z * SD/ME)^2
+n</code></pre>
+<pre><code>## [1] 663.4897</code></pre>
+<p>The sample size to be collected for Luke with a CI of 95% is 663.4896601</p>
+<p><strong>5.20 High School and Beyond, Part I. The National Center of Education Statistics conducted a survey of high school seniors, collecting test data on reading, writing, and several other subjects. Here we examine a simple random sample of 200 students from this survey. Side-by-side box plots of reading and writing scores as well as a histogram of the di↵erences in scores are shown below. </strong></p>
+<p><strong>(a) Is there a clear di↵erence in the average reading and writing scores?</strong></br> The average writing scores are slightly higher than reading, but both fall close being normally distributed.</p>
+<p><strong>(b) Are the reading and writing scores of each student independent of each other?</strong></br> No, from the histogram chart it shows that more number of students have least difference in reading and writing scores. It signifies that they are dependent and the student who reads well also writes well and vice versa.</p>
+<p><strong>(c) Create hypotheses appropriate for the following research question: is there an evident di↵erence in the average scores of students in the reading and writing exam? </strong> </br> H0 - There is no difference in the avg score of reading and writing exam for the students</br> H1 - There is a difference in the avg score of reading and writing exam for the students</p>
+<p><strong>(d) Check the conditions required to complete this test.</strong></br> 1. The sample size should be greater than 10% of the overall population - Pass</br> 2. The sample is normally distributed ( or atleast near normal) - Pass</p>
+<p><strong>(e) The average observed difference in scores is ¯xread−write = −0.545, and the standard deviation of the differences is 8.887 points. Do these data provide convincing evidence of a di↵erence between the average scores on the two exams </strong></p>
 <pre class="r"><code>n &lt;- 200
 xmean &lt;- -.545
 sd &lt;- 8.887
@@ -251,11 +249,48 @@ df &lt;- n - 1
 pt(z, df)</code></pre>
 <pre><code>## [1] 0.1934182</code></pre>
 <p>Since p value is greater than .05, we fail to reject null hypothesis.</p>
-<ol start="6" style="list-style-type: lower-alpha">
-<li><p>What type of error might we have made? Explain what the error means in the context of the application. We may have failed to reject null hypothesis, which is a type2 error. Here, the error in the application context means there is a difference b/w average reading and writing scores.</p></li>
-<li><p>Based on the results of this hypothesis test, would you expect a confidence interval for the average di↵erence between the reading and writing scores to include 0? Explain your reasoning. Yes, going per the null hypothesis that avg difference is 0, we can expect the confidence interval to contain 0.</p></li>
-</ol>
-<p>5.32 Fuel efficiency of manual and automatic cars, Part I. Each year the US Environmental Protection Agency (EPA) releases fuel economy data on cars manufactured in that year. Below are summary statistics on fuel efficiency (in miles/gallon) from random samples of cars with manual and automatic transmissions manufactured in 2012. Do these data provide strong evidence of a di↵erence between the average fuel efficiency of cars with manual and automatic transmissions in terms of their average city mileage? Assume that conditions for inference are satisfied.42</p>
+<p><strong>(f) What type of error might we have made? Explain what the error means in the context of the application. </strong></br> We may have failed to reject null hypothesis, which is a type2 error. Here, the error in the application context means there is a difference b/w average reading and writing scores.</p>
+<p><strong>(g) Based on the results of this hypothesis test, would you expect a confidence interval for the average difference between the reading and writing scores to include 0? Explain your reasoning.</strong></br> Yes, going per the null hypothesis that avg difference is 0, we can expect the confidence interval to contain 0.</p>
+<p><strong>5.32 Fuel efficiency of manual and automatic cars, Part I. Each year the US Environmental Protection Agency (EPA) releases fuel economy data on cars manufactured in that year. Below are summary statistics on fuel efficiency (in miles/gallon) from random samples of cars with manual and automatic transmissions manufactured in 2012. Do these data provide strong evidence of a di↵erence between the average fuel efficiency of cars with manual and automatic transmissions in terms of their average city mileage? Assume that conditions for inference are satisfied.</strong></p>
+<pre class="r"><code>xA &lt;- 16.12
+xM &lt;- 19.85
+sdA &lt;- 3.58
+sdB &lt;- 4.51
+n &lt;- 26
+t &lt;- (xA- xM)/sqrt((sdA)^2/n + (sdB)^2/n)
+
+df &lt;- n -1
+pt(t, df)</code></pre>
+<pre><code>## [1] 0.001441807</code></pre>
+<p>Since PValue is less than .05, we reject null hypothesis. Therefore, there is an evidence to suggest difference in avg fuel efficiency of manual and automatic vars.</p>
+<p><strong>5.48 Work hours and education. The General Social Survey collects data on demographics, education, and work, among many other characteristics of US residents.47 Using ANOVA, we can consider educational attainment levels for all 1,172 respondents at once. Below are the distributions of hours worked by educational attainment and relevant summary statistics that will be helpful in carrying out this analysis.</strong></p>
+<p><strong>(a) Write hypotheses for evaluating whether the average number of hours worked varies across the five groups.</strong> </br> H0 &lt;- The avg number of hours worked across five different groups is same i.e., no difference HA &lt;- The avg number of hours worked across five different groups is not same.</p>
+<p><strong>(b) Check conditions and describe any assumptions you must make to proceed with the test.</strong></br> 1. The observations are independent within and across groups - Pass</br> 2. The data within each group are nearly normal - Pass</br> 3. The variability across the groups is about equal - Pass</p>
+<p><strong>(c) Below is part of the output associated with this test. Fill in the empty cells.</strong></p>
+<pre class="r"><code>n &lt;- 1172
+nG &lt;- 5
+df1 &lt;- nG -1
+df1</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>df2 &lt;- n -nG
+df2</code></pre>
+<pre><code>## [1] 1167</code></pre>
+<pre class="r"><code>#f = MSG/MSE
+MSG &lt;- 501.54
+sse &lt;- 267382
+
+MSE &lt;- sse/df2
+MSE</code></pre>
+<pre><code>## [1] 229.1191</code></pre>
+<pre class="r"><code>ssg &lt;- df1 * MSG
+ssg</code></pre>
+<pre><code>## [1] 2006.16</code></pre>
+<pre class="r"><code>f &lt;- MSG/MSE
+f</code></pre>
+<pre><code>## [1] 2.188992</code></pre>
+<pre class="r"><code>pf(f, df1, df2, lower.tail = F)</code></pre>
+<pre><code>## [1] 0.06819325</code></pre>
+<p><strong>(d) What is the conclusion of the test?</strong></br> Since P value is greater than .05, we fail to reject the null hypothesis.</p>
 
 
 
