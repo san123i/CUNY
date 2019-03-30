@@ -1,0 +1,45 @@
+---
+title: "NYC_API_607Week9"
+author: "SantoshCheruku"
+date: "March 28, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(jsonlite)
+library(knitr)
+library(kableExtra)
+library(stringr)
+```
+
+ 
+
+#NY Times Most Popular
+
+Create an app with NY Times Developer and create an API key.  Load this JSON into a dataframe using libraries (jsonlite, stringr etc) </br>
+
+```{r}
+#Retrieve data from NYTimes API
+nyc_df <- fromJSON("https://api.nytimes.com/svc/mostpopular/v2/emailed/1.json?api-key=rwOfaQmATwYG0nznEENYpGw3XOjBUKMr")
+
+#Since there are multiple nestings of data, jsonlite packages created a list instead of a dataframe. The fourth element in the list contains teh results
+nyc_results <- nyc_df[4]
+
+#Create a null data frame
+nyc_final_df <- NULL
+
+#Iterator over the list of results and load the data into data frame
+for (i in 1:length(nyc_results)) {
+  row <- nyc_results[i] 
+  nyc_final_df <- rbind(nyc_final_df, data.frame(row))
+}
+
+#Update the colnames to remove a redundant string 'results.'
+colnames(nyc_final_df) <- colnames(nyc_final_df) %>% str_replace_all("results.", "")
+
+#Load the data frame into a table using kable_extra package
+nyc_final_df[1:20] %>% kable() %>% kable_styling(bootstrap_options = c("striped", "hover"), fixed_thead = T) %>% scroll_box(width = "1250px", height = "600px")
+```
+
+

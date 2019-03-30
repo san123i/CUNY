@@ -1,0 +1,57 @@
+---
+title: "606_Presentation_531"
+author: "SantoshCheruku"
+date: "March 24, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(png)
+```
+5.31 Chicken diet and weight, Part I. Chicken farming is a multi-billion dollar industry,
+and any methods that increase the growth rate of young chicks can reduce consumer costs while
+increasing company profits, possibly by millions of dollars. An experiment was conducted to
+measure and compare the effectiveness of various feed supplements on the growth rate of chickens.
+Newly hatched chicks were randomly allocated into six groups, and each group was given a different
+feed supplement. Below are some summary statistics from this data set along with box plots
+showing the distribution of weights by feed type.41
+
+![](C://CUNY//GIT//CUNY//Semester1//606//week5//531_Img.PNG)
+
+(a) Describe the distributions of weights of chickens that were fed linseed and horsebean. </br>
+    **Answer: The distributions of weights of chicken fed with linseed and horsebean are normal but horsebean has slight right skew.**
+
+(b) Do these data provide strong evidence that the average weights of chickens that were fed linseed and horsebean are different? Use a 5% significance level.
+
+  **Answer: Assuming a hypothesis test** </br>
+      H0 - Weights of chicken fed linseed and horsebean are same.</br>
+      HA - Weight of chicken fed linseed and horsebean are not same.</br>
+
+```{r}
+#Horsebean fed chicken Stats
+hbMean <- 160.20
+hbSd <- 38.63
+hn <- 10
+
+#Linseed fed chicken Stats
+lsMean <- 218.75
+lsSd <- 52.24
+ln <- 12  
+
+a <- .05
+df <- min(hn-1, ln-1) 
+t <- ((218.75-160.20 ) - 0)/ sqrt(((hbSd^2) / hn) + ((lsSd^2) / ln))
+p <- pt(t, df, lower.tail = F) * 2
+p
+ifelse(p<a, "Reject null hypothesis", "Fail to reject null hypothesis")
+
+```
+
+(c) What type of error might we have committed? Explain.</br>
+    **Answer:  Since we are rejecting null hypothesis, we may have committed a type1 error. Which means, there is a possibility of mean weights being similar for linseed and horsebean fed chickens, but we mistakenly rejected it.**
+
+
+(d) Would your conclusion change if we used a = 0.01?</br>
+   **Answer: If we change the alpha to .01 then yes, our conclusion will change since our P value will be larger than .01**
+  
