@@ -33,14 +33,14 @@ Take a moment to review the report then address the following questions.
     percentages appear to be *sample statistics* (derived from the data 
     sample) or *population parameters*?
     
-    Answer: These are sample statistics since it's not possible to measure entire world's resposne.
+    **Answer: These are sample statistics since it's not possible to measure entire world's response**
 
 2.  The title of the report is "Global Index of Religiosity and Atheism". To
     generalize the report's findings to the global human population, what must 
     we assume about the sampling method? Does that seem like a reasonable 
     assumption?
     
-    Answer: To generalize the report's findings to the entire human population, we need to assume that it was randomly cluster sampled. 
+    **Answer: To generalize the report's findings to the entire human population, we need to assume that it was randomly cluster sampled, with each country representing a cluster **
 
 ## The data
 
@@ -57,8 +57,8 @@ load("more/atheism.RData")
 3.  What does each row of Table 6 correspond to? What does each row of 
     `atheism` correspond to?
     
-    Answer: Each row of table 6 representations the observations from the sample taken from each country. 
-    The variable 'athesim' represents people who declared themselves as aethists in the sample. 
+    **Answer: Each row of table 6 representations the observations from the sample taken from each country. **
+    **The variable 'athesim' represents people who declared themselves as aethists in the sample. **
 
 To investigate the link between these two ways of organizing this data, take a 
 look at the estimated proportion of atheists in the United States. Towards 
@@ -96,13 +96,9 @@ hypothesis test.
     interval for the proportion of atheists in the United States in 2012.
     Are you confident all conditions are met?
     
-    Answer:
-    H0 - The proportion of atheists in the sample matches to the proportion of atheists in the world population 
-    HA - The proportion of atheists in the sample doesn't match the proportion of atheists in the world population 
+    **Answer: </br>    H0 - The proportion of atheists in the sample matches to the proportion of atheists in the world population <br>     HA - The proportion of atheists in the sample doesn't match the proportion of atheists in the world population **</br>
     
-    Conditions:
-    The population samples are independent - Pass
-    There is a success-failure cases of atleast 10 each in the sample - Pass
+    **Conditions: </br>    The population samples are independent - Pass </br>     There is a success-failure cases of atleast 10 each in the sample - Pass **
 
 If the conditions for inference are reasonable, we can either calculate
 the standard error and construct the interval by hand, or allow the `inference`
@@ -123,6 +119,11 @@ the error margin for surveys of this kind is $\pm$ 3-5% at 95% confidence".
 
 6.  Based on the R output, what is the margin of error for the estimate of the 
     proportion of the proportion of atheists in US in 2012?
+    
+    **Answer: Margin of Error <- z * standard of error </br>**
+    **Therefore margin of error = `r 1.96 * .0069`**
+    
+    
 
 7.  Using the `inference` function, calculate confidence intervals for the 
     proportion of atheists in 2012 in two other countries of your choice, and 
@@ -130,6 +131,14 @@ the error margin for surveys of this kind is $\pm$ 3-5% at 95% confidence".
     conditions for inference are met. It may be helpful to create new data 
     sets for each of the two countries first, and then use these data sets in 
     the `inference` function to construct the confidence intervals.
+    
+    **Answer: </br>Margin of error for Canada = 1.96 * SE = `r 1.96*.009` </br> Margin of error for Iceland = 1.96 * SE = `r 1.96*.0103`**
+```{r}
+ca12 <- subset(atheism, nationality == "Canada" & year == "2012")
+inference(ca12$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+ic12 <- subset(atheism, nationality == "Iceland" & year == "2012")
+inference(ic12$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+```
 
 ## How does the proportion affect the margin of error?
 
@@ -210,6 +219,12 @@ distribution.
     $p = 0.1$. Be sure to note the center, spread, and shape.\
     *Hint:* Remember that R has functions such as `mean` to calculate summary
     statistics.
+    
+    **Answer: The distribution is almost normal with a mean of 0.01, sd of .009 and IQR of (.093 to .105)**
+```{r}
+summary(p_hats)
+```
+    
 
 10. Repeat the above simulation three more times but with modified sample
     sizes and proportions: for $n = 400$ and $p = 0.1$, $n = 1040$ and 
@@ -272,7 +287,7 @@ your previous plots.
     
   Answer:
   About 0.1 or 10% of the sample in Australia comes to 104 people. And for Eucador, .02% makes just 8 people.
-  Therefore, as per success-failure case, we can with inference and report margin of errors for Australia but not Eucador.
+  Therefore, as per success-failure case, we can proceed with inference and report margin of errors for Australia but not Eucador.
 
 * * *
 ## On your own
@@ -299,28 +314,39 @@ from 2005 and 2012 for 39 countries.
 ```{r}
 n <-  1146
 p <- .09 
-es_atheist_2012_sample <- sample(c("atheist", "non_atheist"), n, replace = TRUE, prob = c(p, 1-p))
-inference(es_atheist_2012_sample, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+es_atheist_2012_sample <- subset(atheism, nationality=="Spain" & year=="2012")
+es_atheist_2005_sample <- subset(atheism, nationality=="Spain" & year=="2005")
 
-
-
-p <- 0.1
-es_atheist_2005_sample <- sample(c("atheist", "non_atheist"), n, replace = TRUE, prob = c(p, 1-p))
-inference(es_atheist_2005_sample, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
-
+#es_atheist_2012_sample <- sample(c("atheist", "non_atheist"), n, replace = TRUE, prob = c(p, 1-p))
+inference(es_atheist_2012_sample$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+inference(es_atheist_2005_sample$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
 
 ```
     
 
-    **b.** Is there convincing evidence that the United States has seen a
-    change in its atheism index between 2005 and 2012?
+
+
+  **b.** Is there convincing evidence that the United States has seen a change in its atheism index between 2005 and 2012?
+      Answer: Writing up the hypothesis test
+        H0 - There is no change in the atheism in the United States in 2005 and 2012
+        HA - There is a change in the atheism in the United States in 2005 and 2012
+```{r}
+
+us_atheist_2012_sample <- subset(atheism, nationality == "United States" & year == "2012")
+us_atheist_2005_sample <-  subset(atheism, nationality == "United States" & year == "2005")
+#es_atheist_2012_sample <- sample(c("atheist", "non_atheist"), n, replace = TRUE, prob = c(p, 1-p))
+inference(us_atheist_2012_sample$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+inference(us_atheist_2005_sample$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+```
+  
     
-    Answer: We cannot evaluate since there aren't atleast 10 success or failure case scenarios.
+    Answer: Since the confidence intervals match, we can assume that H0 null hypothesis is true, and there is no change in atheism index in the United States b/w 2005 and 2012.
 
 -   If in fact there has been no change in the atheism index in the countries 
     listed in Table 4, in how many of those countries would you expect to 
     detect a change (at a significance level of 0.05) simply by chance?\
     *Hint:* Look in the textbook index under Type 1 error.
+    
 
 -   Suppose you're hired by the local government to estimate the proportion of 
     residents that attend a religious service on a weekly basis. According to 
@@ -331,7 +357,14 @@ inference(es_atheist_2005_sample, est = "proportion", type = "ci", method = "the
     *Hint:* Refer to your plot of the relationship between $p$ and margin of 
     error. Do not use the data set to answer this question.
     
+    Answer: Since we are not provided with a p value. We will assume p as 0.5 since margin of error is max as 0.5
+    
 ```{r}
+me <- .01
+z <- 1.96
+p <- 0.5
+se <- me/z
+n <-  (p*(1-p))/se^2
 
 ```
     

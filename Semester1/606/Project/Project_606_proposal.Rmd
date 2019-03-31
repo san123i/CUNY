@@ -1,5 +1,5 @@
 ---
-title: "Project_606"
+title: "Project_606_Proposl"
 author: "SantoshCheruku"
 date: "March 30, 2019"
 output: html_document
@@ -9,52 +9,53 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 ```
+## This project use the Grad Student data for analysis
 
 
 ### Research question 
-**Does the choice of STEM major in graduation have an effect on the graduate salary?**
+Does the choice of STEM major in graduation have an effect on the graduate salary?
 
 
 
 ### Cases 
-**The recent grad list compiled by census.gov has provided us with a list of compiled data of grads during 2010-2012. There are observations made against 173 majors.Each observation represents a major with data mentioning the number of grads who passed, their employement rate, salary ranges etc **
+The recent grad list compiled by census.gov has provided us with a list of compiled data of grads during 2010-2012. There are observations made against 173 majors.Each observation represents a major with data mentioning the number of grads who passed, their employement rate, salary ranges etc
 
 
 
 ### Data collection 
-**The data has been collected and compiled by American Community Survey (ACS) and made available as Public Use Micro Service (PUMS) data.**
+The data has been collected and compiled by American Community Survey (ACS) and made available as Public Use Micro Service (PUMS) data.
 
 
 
 ### Type of study 
-**This data has been gathered as an observation study**
+This data has been gathered as an observation study
 
 
 
 ### Data Source 
-**This data has been gathered and compiled by ACS, and made available at below locations.**
-**https://github.com/fivethirtyeight/data/tree/master/college-majors**
-**https://www.census.gov/programs-surveys/acs/data/pums.html**
+This data has been gathered and compiled by ACS, and made available at below locations.
+https://github.com/fivethirtyeight/data/tree/master/college-majors
+https://www.census.gov/programs-surveys/acs/data/pums.html
 
 
 
 
 ### Dependent Variable
-**Median salary of a student is the dependent or response variable and is numerical (quantitative)**
+Median salary of a student is the dependent or response variable and is numerical (quantitative)
 
 
 
 ### Independent Variable
-**The course major is an independent variable (qualitative) and number of grad students is another independent variable (quantitative)**
+The course major is an independent variable (qualitative) and number of grad students is another independent variable (quantitative)
 
 
 
 ### Relevant summary statistics 
 
-**Provide summary statistics for each the variables. Also include appropriate visualizations related to your research question (e.g. scatter plot, boxplots, etc). This step requires the use of R, hence a code chunk is provided below. Insert more code chunks as needed.**
+Provide summary statistics for each the variables. Also include appropriate visualizations related to your research question (e.g. scatter plot, boxplots, etc). This step requires the use of R, hence a code chunk is provided below. Insert more code chunks as needed.
 
 ```{r}
-grads <- read.csv(file="C://CUNY//GIT//CUNY//Semester1//606//Project//grad-students.csv")
+grads <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/606/Project/grad-students.csv")
 
 summary(grads$Grad_median)
 
