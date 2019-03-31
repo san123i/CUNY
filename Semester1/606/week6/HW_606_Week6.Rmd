@@ -1,0 +1,220 @@
+---
+title: "HW_606_Week6"
+author: "SantoshCheruku"
+date: "March 31, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**6.6 2010 Healthcare Law. On June 28, 2012 the U.S. Supreme Court upheld the much debated 2010 healthcare law, declaring it constitutional. A Gallup poll released the day after this decision indicates that 46% of 1,012 Americans agree with this decision. At a 95% confidence level, this sample has a 3% margin of error. Based on this information, determine if the following statements are true or false, and explain your reasoning. </br></br>**
+
+(a) We are 95% confident that between 43% and 49% of Americans in this sample support the
+ decision of the U.S. Supreme Court on the 2010 healthcare law. </br>
+ 
+    **Answer: This statement is false since the confidence interval is projected against the overall population, but NOT the sample.**
+    
+    
+ (b) We are 95% confident that between 43% and 49% of Americans support the decision of the U.S. Supreme Court on the 2010 healthcare law. </br>
+ 
+    **Answer: True. Since it has been a random sample, it can effectively represent the entire American population. When applied the margin of error 46 +- 3%, it gives us 43% to 49%.**
+    
+ (c) If we considered many random samples of 1,012 Americans, and we calculated the sample proportions of those who support the decision of the U.S. Supreme Court, 95% of those sample proportions will be between 43% and 49%. </br>
+ 
+    **Answer: True. As per the confidence interval of 95%.**
+    
+ (d) The margin of error at a 90% confidence level would be higher than 3%.
+ 
+    **Answer: False, the margin of error would be lower as confidence interval goes lower.**
+
+</br></br>
+
+**6.12 Legalization of marijuana, Part I. The 2010 General Social Survey asked 1,259 US residents: "Do you think the use of marijuana should be made legal, or not?" 48% of the respondents said it should be made legal. </br></br>**
+
+(a) Is 48% a sample statistic or a population parameter? Explain.</br>
+
+    **Answer: 48% corresponds to sample statistic, since this number was a direct representation from a survey.**
+
+(b) Construct a 95% confidence interval for the proportion of US residents who think marijuana should be made legal, and interpret it in the context of the data. </br>
+
+```{r}
+z <- 1.96
+n<-1259
+p<-.48
+se <- sqrt(p*(1-p)/n)
+me <- round(z*se,2)
+```
+      
+      
+    **Answer: There CI <- .48 + `r me` to .48 - `r me` i.e., `r round(.48 + me,2)` to `r round(.48 -  me,2)`**
+
+(c) A critic points out that this 95% confidence interval is only accurate if the statistic follows a normal distribution, or if the normal model is a good approximation. Is this true for these data? Explain. </br>
+
+    **Answer: Along with the statistic following a normal model it should also be following success-failure condition i.e., atleast of min of 10 success and failure observations.        And the above sample statistic follows it.**
+
+(d) A news piece on this survey's findings states, "Majority of Americans think marijuana should be legalized." Based on your confidence interval, is this news piece's statement justified? </br>
+
+    **Answer: No, since the lower limit of the confidence interval is below 50%, we cannot suggest that this is an opinion of majority of Americans.**
+    
+</br></br>
+    
+**6.20 Legalize Marijuana, Part II. As discussed in Exercise 6.12, the 2010 General Social Survey reported a sample where about 48% of US residents thought marijuana should be ma de legal. If we wanted to limit the margin of error of a 95% confidence interval to 2%, about how many Americans would we need to survey ?**
+
+```{r}
+p <- .48
+z <- 1.96
+me <- .02
+se <- me/z
+n <- (p * (1-p) * z^2)/ (me^2)
+```
+   
+    **Answer: We need atleast `r round(n,0)` people to project a confidence interval of 95% with a margin of error of 2%**
+
+</br></br>
+**6.28 Sleep deprivation, CA vs. OR, Part I. According to a report on sleep deprivation by the Centers for Disease Control and Prevention, the proportion of California residents who reported insufficient rest or sleep during each of the preceding 30 days is 8.0%, while this proportion is 8.8% for Oregon residents. These data are based on simple random samples of 11,545 California and 4,691 Oregon residents. Calculate a 95% confidence interval for the difference between the proportions of Californians and Oregonians who are sleep deprived and interpret it in context of the data**
+
+```{r}
+p1 <- .08
+n1 <- 11545
+
+p2 <- .088
+n2 <- 4691
+
+z <- 1.96
+
+SE <- sqrt((p1*(1-p1)/n1) + (p2*(1-p2)/n2))
+
+ME <- z * SE
+
+ci1 <- (p1 - p2) - ME
+ci2 <- (p1 - p2) + ME
+```
+
+    **Answer: With a 95% confidence interval we can state that the difference b/w proportions of CA and OR sleep deprived residents is b/w   `r round(100*(ci1),2)`% and  `r round(100*(ci2),2)`% **
+    
+</br></br>
+**6.44 Barking deer. Microhabitat factors associated with forage and bed sites of barking deer in Hainan Island, China were examined from 2001 to 2002. In this region woods make up 4.8% of the land, cultivated grass plot makes up 14.7% and deciduous forests makes up 39.6%. Of the 426 sites where the deer forage, 4 were categorized as woods, 16 as cultivated grassplot, and 61 as deciduous forests. The table below summarizes these data </br></br>**
+
+Woods Cultivated grassplot Deciduous forests Other Total </br>
+4               16                  67       345    426  </br></br>
+
+(a) Write the hypotheses for testing if barking deer prefer to forage in certain habitats over others. </br>
+
+    **Answer: </br>**
+    **H0 - Barking deers prefers to forage all habitat equally. </br>**
+    **H1 - Barking deers do not prefer to forage all habitat equally. </br>**
+    
+(b) What type of test can we use to answer this research question? </br> 
+
+    **Answer: Chi-square methodology can be used to answer this since it's preferred when we want to find if the sample represents the actual population. </br>**
+
+(c) Check if the assumptions and conditions required for this test are satisfied.</br>
+
+    **Answer: The sample size should be normal and the expected counts should be atleast 5 in each all categories. </br>**
+    
+    
+(d) Do these data provide convincing evidence that barking deer prefer to forage in certain habitats over others? Conduct an appropriate hypothesis test to answer this research question.</br>
+
+    **H0 - Barking deers prefers to forage all habitat as population proportions </br>**
+    **H1 - Barking deers do not prefer to forage all habitat as expected </br>**
+    
+       ** Data       Woods | Cultivated grassplot | Deciduous forests | Other | Total |</br>**
+        Observed    4               16                  67             345       426  
+        Expected    `r round(.048*426,0)`              `r round(.147*426,0)`                  `r round(.396*426,0)`            `r round(.409*426,0)`      426 
+```{r}
+zo1 <- 4
+ze1 <- .048*426
+
+z1 <- (zo1 - ze1)^2/(ze1)
+z1
+
+zo2 <- 16
+ze2 <- .147*426
+
+z2 <- (zo2 - ze2)^2/(ze2)
+z2
+
+zo3 <- 67
+ze3 <- .396*426
+
+z3 <- (zo3 - ze3)^2/(ze3)
+z3
+
+zo4 <- 345
+ze4 <- .409*426
+
+z4 <- (zo4 - ze4)^2/(ze4)
+z4
+
+z <- z1 + z2 + z3 + z4
+
+df <- 4-1
+z
+df
+
+```
+
+      **The p value calculated from the chi square table is less than .05. Therefore we reject null hypothesis.**
+      
+</br></br>     
+**6.48 Coffee and Depression. Researchers conducted a study investigating the relationship between caffeinated coffee consumption and risk of depression in women. They collected data on 50,739 women free of depression symptoms at the start of the study in the year 1996, and these women were followed through 2006. The researchers used questionnaires to collect data on caffeinated coffee consumption, asked each individual about physician-diagnosed depression, and also asked about the use of antidepressants. The table below shows the distribution of incidences of depression by amount of caffeinated coffee consumption.**
+
+(a) What type of test is appropriate for evaluating if there is an association between coffee intake and depression?
+
+    **Answer: To derive better results it is preferred to use chi square test (using 2 way tables) in this case.**
+    
+(b) Write the hypotheses for the test you identified in part (a).
+    
+    **Answer:**
+    **H0 - There is no impact of caffeinated coffee consumption in causing depression women**
+    **H0 - There is an impact of caffeinated coffee consumption in causing depression women **
+    
+
+(c) Calculate the overall proportion of women who do and do not suffer from depression.
+   
+    
+```{r}
+depression <- 2607
+total <- 50739
+
+suffer <- depression/total
+dontsuffer <-  1 - suffer
+```
+
+    **Answer: The proportion of women who suffer depression is `r round(suffer,3)*100`% and who do not suffer is `r round(dontsuffer,3)*100`%**
+
+(d) Identify the expected count for the highlighted cell, and calculate the contribution of this cell to the test statistic, i.e. (Observed ??? Expected)2/Expected.
+
+```{r}
+row1Total <- 2607
+col2Total <- 6617
+expected <-  row1Total * col2Total / total
+
+observed <- 373
+
+(observed - expected)^2 / expected
+  
+
+```
+    
+
+(e) The test statistic is #2 = 20.93. What is the p-value?
+
+```{r}
+rc <- 2
+cc <- 5
+df <- (rc-1) * (cc-1)
+```
+
+    **Answer: P value for degree of freedom of 4 and test statistic of 20.93 is less than .001**
+
+
+(f) What is the conclusion of the hypothesis test?
+    
+    **Answer: Since the p value is less than .05, the hypothesis test fails. There is an impact of caffeniated coffee on depression in women.**
+
+(g) One of the authors of this study was quoted on the NYTimes as saying it was "too early to recommend that women load up on extra coffee" based on just this study.64 Do you agree with this statement? Explain your reasoning.
+
+    **Answer: Since we rejected the null hypothesis, we could be making a Type I error. Also, we do not know if the impact if positive or negative i.e., if consumption of caffeniated coffee could be increasing or decreasing chances of depression.**
