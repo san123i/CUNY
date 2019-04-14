@@ -1,0 +1,33 @@
+---
+title: "607_RecommenderSystems_Expedia"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Use case
+The site I'm considering for this analysis is <u>Expedia.com</u>. One of the top travel sites to book hotels or flights to different destinations.
+
+
+#Scenario Design Analysis: 
+
+  **<u>1.  Who are your target users:</u>** Every individual who is looking to book a hotel or flight is our target user. We aim to provide them with a choice of hotels/flights to book according to their travel plans.
+
+  **<u>2. What are their key goals:</u>** To book a hotel or flight which fits their requirements i.e., for some it is to fit in their budget, and few it is according to their amentities requirements.
+
+  **<u>3. How can you help them accomplish their goals:</u>** I can provide a better optimization to the sites's algorithm or recommendation engine to provide an apt choice to them according to their needs without engaging the customers to spend too much time.
+
+As a top travel site, it makes sense for Expedia to provide a recommendation because there will be millions of customers who use it and these customers are from different backgrounds with different expectations. Therefore providing common results to every individual customer doesn't make much sense.
+It also makes sense for the customers because it helps them make selections quickly according to their needs i.e., for few customers it is price, others it is amenities etc.
+
+#Reverse Engineering:
+Looking into the site functionality we can identify that site sorts the list of hotels by following it's recommendation engine. A major portion of the search result is assigned to show classy images of the hotel to attract the customers and the top most results are sponsored just like any other retail site.
+
+#Improving site's recommendation:
+A quick glance at the search results clearly show a deficiency. The search results doesn't show what's the difference b/w different hotels with respect to amentieis offered i.e., if any hotel provides free pool access, free parking or wifi, which differentiate them from other hotels in the results. This adds additional burden on the customers to open each result and check what additional amenities are available.
+
