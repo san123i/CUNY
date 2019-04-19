@@ -1,0 +1,30 @@
+---
+title: "Week12_Neo4J"
+author: "SantoshCheruku"
+date: "April 18, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(RMySQL)
+library(sqldf)
+
+```
+```{r}
+dbConnection <- dbConnect(MySQL(), dbname="usp_drug_classification_607", user="root", password="root", host="localhost")
+drug_df <- read.csv("usp_drug_classification.csv",sep = ",")
+head(drug_df)
+#Load dataframe into MySQL table
+dbWriteTable(dbConnection, name="drug_data",value = drug_df)
+
+#Now load MySQL data into dataframe
+drug_table_data <- dbReadTable(dbConnection, name="drug_data")
+
+#Now load the dataframe into Neo4J graph DB
+
+
+
+```
+
