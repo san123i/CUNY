@@ -33,5 +33,36 @@ for(i in 1:nrow(routes_table_data)) {
 }
 cypher_query
 
+
+
 ```
 
+```{r}
+dbConnection <- dbConnect(MySQL(), dbname="student_enrollment", user="root", password="root", host="localhost")
+students_df <- read.csv("Students.csv",sep = ",")
+subjects_df <- read.csv("Subjects.csv",sep = ",")
+
+#Load dataframe into MySQL table
+dbWriteTable(dbConnection, name="students_enrollments",value = students_df, overwrite=T)
+dbWriteTable(dbConnection, name="subjects",value = subjects_df, overwrite=T)
+
+#Now load MySQL data into dataframe
+students_table_data <- dbReadTable(dbConnection, name="students_enrollments")
+subjects_table_data <- dbReadTable(dbConnection, name="subjects")
+
+cypher_query_student <- " "
+#Now load the dataframe into Neo4J graph DB
+for(i in 1:nrow(students_table_data)) {
+  cypher_query_student <- paste(cypher_query_student, "CREATE", vec_to_cypher(students_table_data[i, ], "Student"), " ")
+}
+cypher_query_student
+
+cypher_query_subject <- " "
+#Now load the dataframe into Neo4J graph DB
+i <- 0
+for(i in 1:nrow(subjects_table_data)) {
+  cypher_query_subject <- paste(cypher_query_subject, "CREATE", vec_to_cypher(subjects_table_data[i, ], "Subject"), " ")
+}
+cypher_query_subject
+
+```
