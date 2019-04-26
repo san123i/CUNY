@@ -1,0 +1,37 @@
+---
+title: "Week12_Neo4J"
+author: "SantoshCheruku"
+date: "April 18, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(RMySQL)
+library(sqldf)
+library(neo4r)
+
+```
+```{r}
+dbConnection <- dbConnect(MySQL(), dbname="flights_new", user="root", password="root", host="localhost")
+airlines_Df <- read.csv("Dummy_Airlines.csv",sep = ",")
+routes_Df <- read.csv("routes.csv",sep = ",")
+
+#Load dataframe into MySQL table
+dbWriteTable(dbConnection, name="flight_routes",value = routes_Df, overwrite=T)
+dbWriteTable(dbConnection, name="airlines",value = airlines_Df, overwrite=T)
+
+#Now load MySQL data into dataframe
+routes_table_data <- dbReadTable(dbConnection, name="flight_routes")
+airlines_table_data <- dbReadTable(dbConnection, name="airlines")
+
+cypher_query <- " "
+#Now load the dataframe into Neo4J graph DB
+for(i in 1:nrow(routes_table_data)) {
+  cypher_query <- paste(cypher_query, "CREATE", vec_to_cypher(routes_table_data[i, ], "Route"), " ")
+}
+cypher_query
+
+```
+

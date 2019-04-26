@@ -22,9 +22,13 @@ dbWriteTable(dbConnection, name="drug_data",value = drug_df)
 #Now load MySQL data into dataframe
 drug_table_data <- dbReadTable(dbConnection, name="drug_data")
 
+cypher_query <- " "
 #Now load the dataframe into Neo4J graph DB
-
-
+for(i in 1:nrow(drug_table_data)) {
+  drug_id <- drug_table_data[i,5]
+  cypher_query <- paste(cypher_query, "CREATE", vec_to_cypher(drug_table_data[i, ], "Drug"), " ")
+}
+cypher_query
 
 ```
 

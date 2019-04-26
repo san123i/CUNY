@@ -1,0 +1,30 @@
+---
+title: "607_FinalProject_StatisticalAnalysis"
+author: "SantoshCheruku"
+date: "April 23, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+```{r}
+all_drugs_df <- read.csv("drugLibTest_raw.csv")
+
+all_drugs_df$effectiveness <- factor(all_drugs_df$effectiveness, levels=c('Ineffective','Marginally Effective','Moderately Effective','Considerably Effective','Highly Effective'))
+
+all_drugs_df$sideEffects <- factor(all_drugs_df$sideEffects,levels=c('No Side Effects','Mild Side Effects','Moderate Side Effects','Severe Side Effects','Extremely Severe Side Effects'))
+
+mean(all_drugs_df$rating)
+
+h_effective_drugs_df <- subset(all_drugs_df, effectiveness=='Highly Effective')
+
+mean(h_effective_drugs_df$rating)
+ggplot(all_drugs_df, aes(x=effectiveness)) + geom_bar(stat="count")
+ggplot(all_drugs_df, aes(x=sideEffects)) + geom_bar(stat="count")
+ggplot(all_drugs_df, aes(x=sideEffects)) + geom_bar(stat="count") + geom_line(aes(x=sideEffects, y=rating), stat="identity")
+```
+

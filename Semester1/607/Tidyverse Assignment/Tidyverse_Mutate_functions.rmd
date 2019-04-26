@@ -1,0 +1,100 @@
+---
+title: "Tidyverse_dplyr_ggplot_functions"
+author: "SantoshCheruku"
+date: "April 24, 2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(DT)
+```
+
+# dplyr:Mutate function{.tabset}
+
+Dplyr is part of tidyverse, mainly use for manipulating the data set(dataframes). It supports numerous functions within, but in this vignette we will focus on mutate and varities of mutate funtions supported with in dplyr.
+
+<b>Mutate</b>:  adds new variables and preserves existing ones.</br>
+<b>Mutate_all</b>: affects every variable in the given dataframe.</br>
+<b>Mutate_at</b>: affects variables selected with a character vector or vars().</br>
+<b>Mutate_if</b>: affects variables selected with a predicate function.</br>
+
+##Mutate
+```{r warning=FALSE}
+
+sales_df <- read.csv("BlackFriday.csv")
+#To identify the types of each column
+sales_df <- mutate(sales_df, Premium_customer = ifelse(Purchase>10000, "Yes", "No"))
+DT::datatable(sales_df)
+```
+
+##Mutate_at
+```{r warning=FALSE}
+sales_df_2 <- mutate_at(sales_df, vars(Purchase), funs("Million"=./1000000))
+DT::datatable(sales_df_2)
+```
+
+##Mutate_all
+```{r warning=FALSE}
+
+sales_df_mutate <- mutate_all(sales_df, funs("isNumeric"= is.numeric(.)))
+DT::datatable(sales_df_mutate)
+
+```
+
+##Mutate_if
+```{r warning=FALSE}
+sales_df <- sales_df %>% mutate_if(is.character, toupper)
+DT::datatable(sales_df)
+```
+
+
+
+#ggplot function{.tabset}
+
+ggplot2 is a system for declaratively creating graphics, based on The Grammar of Graphics. You provide the data, tell ggplot2 how to map variables to aesthetics, what graphical primitives to use, and it takes care of the details.
+
+Below are some examples of how to implement different features in ggplot2
+
+ggplot function supports adding the dataframe or dataset through 'data' attribute and supports an aethsetic 'aes' to set.
+Along with the above ggplot function, we need to provide below plot functions too which are suppported by ggplot.
+
+<b>geom_bar():</b> geom_bar makes the height of the bar proportional to the number of cases in each group. </br>
+<b>geom_col():</b> geom_cal makes the height of the bar proportional to the value of cases in each group. </br>
+<b>geom_point():</b> geom_point creates a plot of point based data plotted between two different parameters. </br>
+<b>geom_smooth():</b> Creates a representation of the data using any method, here in the example is a 'linear model'. </br>
+<b>labs():</b> These are used to set the label and other properties related to the plots. </br>
+
+### <b>geom_bar</b>
+
+```{r}
+ggplot(data=sales_df, aes(x=Age, fill=Gender)) +  geom_bar()
+```
+
+### <b>geom_col</b>
+
+```{r}
+ggplot(data = sales_df, aes(x=Age, y=Purchase)) + geom_col()
+```
+
+### <b>geom_point</b>
+
+```{r}
+ggplot(data=sales_df, aes(x=Age, y=Purchase)) + geom_point() 
+```
+
+### <b>geom_smooth and labs</b>
+
+```{r}
+ggplot(data=sales_df, aes(x=User_ID, y=Purchase)) + geom_point() + geom_smooth(method="lm") + labs(title="Purchase Point chart", y = "Amount", x="Customers")
+```
+
+
+
+
+
+
