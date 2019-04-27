@@ -1,4 +1,35 @@
- CREATE (:`Student` {`First.Name`: 'Santosh', `Last.Name`: 'C', `Subject.ID`: '1', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Santosh', `Last.Name`: 'C', `Subject.ID`: '2', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Raj', `Last.Name`: 'K', `Subject.ID`: '1', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Sam', `Last.Name`: 'D', `Subject.ID`: '1', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Priya', `Last.Name`: 'R', `Subject.ID`: '3', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Jim', `Last.Name`: 'D', `Subject.ID`: '4', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Albert', `Last.Name`: 'P', `Subject.ID`: '4', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Kris', `Last.Name`: 'K', `Subject.ID`: '1', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Beth', `Last.Name`: 'R', `Subject.ID`: '3', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Arthur', `Last.Name`: 'M', `Subject.ID`: '4', `Joining.Date`: '2018'})   CREATE (:`Student` {`First.Name`: 'Ram', `Last.Name`: 'R', `Subject.ID`: '4', `Joining.Date`: '2013'})   CREATE (:`Student` {`First.Name`: 'John', `Last.Name`: 'P', `Subject.ID`: '1', `Joining.Date`: '2012'})   CREATE (:`Student` {`First.Name`: 'Robert', `Last.Name`: 'K', `Subject.ID`: '3', `Joining.Date`: '2012'})   CREATE (:`Student` {`First.Name`: 'Seun', `Last.Name`: 'D', `Subject.ID`: '4', `Joining.Date`: '2012'})   CREATE (:`Student` {`First.Name`: 'John', `Last.Name`: 'S', `Subject.ID`: '4', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Vicky', `Last.Name`: 'D', `Subject.ID`: '1', `Joining.Date`: '2015'})   CREATE (:`Student` {`First.Name`: 'Win', `Last.Name`: 'A', `Subject.ID`: '3', `Joining.Date`: '2019'})   CREATE (:`Student` {`First.Name`: 'Taylor', `Last.Name`: 'L', `Subject.ID`: '4', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Washington', `Last.Name`: 'D', `Subject.ID`: '4', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Jim', `Last.Name`: 'D', `Subject.ID`: '1', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Jim', `Last.Name`: 'D', `Subject.ID`: '2', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Jim', `Last.Name`: 'D', `Subject.ID`: '3', `Joining.Date`: '2016'})   CREATE (:`Student` {`First.Name`: 'Ram', `Last.Name`: 'R', `Subject.ID`: '2', `Joining.Date`: '2013'})   CREATE (:`Student` {`First.Name`: 'Ram', `Last.Name`: 'R', `Subject.ID`: '1', `Joining.Date`: '2013'}) 
+MATCH (n) DETACH DELETE n;
+  
+CREATE (:`Student` {`Name`: 'Santosh', `LastName`: 'C', `SubjectId`: '2', `EnrollYear`: '2019'})   
+CREATE (:`Student` {`Name`: 'Raj', `LastName`: 'K', `SubjectId`: '1', `EnrollYear`: '2019'})   
+CREATE (:`Student` {`Name`: 'Sam', `LastName`: 'D', `SubjectId`: '1', `EnrollYear`: '2019'})   
+CREATE (:`Student` {`Name`: 'Priya', `LastName`: 'R', `SubjectId`: '3', `EnrollYear`: '2019'})   
+CREATE (:`Student` {`Name`: 'Jim', `LastName`: 'D', `SubjectId`: '4', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Albert', `LastName`: 'P', `SubjectId`: '4', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Kris', `LastName`: 'K', `SubjectId`: '1', `EnrollYear`: '2019'})   
+CREATE (:`Student` {`Name`: 'Beth', `LastName`: 'R', `SubjectId`: '3', `EnrollYear`: '2019'})   
+CREATE (:`Student` {`Name`: 'Arthur', `LastName`: 'M', `SubjectId`: '4', `EnrollYear`: '2018'})   
+CREATE (:`Student` {`Name`: 'Ram', `LastName`: 'R', `SubjectId`: '4', `EnrollYear`: '2013'})   
+CREATE (:`Student` {`Name`: 'John', `LastName`: 'P', `SubjectId`: '1', `EnrollYear`: '2012'})   
+CREATE (:`Student` {`Name`: 'Robert', `LastName`: 'K', `SubjectId`: '3', `EnrollYear`: '2012'})   
+CREATE (:`Student` {`Name`: 'Seun', `LastName`: 'D', `SubjectId`: '4', `EnrollYear`: '2012'})   
+CREATE (:`Student` {`Name`: 'John', `LastName`: 'S', `SubjectId`: '4', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Vicky', `LastName`: 'D', `SubjectId`: '1', `EnrollYear`: '2015'})   
+CREATE (:`Student` {`Name`: 'Win', `LastName`: 'A', `SubjectId`: '3', `EnrollYear`: '2019'})   
+CREATE (:`Student` {`Name`: 'Taylor', `LastName`: 'L', `SubjectId`: '4', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Washington', `LastName`: 'D', `SubjectId`: '4', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Jim', `LastName`: 'D', `SubjectId`: '1', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Jim', `LastName`: 'D', `SubjectId`: '2', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Jim', `LastName`: 'D', `SubjectId`: '3', `EnrollYear`: '2016'})   
+CREATE (:`Student` {`Name`: 'Ram', `LastName`: 'R', `SubjectId`: '2', `EnrollYear`: '2013'})   
+CREATE (:`Student` {`Name`: 'Ram', `LastName`: 'R', `SubjectId`: '1', `EnrollYear`: '2013'}) ;
  
- 
-  CREATE (:`Subject` {`Subject.ID`: '1', `Subject.Name`: 'Data Science', `Professor`: 'Elizabeth Parker'})   CREATE (:`Subject` {`Subject.ID`: '2', `Subject.Name`: 'Math', `Professor`: 'Lawrence Fulton'})   CREATE (:`Subject` {`Subject.ID`: '3', `Subject.Name`: 'R', `Professor`: 'Jason Bryer'})   CREATE (:`Subject` {`Subject.ID`: '4', `Subject.Name`: 'SQL', `Professor`: 'Andrew Catlin'}) 
+   
+CREATE (:`Subject` {`SubjectId`: '1', `SubjectName`: 'Data Science', `Professor`: 'Elizabeth Parker'})   
+CREATE (:`Subject` {`SubjectId`: '2', `SubjectName`: 'Math', `Professor`: 'Lawrence Fulton'})   
+CREATE (:`Subject` {`SubjectId`: '3', `SubjectName`: 'R', `Professor`: 'Jason Bryer'})   
+CREATE (:`Subject` {`SubjectId`: '4', `SubjectName`: 'SQL', `Professor`: 'Andrew Catlin'}) ;
+
+MATCH (a:Student), (b:Subject) WHERE (a.SubjectId) = (b.SubjectId) CREATE (a) -[:ENROLLED_INTO]-> (b) return a,b;
+
+MATCH (a:Student) -[:ENROLLED_INTO] -> (b:Subject) return a, b;	
