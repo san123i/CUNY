@@ -1,0 +1,108 @@
+---
+title: "606_FinalProject"
+author: "SantoshCheruku"
+date: "April 28, 2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+
+---
+
+```{css}
+.rCode {
+background-color: black;
+color: white;
+}
+```
+
+```{r}
+library(tidyverse)
+```
+
+#Introduction
+
+I'm researching to find whether the choice of STEM major in graduction have an impact on a graduate salary? I find it important because it helps students in identifying a right course that is in demand, and thus help them make an overall informative decision.
+
+
+
+#Data
+
+The recent grad list compiled by census.gov has provided us with a list of compiled data of grads during 2010-2012. There are observations made against 173 majors.Each observation represents a major with data mentioning the number of grads who passed, their employement rate, salary ranges etc.</br>
+There are totally 173 observations which each observation representing a major.</br>
+We will be studying two variables, the median salary which is a response variable and course major which is an independent variable also an explantory variable.</br>
+This is an observation study since it's derived from a data which is taken from an observation during a period of time. </br>
+The population of interest is the graduates of United States. And the findings from this analysis can be generalized for the entire population of interest i.e., the graduates. Describe why???And are there any sources of bias???   </br>
+
+Scope of inference - causality: Can these data be used to establish causal links between the variables of interest? Explain why or why not.
+
+```{r, class.source="rCode"}
+grads <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/606/Project/grad-students.csv")
+head(grads)
+
+
+summary(grads)
+```
+
+
+#Exploratory Data Analysis
+
+##1. Number of graduates in each major
+Let's do an analysis on the number of graduates in each major. </br>
+
+```{r block1, class.source="rCode"}
+isSTEM <- function(majorCategory){
+    result <- grepl("science|math|engineering|technology|computer|!Social", majorCategory, ignore.case = T)
+    result <- ifelse(result, !grepl("Social", majorCategory, ignore.case = T), result)
+    return(ifelse(result, "STEM","NON-STEM"));
+}
+
+cateogryCount <- function(majorCategory){
+    result <- grepl("science|math|engineering|technology|computer|!Social", majorCategory, ignore.case = T)
+    result <- ifelse(result, !grepl("Social", majorCategory, ignore.case = T), result)
+    return(ifelse(result, "STEM","NON-STEM"));
+}
+```
+The below plot shows that majority of the graduates fall under 'Education' major type where as the lease are under 'interdiscriplinary' and 'Agriculture & Natural Resources' category. Also there are only 4 major categories which fall under STEM i.e. 'Biology & Life Sciences', 'Computers & Mathematics', 'Engineering' and 'Physical Sciences'.
+
+```{r, class.source="rCode"}
+grads <- grads %>% mutate("Major_Type_STEM"=isSTEM(Major_category))
+
+ggplot(grads, aes(x=grads$Major_category, y = Grad_total, fill=Major_Type_STEM)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs( title = 'Graduates by major category type')
+
+list <- aggregate(Grad_total ~ Major_category, grads, sum)
+ggplot(list, aes(x=Major_category, y=Grad_total, label=Grad_total, label.size=.25)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by major category type') + 
+  geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
+
+list <- aggregate(Grad_total ~ Major_Type_STEM, grads, sum)
+ggplot(list, aes(x=Major_Type_STEM, y=Grad_total, label=Grad_total, fill=Major_Type_STEM)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by STEM type') + 
+  geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
+
+# label=sum(Grad_total)
+```
+
+##2. Salary data analysis by category
+
+The below plot shows the number of graduates in each category. 
+
+```{r, class.source="rCode"}  
+
+ggplot(grads, aes(Major_category, Grad_median)) + geom_boxplot()  +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+
+ggplot(grads, aes(x=Major, y=Grad_median, shape=Major_Type_STEM, colour=Major_Type_STEM)) + geom_point()  + scale_shape_manual(values=c(19, 2))
+```
+
+
+##3. Average p25, p75 and median salary of each category.
+```{r, class.source="rCode"}  
+ggplot(grads, aes(x=grads$Major_category, y = Grad_P25, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '25Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+
+ggplot(grads, aes(x=grads$Major_category, y = Grad_P75, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '75Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+
+ggplot(grads, aes(x=grads$Major_category, y = Grad_median, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = 'Median of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+```
+
+  
+
+##4. Summary stats of median salary per category.
+

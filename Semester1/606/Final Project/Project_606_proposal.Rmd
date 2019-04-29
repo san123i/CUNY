@@ -1,5 +1,5 @@
 ---
-title: "Project_606_Proposl"
+title: "Project_606_Proposal"
 author: "SantoshCheruku"
 date: "March 30, 2019"
 output: html_document
@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
+library(dplyr)
 ```
 ## This project use the Grad Student data for analysis
 
@@ -63,3 +64,26 @@ summary(grads$Grad_total)
 
 ggplot(grads, aes(x=grads$Major_category, y = Grad_median)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
+
+```{r}
+list <- aggregate(Grad_total ~ Major_category, grads, sum)
+ggplot(list, aes(x=Major_category, y=Grad_total, label=Grad_total)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by major category type') + 
+  geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
+```
+
+```{r}
+isSTEM <- function(majorCategory){
+    result <- grepl("science|math|engineering|technology|computer|!Social", majorCategory, ignore.case = T)
+    result <- ifelse(result, !grepl("Social", majorCategory, ignore.case = T), result)
+    return(ifelse(result, "STEM","NON-STEM"));
+}
+```
+
+```{r}
+grads <- grads %>% mutate("Major_Type_STEM"=isSTEM(Major_category))
+
+list <- aggregate(Grad_total ~ Major_Type_STEM, grads, sum)
+ggplot(list, aes(x=Major_Type_STEM, y=Grad_total, label=Grad_total)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by STEM type') + 
+  geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
+```
+
