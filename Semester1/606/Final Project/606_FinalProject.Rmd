@@ -16,7 +16,7 @@ color: white;
 }
 ```
 
-```{r}
+```{r, warning=FALSE}
 library(tidyverse)
 ```
 
@@ -36,8 +36,8 @@ The population of interest is the graduates of United States. And the findings f
 
 Scope of inference - causality: Can these data be used to establish causal links between the variables of interest? Explain why or why not.
 
-```{r, class.source="rCode"}
-grads <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/606/Project/grad-students.csv")
+```{r block0, class.source="rCode"}
+grads <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/606/Final%20Project/grad-students.csv")
 head(grads)
 
 
@@ -68,14 +68,14 @@ The below plot shows that majority of the graduates fall under 'Education' major
 ```{r, class.source="rCode"}
 grads <- grads %>% mutate("Major_Type_STEM"=isSTEM(Major_category))
 
-ggplot(grads, aes(x=grads$Major_category, y = Grad_total, fill=Major_Type_STEM)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs( title = 'Graduates by major category type')
+ggplot(grads, aes(x=reorder(Major_category, Grad_total), y = Grad_total, fill=Major_Type_STEM)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs( title = 'Graduates by major category type')
 
 list <- aggregate(Grad_total ~ Major_category, grads, sum)
-ggplot(list, aes(x=Major_category, y=Grad_total, label=Grad_total, label.size=.25)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by major category type') + 
+ggplot(list, aes(x=reorder(Major_category, Grad_total), y=Grad_total, label=Grad_total, label.size=.25)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by major category type') + 
   geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
 
 list <- aggregate(Grad_total ~ Major_Type_STEM, grads, sum)
-ggplot(list, aes(x=Major_Type_STEM, y=Grad_total, label=Grad_total, fill=Major_Type_STEM)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by STEM type') + 
+ggplot(list, aes(x=reorder(Major_Type_STEM, Grad_total), y=Grad_total, label=Grad_total, fill=Major_Type_STEM)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by STEM type') + 
   geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
 
 # label=sum(Grad_total)
@@ -95,14 +95,31 @@ ggplot(grads, aes(x=Major, y=Grad_median, shape=Major_Type_STEM, colour=Major_Ty
 
 ##3. Average p25, p75 and median salary of each category.
 ```{r, class.source="rCode"}  
-ggplot(grads, aes(x=grads$Major_category, y = Grad_P25, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '25Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(grads, aes(x=reorder(Major_category, Grad_P25), y = Grad_P25, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '25Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 
-ggplot(grads, aes(x=grads$Major_category, y = Grad_P75, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '75Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(grads, aes(x=reorder(Major_category, Grad_P75), y = Grad_P75, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '75Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 
-ggplot(grads, aes(x=grads$Major_category, y = Grad_median, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = 'Median of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(grads, aes(x=reorder(Major_category, Grad_median), y = Grad_median, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = 'Median of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
 
-  
+##4. Grad Median salaries by STEM or Non-STEM
+```{r, class.source="rCode"}  
+ggplot(grads, aes(Major_Type_STEM, Grad_median, fill=Major_Type_STEM)) + geom_boxplot()  +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+```
 
-##4. Summary stats of median salary per category.
+#Inference
+
+Let's start our inference with a Null Hypothesis test</br>
+H0 <- The median salary for an average graduate in STEM and Non-STEM categories are same </br>
+HA <- The median salary for an average graduate in STEM and non-STEM categories are not same.</br>
+
+```{r}
+grads_anova <- aov(grads$Grad_median ~ grads$Major_Type_STEM)
+summary(grads_anova)
+
+plot(grads_anova)
+```
+
+Since the P value is very less than .05, we reject the null hypothesis (H0), and can conclude that average graduate salary for STEM and non-STEM category students is not equal.
+
 
