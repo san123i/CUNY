@@ -56,7 +56,7 @@ The course major is an independent variable (qualitative) and number of grad stu
 Provide summary statistics for each the variables. Also include appropriate visualizations related to your research question (e.g. scatter plot, boxplots, etc). This step requires the use of R, hence a code chunk is provided below. Insert more code chunks as needed.
 
 ```{r}
-grads <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/606/Project/grad-students.csv")
+grads <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/606/Final%20Project/grad-students.csv")
 
 summary(grads$Grad_median)
 
@@ -65,15 +65,18 @@ summary(grads$Grad_total)
 ggplot(grads, aes(x=grads$Major_category, y = Grad_median)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
 
+# Students in each category
 ```{r}
 list <- aggregate(Grad_total ~ Major_category, grads, sum)
 ggplot(list, aes(x=Major_category, y=Grad_total, label=Grad_total)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by major category type') + 
   geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
 ```
 
+
+# Categorize the students into STEM and non-STEM.
 ```{r}
 isSTEM <- function(majorCategory){
-    result <- grepl("science|math|engineering|technology|computer|!Social", majorCategory, ignore.case = T)
+    result <- grepl("science|math|engineering|technology|computer", majorCategory, ignore.case = T)
     result <- ifelse(result, !grepl("Social", majorCategory, ignore.case = T), result)
     return(ifelse(result, "STEM","NON-STEM"));
 }
@@ -83,7 +86,7 @@ isSTEM <- function(majorCategory){
 grads <- grads %>% mutate("Major_Type_STEM"=isSTEM(Major_category))
 
 list <- aggregate(Grad_total ~ Major_Type_STEM, grads, sum)
-ggplot(list, aes(x=Major_Type_STEM, y=Grad_total, label=Grad_total)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by STEM type') + 
+ggplot(list, aes(x=Major_Type_STEM, y=Grad_total, label=Grad_total, fill=Major_Type_STEM)) + geom_col() + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs(title = '# of Graduates by STEM type') + 
   geom_text(size = 3, position = position_stack(vjust = 0.5), color='white')
 ```
 
