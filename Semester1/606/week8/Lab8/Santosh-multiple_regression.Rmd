@@ -38,6 +38,45 @@ different course and columns represent variables about the courses and professor
 
 ```{r load-data, eval=TRUE}
 load("more/evals.RData")
+plot_ss <- function(x, y, showSquares = FALSE, leastSquares = FALSE){
+  plot(y~x, asp = 1)# xlab = paste(substitute(x)), ylab = paste(substitute(y)))
+  
+  if(leastSquares){
+    m1 <- lm(y~x)
+    y.hat <- m1$fit
+  } else{
+    cat("Click two points to make a line.")
+    pt1 <- locator(1)
+    points(pt1$x, pt1$y, pch = 4)
+    pt2 <- locator(1)
+    points(pt2$x, pt2$y, pch = 4)
+    pts <- data.frame("x" = c(pt1$x, pt2$x),"y" = c(pt1$y, pt2$y))
+    m1 <- lm(y ~ x, data = pts)
+    y.hat <- predict(m1, newdata = data.frame(x))
+  }
+  r <- y - y.hat
+  abline(m1)
+
+  oSide <- x - r
+  LLim <- par()$usr[1]
+  RLim <- par()$usr[2]
+  oSide[oSide < LLim | oSide > RLim] <- c(x + r)[oSide < LLim | oSide > RLim] # move boxes to avoid margins
+
+  n <- length(y.hat)
+  for(i in 1:n){
+    lines(rep(x[i], 2), c(y[i], y.hat[i]), lty = 2, col = "blue")
+    if(showSquares){
+    lines(rep(oSide[i], 2), c(y[i], y.hat[i]), lty = 3, col = "orange")
+    lines(c(oSide[i], x[i]), rep(y.hat[i],2), lty = 3, col = "orange")
+    lines(c(oSide[i], x[i]), rep(y[i],2), lty = 3, col = "orange")
+    }
+  }
+
+  SS <- round(sum(r^2), 3)
+  cat("\r                                ")
+  print(m1)
+  cat("Sum of Squares: ", SS)
+}
 ```
 
 variable         | description
@@ -71,13 +110,24 @@ variable         | description
     differences in course evaluations. Given the study design, is it possible to
     answer this question as it is phrased? If not, rephrase the question.
 
+**Answer: Yes, this is an observation study. Are course evaluations impacted by beauty.**
+
 2.  Describe the distribution of `score`. Is the distribution skewed? What does 
     that tell you about how students rate courses? Is this what you expected to 
     see? Why, or why not?
+    
+**Answer: The distribution of `score` is left skewed. Majority of the students rate their courses higher or we can say they are satisfatory with the results. **
 
 3.  Excluding `score`, select two other variables and describe their relationship 
     using an appropriate visualization (scatterplot, side-by-side boxplots, or 
     mosaic plot).
+    
+```{r scatter-rank-language, eval = FALSE}
+  plot(evals$rank ~ evals$language)
+```
+```{r scatter-rank-age, eval = FALSE}
+  plot(evals$rank ~ evals$age)
+```
 
 ## Simple linear regression
 
@@ -97,6 +147,10 @@ Is anything awry?
 4.  Replot the scatterplot, but this time use the function `jitter()` on the
     $y$- or the $x$-coordinate. (Use `?jitter` to learn more.) What was
     misleading about the initial scatterplot?
+```{r}
+plot(jitter(evals$score) ~ jitter(evals$bty_avg))
+```
+    
 
 5.  Let's see if the apparent trend in the plot is something more than
     natural variation. Fit a linear model called `m_bty` to predict average
@@ -104,10 +158,25 @@ Is anything awry?
     using `abline(m_bty)`. Write out the equation for the linear model and
     interpret the slope. Is average beauty score a statistically significant
     predictor? Does it appear to be a practically significant predictor?
+```{r}
+m_bty <- lm(score~bty_avg, data = evals)
+summary(m_bty)
+
+
+```
+**Answer: score = 3.88 +.066*bty_avg**
+
+**No, the bty_avg is quite small to make a significant impact on the overall score.**
+    
 
 6.  Use residual plots to evaluate whether the conditions of least squares
     regression are reasonable. Provide plots and comments for each one (see
     the Simple Regression Lab for a reminder of how to make these).
+    
+```{r}
+plot_ss(evals$score, evals$bty_avg)
+```
+    
 
 ## Multiple linear regression
 
@@ -148,9 +217,29 @@ summary(m_bty_gen)
 7.  P-values and parameter estimates should only be trusted if the
     conditions for the regression are reasonable. Verify that the conditions
     for this model are reasonable using diagnostic plots.
+    
+**Answer: Below are the conditions**   
+</br>
+**a. Residuals should be nearly normal</br>**
+**b. Variance in the residuals should be nearly constant</br>**
+**c. Residuals should be independent</br>**
+**d. Each variable should be linearly related to the outcome</br>**
+
+From the below plots we can say that above conditions are satisfied
+```{r}
+m_bty_gen <- lm(score ~ bty_avg + gender, data = evals)
+hist(m_bty_gen$residuals)
+plot(evals$score ~ evals$gender)
+plot(m_bty_gen)
+```
+
+
 
 8.  Is `bty_avg` still a significant predictor of `score`? Has the addition
     of `gender` to the model changed the parameter estimate for `bty_avg`?
+
+**Answer: The model when included with `gender` would be below. It shows that `bty_avg` is a more significant predictor than `gendermale`, since the `gendermale` is always .17 where as `bty_avg` with an avg value of 4.4 in the `evals` dataset is higher than .17.**
+
 
 Note that the estimate for `gender` is now called `gendermale`. You'll see this 
 name change whenever you introduce a categorical variable. The reason is that R 
@@ -179,6 +268,8 @@ multiLines(m_bty_gen)
     males, the parameter estimate is multiplied by 1.) For two professors
     who received the same beauty rating, which gender tends to have the
     higher course evaluation score?
+    
+**Answer:     `score` = 3.747 + .07 * `bty_avg` + .17 * `gendermale`**
 
 The decision to call the indicator variable `gendermale` instead of`genderfemale`
 has no deeper meaning. R simply codes the category that comes first 
@@ -190,6 +281,14 @@ Use `?relevel` to learn more.)
     added in. How does R appear to handle categorical variables that have more 
     than two levels? Note that the rank variable has three levels: `teaching`, 
     `tenure track`, `tenured`.
+    
+**Answer: </br>**
+**The below model provides data only for two levels i.e., `tenure track` and `tenured`. When there are more than two levels then R seems to be reducing 1 level from the total number of levels.**
+    
+```{r}
+m_bty_rank <- lm(score~bty_avg + rank, data = evals)
+```
+    
 
 The interpretation of the coefficients in multiple regression is slightly 
 different from that of simple regression. The estimate for `bty_avg` reflects
@@ -210,6 +309,8 @@ picture color.
     Why? *Hint:* Think about which variable would you expect to not have any 
     association with the professor score.
 
+**Answer: I expect the `rank` to have highest p-value and `age` to be least**
+
 Let's run the model...
 
 ```{r m_full, eval = FALSE, tidy = FALSE}
@@ -221,8 +322,21 @@ summary(m_full)
 
 12. Check your suspicions from the previous exercise. Include the model output
     in your response.
+```{r}
+m_rank_score <- lm(score ~ rank+age, data = evals)
+summary(m_rank_score)
+```
+    
 
 13. Interpret the coefficient associated with the ethnicity variable.
+
+**Answer: score = 4.07 + .119*ethnicity_not_minority** 
+**Here .119 is a positive number and professors who fall under this category have a positive trend towards higher score.**
+```{r}
+m_eth_score <- lm(score ~ ethnicity, data = evals)
+summary(m_eth_score)
+```
+
 
 14. Drop the variable with the highest p-value and re-fit the model. Did the
     coefficients and significance of the other explanatory variables change?
@@ -230,14 +344,39 @@ summary(m_full)
     coefficient estimates depend on the other variables that are included in
     the model.) If not, what does this say about whether or not the dropped
     variable was collinear with the other explanatory variables?
+    
+**Answer: Yes, after dropping the highest p value variable, the co-efficient of the other variables underwent a change.**
+```{r}
+m_full_minus_cls_credits <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval  + cls_students + cls_level + cls_profs  + bty_avg  + pic_outfit + pic_color, data = evals)
+summary(m_full_minus_cls_credits)
+```
+    
 
 15. Using backward-selection and p-value as the selection criterion,
     determine the best model. You do not need to show all steps in your
     answer, just the output for the final model. Also, write out the linear
     model for predicting score based on the final model you settle on.
+    
+Answer:  Taking out `cls_profs` variable, improved the R2 square the most.
+```{r}
+m_full_minus_cls_profs <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval 
+             + cls_students + cls_level  + cls_credits + bty_avg 
+             + pic_outfit + pic_color, data = evals)
+summary(m_full_minus_cls_profs)
+```
+    
 
 16. Verify that the conditions for this model are reasonable using diagnostic 
     plots.
+```{r}
+plot(m_full_minus_cls_profs)
+hist(m_full_minus_cls_profs$residuals)
+plot(evals$score ~ evals$gender)
+plot(evals$score ~ evals$rank)
+plot(evals$score ~ evals$ethnicity)
+plot(evals$score ~ evals$language)
+```
+    
 
 17. The original paper describes how these data were gathered by taking a
     sample of professors from the University of Texas at Austin and including 
@@ -248,7 +387,12 @@ summary(m_full)
 18. Based on your final model, describe the characteristics of a professor and 
     course at University of Texas at Austin that would be associated with a high
     evaluation score.
+    
+**Answer: Considering the stats presented by the model, we can derive to a conclusion that characteristics of a professor associated with a higher score would include being a male, non-white, english speaking with a moderate beauty score.**
 
 19. Would you be comfortable generalizing your conclusions to apply to professors
     generally (at any university)? Why or why not?
+
+**Answer: No, it cannot be generalized since the sample was only from one university but not diverisified through different geographies and population demographics. Therefore, it's not feasible to apply the result of such observation to entire population.**
+    
 
