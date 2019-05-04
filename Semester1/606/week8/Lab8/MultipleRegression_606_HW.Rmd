@@ -1,0 +1,64 @@
+---
+title: "MultipleRegression_606_HW"
+author: "SantoshCheruku"
+date: "May 2, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+8.2 Baby weights, Part II. Exercise 8.1 introduces a data set on birth weight of babies. Another variable we consider is parity, which is 0 if the child is the first born, and 1 otherwise. The summary table below shows the results of a linear regression model for predicting the average birth weight of babies, measured in ounces, from parity.
+
+(a) Write the equation of the regression line.
+
+    Answer: weight = 120.07 - 1.93 * parity
+
+(b) Interpret the slope in this context, and calculate the predicted birth weight of first borns and others.
+
+    Answer: Slope in this context is -1.93 for variable `parity`. Predicted weight for 
+    firstborn <- 120.07 - 1.93 * 0
+    firstborn <- 120.07
+    
+    othersweight <- 120.07 - 1.93 * 1
+    otherrweight <- 118.14
+    
+
+(c) Is there a statistically significant relationship between the average birth weight and parity?
+
+    Answer: No, going by the p value given for others, which is more than .05. The wieght of firstborn and others, it doesn't seem to make a significant impact (1.93) on the weight (120.07).
+    
+
+8.4 Absenteeism. Researchers interested in the relationship between absenteeism from school and certain demographic characteristics of children collected data from 146 randomly sampled students in rural New SouthWales, Australia, in a particular school year. Below are three observations from this data set. The summary table below shows the results of a linear regression model for predicting the average number of days absent based on ethnic background (eth: 0 - aboriginal, 1 - not aboriginal), sex (sex: 0 - female, 1 - male), and learner status (lrn: 0 - average learner, 1 - slow learner).
+
+
+(a) Write the equation of the regression line.
+
+    Answer: avg_days_absent = 18.93 - 9.11 * eth + 3.1 * sex + 2.15 * lrn
+    
+(b) Interpret each one of the slopes in this context.
+
+    Answer: With a positive slope of 3.11 for `sex`, we can say that male students have a positive relation towards absenteeism.
+    
+(c) Calculate the residual for the first observation in the data set: a student who is aboriginal, male, a slow learner, and missed 2 days of school.
+
+
+(d) The variance of the residuals is 240.57, and the variance of the number of absent days for all students in the data set is 264.17. Calculate the R2 and the adjusted R2. Note that there are 146 observations in the data set.
+
+
+8.8 Absenteeism, Part II. Exercise 8.4 considers a model that predicts the number of days absent using three predictors: ethnic background (eth), gender (sex), and learner status (lrn). The table below shows the adjusted R-squared for the model as well as adjusted R-squared values for all models we evaluate in the first step of the backwards elimination process.
+
+Which, if any, variable should be removed from the model first?
+
+Answer: No Learner status can be removed from the model, since the Adjusted R2 value is the highest when we removed the 'No Learner Status' using the `backwards elimination process`.
+
+8.16 Challenger disaster, Part I. On January 28, 1986, a routine launch was anticipated for the Challenger space shuttle. Seventy-three seconds into the flight, disaster happened: the shuttle broke apart, killing all seven crew members on board. An investigation into the cause of the disaster focused on a critical seal called an O-ring, and it is believed that damage to these O-rings during a shuttle launch may be related to the ambient temperature during the launch. The table below sumarizes observational data on O-rings for 23 shuttle missions, where the mission order is based on the temperature at the time of the launch. Temp gives the temperature in Fahrenheit, Damaged represents the number of damaged O-rings, and Undamaged represents the number of O-rings that were not damaged.
+
+(a) Each column of the table above represents a di???erent shuttle mission. Examine these data and describe what you observe with respect to the relationship between temperatures and damaged O-rings.
+
+    Answer: Looking at the question, we can identify that the damaged rings appear more often at lower temperatures. 
+    
+(b) Failures have been coded as 1 for a damaged O-ring and 0 for an undamaged O-ring, and a logistic regression model was fit to these data. A summary of this model is given below. Describe the key components of this summary table in words.
+
+    Answer:  The intercept is 11.66 and the temperature co-efficient is -.2162 which mentions that as the temperature goes down the 

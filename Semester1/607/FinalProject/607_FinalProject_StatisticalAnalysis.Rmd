@@ -2,7 +2,10 @@
 title: "607_FinalProject_StatisticalAnalysis"
 author: "SantoshCheruku"
 date: "April 23, 2019"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -10,21 +13,53 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 ```
+`'Medicine Recommender'` project is designed to work through the data set and identify if we can recommend a medicine to a patient based on the symptoms and the ratings and side effect info of it provided by the patients who previously consumed those drugs. Here, we are trying to identify if there is  a statistical inference we can provide from the given data set of patients provided to us. 
 
+#Data Load and Setup
 ```{r}
+
 all_drugs_df <- read.csv("drugLibTest_raw.csv")
 
 all_drugs_df$effectiveness <- factor(all_drugs_df$effectiveness, levels=c('Ineffective','Marginally Effective','Moderately Effective','Considerably Effective','Highly Effective'))
 
 all_drugs_df$sideEffects <- factor(all_drugs_df$sideEffects,levels=c('No Side Effects','Mild Side Effects','Moderate Side Effects','Severe Side Effects','Extremely Severe Side Effects'))
-
-mean(all_drugs_df$rating)
-
-h_effective_drugs_df <- subset(all_drugs_df, effectiveness=='Highly Effective')
-
-mean(h_effective_drugs_df$rating)
-ggplot(all_drugs_df, aes(x=effectiveness)) + geom_bar(stat="count")
-ggplot(all_drugs_df, aes(x=sideEffects)) + geom_bar(stat="count")
-ggplot(all_drugs_df, aes(x=sideEffects)) + geom_bar(stat="count") + geom_line(aes(x=sideEffects, y=rating), stat="identity")
 ```
+
+
+
+#Exploratory Data Analysis
+```{r}
+
+#mean(all_drugs_df$rating)
+
+#h_effective_drugs_df <- subset(all_drugs_df, effectiveness=='Highly Effective')
+#mean(h_effective_drugs_df$rating)
+```
+
+##Plotting drug effectiveness
+```{r}
+ggplot(all_drugs_df, aes(x=effectiveness)) + geom_bar(stat="count")
+```
+
+##Plotting drug side effects for effectiveness
+```{r}
+ggplot(all_drugs_df, aes(x=sideEffects)) + geom_bar(stat="count") + facet_wrap(~effectiveness) + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+```
+
+##Drug effectiveness vs Patient Rating
+```{r}
+ggplot(all_drugs_df, aes(x=rating)) + geom_bar(stat="count") + facet_wrap(~effectiveness) + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(all_drugs_df, aes(x=effectiveness, rating)) + geom_boxplot()
+```
+
+##Distribution of patient ratings
+```{r}
+hist(all_drugs_df$rating)
+
+```
+
+#Statistical Inference
+
+
+#Conclusion
 

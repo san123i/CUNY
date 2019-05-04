@@ -1,0 +1,383 @@
+---
+output:
+  html_document:
+    theme: journal
+    toc: TRUE
+    toc_float: TRUE  
+    toc_depth: 3
+---
+
+Medicine Recommender System
+===============================
+
+*Establishing a Medicine Recommender System that can give a medication recommendation with an excellent efficiency and accuracy based on diagnosis and symptoms.*
+
+#### DATA 607 Final Project
+#### May 12, 2019
+#### Team SPARC
+
+* [Santosh Cheruku](https://github.com/san123i)
+* [Samantha Deokinanan](https://github.com/greeneyefirefly)
+* [Rajwant Mishra](https://github.com/rajwantmishra)
+* [Priya Shaji](https://github.com/PriyaShaji)
+
+#### Github 
+
+All the project files, codes, and graphics are available under [Final Project repository]() on Github.
+
+#### Rpub 
+
+The presentation is published on [Final Project]() Rpub.
+
+#### Project Documentation 
+
+All the project work and ideas were documented and available under [Project Documentation]() on Github.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+##################################################################
+#               Add All Required R Packages Here              #
+##################################################################
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+library(party)
+library(kableExtra)
+
+
+```
+
+***
+
+### Overview {.tabset .tabset-fade .tabset-pills}
+
+According to the World Health Organization, more than 42% medication errors are caused by doctors because experts write the prescription according to their experiences which are quite limited. With the advancement of technology and data analytical technique such as data mining and recommender systems, it is possibilities to explore potential knowledge from diagnosis history records and help doctors to prescribe medication correctly. A recommendation of right medicine based on diagnosis can targeted healing and decreasing trial-and-error when prescribing drugs. This can may further decrease undesirable drug side-effects. Therefore, the objective of this project is to build a medicine recommender system that can give a medication recommendation with an excellent efficiency and accuracy based on diagnosis and symptoms.  
+
+***
+
+#### Motivation 
+
+
+***  
+#### Team Work & Communication
+
+
+***  
+#### Timeline  
+
+
+***
+### Methodology   
+#### Approaching the Problem  {.tabset .tabset-fade .tabset-pills}
+
+Team SPARC plans to design medicine recommender system that applies machine learning to the recommendation system. 
+
+These datasets are given its raw form; therefore, data cleaning and transformation will be conducted as necessary. Possible methods for building the recommender system will include  SVM (Support Vector Machine) and Decision Tree algorithm based on the diagnosis data. The data sets will be split into a training and testing set to access and improve performance.
+
+***
+##### Source Identification
+
+
+
+***
+
+
+
+***
+##### Data Collection
+
+Datasets are retrieved from:
+
+* Felix Gräßer, Surya Kallumadi, Hagen Malberg, and Sebastian Zaunseder. 2018. Aspect-Based Sentiment Analysis of Drug Reviews Applying Cross-Domain and Cross-Data Learning. In Proceedings of the 2018 International Conference on Digital Health (DH '18). ACM, New York, NY, USA, 121-125. DOI: [https://doi.org/10.1145/3194658.3194677]
+  +	These datasets provide patient reviews on specific drugs along with related conditions. Reviews and ratings are grouped into reports on the three aspects benefits, side effects and overall comment.
+*	USP Drug Classifications which provides therapeutic or pharmacologic groupings of FDA approved medications, consistent with current U.S. healthcare practices and standards of care.
+  +	This dataset has the hierarchical USP drug classifications which includes USP Categories, USP Classes in that category, the drugs (i.e. the general drug compound), and the medication or formulation you would buy of that drug. The dataset also has the individual KEGG pages for these drugs which leads to information the product and generic names, chemical formula, additional classes, ATC codes, biochemical information, other classifications, and links to the compound in other databases (e.g. PubChem, DrugBank, etc). [https://www.kaggle.com/danofer/usp-drug-classification]
+
+The following is a sample of how the data was read from the respective sources. The full code on web scraping can be found at [Final Project Supporting Rmd]() on Github. 
+
+
+
+***
+##### Storage & Retrieve
+
+
+
+***
+##### Our Data
+
+```{r}
+train <- read_tsv("drugLibTrain_raw.tsv", col_names = TRUE, cols(
+  X1 = col_double(),
+  urlDrugName = col_character(),
+  rating = col_double(),
+  effectiveness = col_factor(),
+  sideEffects = col_factor(),
+  condition = col_factor(),
+  benefitsReview = col_character(),
+  sideEffectsReview = col_character(),
+  commentsReview = col_character()
+))
+
+test <- read_tsv("drugLibTest_raw.tsv", col_names = TRUE, cols(
+  X1 = col_double(),
+  urlDrugName = col_character(),
+  rating = col_double(),
+  effectiveness = col_factor(),
+  sideEffects = col_factor(),
+  condition = col_factor(),
+  benefitsReview = col_character(),
+  sideEffectsReview = col_character(),
+  commentsReview = col_character()
+))
+
+dataset <- full_join(train, test)
+
+usp_drug_classification <- read_csv("usp_drug_classification.csv", col_names = TRUE, cols(
+  usp_category = col_factor(),
+  usp_class = col_factor(),
+  usp_drug = col_character(),
+  kegg_id_drug = col_character(),
+  drug_example = col_character(),
+  kegg_id_drug_example = col_character(),
+  nomenclature = col_character()
+))
+dataset$effectiveness <- as.factor(dataset$effectiveness)
+dataset$sideEffects <- as.factor(dataset$sideEffects)
+dataset$effectiveness <- factor(dataset$effectiveness , levels = levels(dataset$effectiveness)[c(3, 2, 5, 4, 1)])
+dataset$sideEffects <- factor(dataset$sideEffects , levels = levels(dataset$sideEffects)[c(4, 2, 5, 1, 3)])
+
+kable(dataset) %>%
+  kable_styling() %>%
+  scroll_box(width = "100%", height = "300px")
+
+ggplot(dataset, aes(x= effectiveness, fill=as.factor(effectiveness) )) + geom_bar( ) + scale_fill_brewer(palette = "Set1") + facet_wrap(~sideEffects) + labs(x = "Effectiveness of Drug", y = "Side Effects of Drug") + ggtitle("Distribution of Drug Effectiveness and Side Effect") + theme(legend.position = "none") + coord_flip()
+
+# New variable
+dataset$Effective <- recode(dataset$effectiveness, "Highly Effective" = "2", "Considerably Effective" = "1", "Ineffective" = "0", "Marginally Effective" = "0", "Moderately Effective" = "0")
+dataset$NoSideEffects <- recode(dataset$sideEffects, "Extremely Severe Side Effects" = "0", "Severe Side Effects" = "0", "Moderate Side Effects" = "0", "Mild Side Effects" = "1", "No Side Effects" = "2")
+
+dataset$Works <- as.factor(ifelse(dataset$Effective == 1 & dataset$NoSideEffects == 1,"helps", "not helpful"))
+
+```
+
+### Results & Discussion {.tabset .tabset-fade .tabset-pills}
+***
+#### Medicine Decision Tree
+
+brief on decision tree and medicine
+
+the data
+
+The data has no missing values. this is important because missing data will result in information loss.
+
+The features that may explain
+
+```{r}
+# No missing data
+summary(dataset)
+```
+
+```{r}
+.data <- c("training", "test") %>%
+  sample(nrow(dataset), replace = T) %>%
+  split(dataset, .)
+
+rtree_fit <- rpart(Works ~ Effective + NoSideEffects + rating, .data$training) 
+rpart.plot(rtree_fit)
+
+tree_fit <- ctree(Works ~ Effective + NoSideEffects + rating, data = .data$training)
+
+tree_roc <- tree_fit %>%
+  predict(newdata = .data$test) %>%
+  prediction(.data$test$survived) %>%
+  performance("tpr", "fpr")
+
+
+head(predict(rtree_fit))
+par(mar=c(1,1,0.25,1))
+plot(rtree_fit, branch = 0.4,uniform = TRUE, compress = TRUE)
+text(rtree_fit, pretty = 0) 
+rpart.predict <- predict(rtree_fit, newdata = objTrain, type="class")
+tail(rpart.predict)
+
+
+cf <-confusionMatrix(rpart.predict, objTrain$Works)
+cf 
+
+mean.error.rate.rpart <- 1- cf$overall[1]
+mean.error.rate.rpart
+
+
+
+cv.rtree_fit <- cv.tree(rtree_fit, FUN = prune.misclass)
+cv.rtree_fit 
+prune.rtree_fit <- prune.misclass(rtree_fit, best = 4)
+
+text(prune.rtree_fit, pretty = 0) 
+
+rtree_fit2 = prune(rtree_fit, cp = 0.0014)
+par(mar=c(1,1,0.25,1))
+plot(rtree_fit2, branch = 0.4,uniform = TRUE, compress = TRUE)
+text(rtree_fit2)
+
+
+rpart.prune.predict <- predict(rtree_fit2, newdata = objTest,type = "class")
+cf.prune <-confusionMatrix(rpart.prune.predict,objTest$readmitted)
+
+mean.error.rate.rpart.prune <- 1- cf.prune$overall[1]
+mean.error.rate.rpart.prune
+```
+
+
+***
+#### Other Visual and Statisical Analysis
+##### 
+
+
+```{r}
+library(tidytext)
+library(sentimentr)
+library(SnowballC)
+library(tm)
+library(wordcloud)
+library(reticulate)
+
+
+words <- dataset %>%
+  select(urlDrugName, rating, effectiveness, condition, benefitsReview) %>%
+  unnest_tokens(word, benefitsReview) %>%
+  filter(!word %in% stop_words$word,
+         str_detect(word, "^[a-z']+$"))
+
+afinn <- get_sentiments("afinn") %>% mutate(word = wordStem(word))
+
+reviews.afinn <- words %>%
+  inner_join(afinn, by = "word")
+
+reviews.afinn$EffectRate <- recode(reviews.afinn$effectiveness, "Highly Effective" = "3", "Considerably Effective" = "2", "Moderately Effective" = "1", "Marginally Effective" = "1", "Ineffective" = "1")
+
+reviews.afinn$TrueEffectScore = ifelse(reviews.afinn$EffectRate >= 2 & reviews.afinn$score < 0, abs(reviews.afinn$score),
+                          ifelse(reviews.afinn$EffectRate == 1 & reviews.afinn$score > 0,(reviews.afinn$score)*(-1),
+                                 reviews.afinn$score))
+
+word_summary <- reviews.afinn %>%
+  group_by(word) %>%
+  summarise(mean_rating = mean(rating), score = max(TrueScore), count_word = n()) %>%
+  arrange(desc(count_word))
+
+
+review_summary <- reviews.afinn %>%
+  group_by(condition) %>%
+  summarise(mean_rating = mean(rating), sentiment = mean(TrueScore))
+
+
+x_mid = 5
+
+review_summary %>% 
+  mutate(quadrant = case_when(mean_rating > x_mid & sentiment > 0   ~ "Positive Review/Postive Sentiment",
+                              mean_rating <= x_mid & sentiment > 0  ~ "Negative Review/Positive Sentiment",
+                              mean_rating <= x_mid & sentiment <= 0 ~ "Negative Review/Negative Sentiment",
+                              TRUE                                      ~ "Positive Review/Negative Sentiment")) %>% 
+  ggplot(aes(x = mean_rating, y = sentiment, color = quadrant)) + 
+  geom_hline(yintercept=0, color = "black", size=.5) + 
+  geom_vline(xintercept=x_mid, color = "black", size=.5) +
+  guides(color=FALSE) +
+  scale_color_manual(values=c("blue", "red", "red","blue")) +
+  ggtitle("Rating vs Sentiment Rating of Effectiveness") +
+  ggplot2::annotate("text", x = 4.33, y=3.5,label="+ Review/+ Sentiment") +
+  ggplot2::annotate("text", x = 2, y=3.5,label="- Review/+ Sentiment") +
+  ggplot2::annotate("text", x = 4.33, y=-2.5,label="+ Review/- Sentiment") +
+  ggplot2::annotate("text", x = 2, y=-2.5,label="- Review/- Sentiment") +
+  geom_point()
+
+words <- dataset %>%
+  select(urlDrugName, rating, effectiveness, condition, benefitsReview) %>%
+  unnest_tokens(word, benefitsReview) %>%
+  filter(!word %in% stop_words$word,
+         str_detect(word, "^[a-z']+$"))
+
+afinn <- get_sentiments("afinn") %>% mutate(word = wordStem(word))
+
+reviews.afinn <- words %>%
+  inner_join(afinn, by = "word")
+
+reviews.afinn$NoSideEffects <- recode(reviews.afinn$sideEffects, "Extremely Severe Side Effects" = "1", "Severe Side Effects" = "1", "Moderate Side Effects" = "1", "Mild Side Effects" = "2", "No Side Effects" = "3") 
+
+reviews.afinn$TrueSEffectScore = ifelse(reviews.afinn$NoSideEffects >= 2 & reviews.afinn$score < 0, abs(reviews.afinn$score),
+                          ifelse(reviews.afinn$NoSideEffects == 1 & reviews.afinn$score > 0,(reviews.afinn$score)*(-1),
+                                 reviews.afinn$score))
+
+word_summary <- reviews.afinn %>%
+  group_by(word) %>%
+  summarise(mean_rating = mean(rating), score = max(TrueScore), count_word = n()) %>%
+  arrange(desc(count_word))
+
+
+review_summary <- reviews.afinn %>%
+  group_by(condition) %>%
+  summarise(mean_rating = mean(rating), sentiment = mean(TrueScore))
+
+x_mid = 5
+
+review_summary %>% 
+  mutate(quadrant = case_when(mean_rating > x_mid & sentiment > 0   ~ "Positive Review/Postive Sentiment",
+                              mean_rating <= x_mid & sentiment > 0  ~ "Negative Review/Positive Sentiment",
+                              mean_rating <= x_mid & sentiment <= 0 ~ "Negative Review/Negative Sentiment",
+                              TRUE                                      ~ "Positive Review/Negative Sentiment")) %>% 
+  ggplot(aes(x = mean_rating, y = sentiment, color = quadrant)) + 
+  geom_hline(yintercept=0, color = "black", size=.5) + 
+  geom_vline(xintercept=x_mid, color = "black", size=.5) +
+  guides(color=FALSE) +
+  scale_color_manual(values=c("blue", "red", "red","blue")) +
+  ggtitle("Rating vs Sentiment Rating of Effectiveness") +
+  ggplot2::annotate("text", x = 4.33, y=3.5,label="+ Review/+ Sentiment") +
+  ggplot2::annotate("text", x = 2, y=3.5,label="- Review/+ Sentiment") +
+  ggplot2::annotate("text", x = 4.33, y=-2.5,label="+ Review/- Sentiment") +
+  ggplot2::annotate("text", x = 2, y=-2.5,label="- Review/- Sentiment") +
+  geom_point()
+
+
+
+```
+
+
+***
+
+#### 
+##### 
+
+***
+#### 
+##### 
+
+
+***
+### Conclusion
+
+
+
+***
+
+### Challenges & Solutions {.tabset .tabset-fade .tabset-pills}
+#### Source Identification
+
+
+***
+#### Data Collection
+
+***
+#### Storage & Retrieve
+.  
+ 
+***
+#### Data Analysis
+
+
+***
+### Works Cited
+
+* Meisamshabanpoor & Mahdavi, Mehregan. (2012). Implementation of a recommender system on medical recognition and treatment. International Journal of E-Education, E-Business, E-Management and E-Learning. 2. 315-318.
+* Kakulapati, Vijayalakshmi & Balaram, V V S S S & Reddy, Sheri. (2018). Collaborative Filtering Recommendation systems for personalized medicines. 5.
+
+

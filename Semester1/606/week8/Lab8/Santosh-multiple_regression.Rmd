@@ -331,7 +331,10 @@ summary(m_rank_score)
 13. Interpret the coefficient associated with the ethnicity variable.
 
 **Answer: score = 4.07 + .119*ethnicity_not_minority** 
+
 **Here .119 is a positive number and professors who fall under this category have a positive trend towards higher score.**
+
+
 ```{r}
 m_eth_score <- lm(score ~ ethnicity, data = evals)
 summary(m_eth_score)
@@ -357,7 +360,8 @@ summary(m_full_minus_cls_credits)
     answer, just the output for the final model. Also, write out the linear
     model for predicting score based on the final model you settle on.
     
-Answer:  Taking out `cls_profs` variable, improved the R2 square the most.
+**Answer:  Taking out `cls_profs` variable, improved the R2 square the most.**
+
 ```{r}
 m_full_minus_cls_profs <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval 
              + cls_students + cls_level  + cls_credits + bty_avg 
@@ -383,6 +387,9 @@ plot(evals$score ~ evals$language)
     all courses that they have taught. Considering that each row represents a 
     course, could this new information have an impact on any of the conditions 
     of linear regression?
+    
+**Answer: No, I believe having each course as an observation wouldn't have an impact since the evaluations from each course will be different.**
+    
 
 18. Based on your final model, describe the characteristics of a professor and 
     course at University of Texas at Austin that would be associated with a high
