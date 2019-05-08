@@ -1,0 +1,314 @@
+---
+title: "Data 607 Team Sparc"
+author: "Priya Shaji"
+date: "5/4/2019"
+output: html_document
+---
+
+
+---
+title: "Data 607 Final Project"
+author: "Priya Shaji"
+date: "5/3/2019"
+output: html_document
+---
+
+## Load the Data
+
+```{r eval=FALSE}
+library(tidyverse)
+library(psych)
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+library(party)
+library(kableExtra)
+```
+
+
+
+```{r} 
+library(tidyverse)
+train <- read_tsv("drugLibTrain_raw.tsv", col_names = TRUE, cols(
+  X1 = col_double(),
+  urlDrugName = col_character(),
+  rating = col_double(),
+  effectiveness = col_factor(),
+  sideEffects = col_factor(),
+  condition = col_factor(),
+  benefitsReview = col_character(),
+  sideEffectsReview = col_character(),
+  commentsReview = col_character()
+))
+
+test <- read_tsv("drugLibTest_raw.tsv", col_names = TRUE, cols(
+  X1 = col_double(),
+  urlDrugName = col_character(),
+  rating = col_double(),
+  effectiveness = col_factor(),
+  sideEffects = col_factor(),
+  condition = col_factor(),
+  benefitsReview = col_character(),
+  sideEffectsReview = col_character(),
+  commentsReview = col_character()
+))
+
+dataset <- full_join(train, test)
+
+```
+
+## Analysis{.tabset}
+
+
+```{r}
+library(FSA)
+
+Drugs_summary<-Summarize(dataset$rating ~ dataset$urlDrugName,
+          , 
+          digits=3)
+
+head(Drugs_summary)
+```
+
+
+
+```{r}
+qqnorm(dataset$rating)
+qqline(dataset$rating)
+```
+
+
+From the above plots it is clear that the data distribution is not normal
+
+
+### Statistical inference
+
+
+
+<strong> ANOVA </strong> 
+
+We will conduct an ANOVA analysis to test the hypothesis of, if the means of the ratings of drugs are same overall.
+
+
+H0= mean rating is same for all the effective types
+
+H1= not all means are equal
+
+
+```{r}
+drug.aov<-aov(dataset$rating~dataset$effectiveness )
+```
+
+```{r}
+attributes(drug.aov)
+
+summary(drug.aov)
+
+```
+
+Since. the p-value is less than 0.05,  we will reject the null hypothesis and conclude that not all means are equal
+
+
+
+
+```{r}
+#conduct a Turkey's multiple comparison procedure
+
+#TukeyHSD(drug.aov,console=TRUE)
+```
+
+
+<strong>Kruskal Wallis One way analysis of variance</strong>
+
+It is a non-parametric equivalent to the one way analysis of variance
+
+
+H0= An extremely effective drug means a high rated drug
+
+H1= An extremely effective drug is not necessarily a high rated drug
+
+```{r}
+kruskal.test(dataset$rating~dataset$effectiveness)
+```
+
+
+Since ,p-value is less than 0.05, we reject the null hypothesis.
+Therefore an extremely effective drug is not necessarily a high rated drug.
+
+
+Create a new variable which is the rating values as an ordered factor
+
+```{r}
+ 
+
+dataset$rating.f = factor(dataset$rating,
+                          ordered=TRUE)
+
+```
+
+
+Summarize data treating rating  as factors
+
+```{r}
+#xtabs( ~ urlDrugName + rating.f,
+ #     data = dataset)
+```
+
+
+Proportional table for rating of all drugs 
+
+```{r}
+#XT = xtabs( ~ urlDrugName + rating.f,
+ #     data = dataset)
+
+
+#prop.table(XT, 
+#           margin = 1)
+```
+
+
+
+Bar plots by group
+Note that the bar plots don’t show the effect of the blocking variable.
+
+It shows the percentage of ratings for all the drugs in the dataset
+
+```{r}
+library(lattice)
+
+par(mfrow=c(10,10))
+
+drug_rating_plot<-histogram(~ rating.f | urlDrugName,
+          data=dataset,
+          layout=c(1,5)      #  columns and rows of individual plots
+          )
+
+head(drug_rating_plot)
+```
+
+
+
+## DataBase
+
+Process
+
+In Mysql
+
+1) create database Data607FinalProject
+2) set it as default schema
+3) import tables from the local file via Table Data Import Wizard
+
+In R
+
+1) Connect the Mysql database using dbConnect
+2) a) Case 1: if table exists, drop it
+   b) Case 2: Else create a new table
+
+3) Specify the column names and their definition
+4) Write Query to update the tables
+5) Close Connection
+
+
+
+
+
+```{r}
+
+CheckDB <- function() {
+  
+#--------------- Open Connection 
+  
+  con2 <- dbConnect(RMySQL::MySQL(), dbname = "Data607FinalProject", host="localhost", user="root",password= "Sparc@DATA_607")
+
+#--------------- Drop Table if Exists 
+  
+  
+if(dbExistsTable(con2, "dataset")){
+    dbRemoveTable(con2,"dataset")
+  
+  }
+ 
+
+  
+  
+  
+#-------------- Create first table for dataset
+  
+  
+query <- "CREATE TABLE `dataset` (  
+`Drug_id`  INT AUTO_INCREMENT,
+`urlDrugName` VARCHAR(45) NULL,
+`rating` VARCHAR(45) NULL,
+`effectiveness` VARCHAR(45) NULL, 
+`sideEffects` VARCHAR(45) NULL, 
+`condition` VARCHAR(45) NULL,
+`benefitsReview` VARCHAR(45) NULL,
+`sideEffectsReview` VARCHAR(45) NULL,
+`commentsReview` VARCHAR(45) NULL,
+PRIMARY KEY (`Drug_id`))"
+
+
+
+tab1 <- dbSendQuery(con2,query)
+tab1data <- dbFetch(tab1)
+
+
+
+#--------------- Close Connection
+
+
+dbDisconnect(con2)
+
+}
+
+#--------------- Update tables
+
+
+updateDB <- function(urlDrugName, rating, effectiveness, sideEffects, condition, benefitsReview, sideEffectsReview, commentsReview){
+
+  con2 <- dbConnect(RMySQL::MySQL(), dbname = "Data607FinalProject", host="localhost", user="root",password= "Sparc@DATA_607")
+  
+ 
+#--------------- Update dataset table 
+  
+  
+query <- sprintf("insert into dataset (DrugName, Rating, Effectiveness, SideEffects, Condition, BenefitsReview, SideEffectsReview, CommentsReview) values('%s','%s','%s','%s','%s','%s','%s','%s')",urlDrugName, rating, effectiveness, sideEffects, condition, benefitsReview, sideEffectsReview, commentsReview)
+  print (query)
+tab1 <- dbSendQuery(con2,query)
+tab1data <- dbFetch(tab1)
+
+#--------------- Get 'Drug_id' to update dataset table
+
+
+query <- sprintf("select Drug_id from dataset where DrugName='%s', Rating='%s', Effectiveness='%s', SideEffects='%s', Condition='%s', BenefitsReview='%s', SideEffectsReview='%s', CommentsReview='%s' limit 1",urlDrugName, rating, effectiveness, sideEffects, condition, benefitsReview, sideEffectsReview, commentsReview)
+  
+tab1 <- dbSendQuery(con2,query)
+tab1data <- dbFetch(tab1)
+data_id <- tab1data$Drug_id
+
+
+
+#---------------- Close Connection
+
+
+dbDisconnect(con2)
+
+
+
+}
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+

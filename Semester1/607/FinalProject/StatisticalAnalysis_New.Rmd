@@ -1,0 +1,235 @@
+---
+title: "607_FinalProject_StatisticalAnalysis"
+author: "Santosh Cheruku, Priya Shaji"
+date: "April 23, 2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+`'Medicine Recommender'` project is designed to work through the data set and identify if we can recommend a medicine to a patient based on the symptoms and the ratings and side effect info of it provided by the patients who previously consumed those drugs. Here, we are trying to identify if there is  a statistical inference we can provide from the given data set of patients provided to us. 
+
+```{r}
+train <- read_tsv("drugLibTrain_raw.tsv", col_names = TRUE, cols(
+  X1 = col_double(),
+  urlDrugName = col_character(),
+  rating = col_double(),
+  effectiveness = col_factor(),
+  sideEffects = col_factor(),
+  condition = col_factor(),
+  benefitsReview = col_character(),
+  sideEffectsReview = col_character(),
+  commentsReview = col_character()
+))
+
+test <- read_tsv("drugLibTest_raw.tsv", col_names = TRUE, cols(
+  X1 = col_double(),
+  urlDrugName = col_character(),
+  rating = col_double(),
+  effectiveness = col_factor(),
+  sideEffects = col_factor(),
+  condition = col_factor(),
+  benefitsReview = col_character(),
+  sideEffectsReview = col_character(),
+  commentsReview = col_character()
+))
+
+dataset <- full_join(train, test)
+
+
+dataset$effectiveness <- factor(dataset$effectiveness, levels=c('Ineffective','Marginally Effective','Moderately Effective','Considerably Effective','Highly Effective'))
+
+dataset$sideEffects <- factor(dataset$sideEffects,levels=c('No Side Effects','Mild Side Effects','Moderate Side Effects','Severe Side Effects','Extremely Severe Side Effects'))
+
+```
+
+
+
+
+
+
+
+```{r}
+
+## DataBase
+
+#Process
+
+#In Mysql
+
+#1) create database Data607FinalProject
+#2) set it as default schema
+#3) import tables from the local file via Table Data Import Wizard
+
+#In R
+
+#1) Connect the Mysql database using dbConnect
+#2) a) Case 1: if table exists, drop it
+#   b) Case 2: Else create a new table
+
+#3) Specify the column names and their #definition
+#4) Write Query to update the tables
+#5) Close Connection
+CheckDB <- function() {
+  
+#--------------- Open Connection 
+  
+  con2 <- dbConnect(RMySQL::MySQL(), dbname = "Data607FinalProject", host="localhost", user="root",password= "Sparc@DATA_607")
+#--------------- Drop Table if Exists 
+  
+  
+if(dbExistsTable(con2, "dataset")){
+    dbRemoveTable(con2,"dataset")
+  
+  }
+ 
+  
+  
+  
+#-------------- Create first table for dataset
+  
+  
+query <- "CREATE TABLE `dataset` (  
+`Drug_id`  INT AUTO_INCREMENT,
+`urlDrugName` VARCHAR(45) NULL,
+`rating` VARCHAR(45) NULL,
+`effectiveness` VARCHAR(45) NULL, 
+`sideEffects` VARCHAR(45) NULL, 
+`condition` VARCHAR(45) NULL,
+`benefitsReview` VARCHAR(45) NULL,
+`sideEffectsReview` VARCHAR(45) NULL,
+`commentsReview` VARCHAR(45) NULL,
+PRIMARY KEY (`Drug_id`))"
+tab1 <- dbSendQuery(con2,query)
+tab1data <- dbFetch(tab1)
+#--------------- Close Connection
+dbDisconnect(con2)
+}
+#--------------- Update tables
+updateDB <- function(urlDrugName, rating, effectiveness, sideEffects, condition, benefitsReview, sideEffectsReview, commentsReview)
+    {
+  con2 <- dbConnect(RMySQL::MySQL(), dbname = "Data607FinalProject", host="localhost", user="root",password= "root")
+  
+#--------------- Update dataset table 
+  
+query <- sprintf("insert into dataset (DrugName, Rating, Effectiveness, SideEffects, Condition, BenefitsReview, SideEffectsReview, CommentsReview) values('%s','%s','%s','%s','%s','%s','%s','%s')",urlDrugName, rating, effectiveness, sideEffects, condition, benefitsReview, sideEffectsReview, commentsReview)
+  print (query)
+tab1 <- dbSendQuery(con2,query)
+tab1data <- dbFetch(tab1)
+#--------------- Get 'Drug_id' to update dataset table
+query <- sprintf("select Drug_id from dataset where DrugName='%s', Rating='%s', Effectiveness='%s', SideEffects='%s', Condition='%s', BenefitsReview='%s', SideEffectsReview='%s', CommentsReview='%s' limit 1",urlDrugName, rating, effectiveness, sideEffects, condition, benefitsReview, sideEffectsReview, commentsReview)
+  
+tab1 <- dbSendQuery(con2,query)
+tab1data <- dbFetch(tab1)
+data_id <- tab1data$Drug_id
+#---------------- Close Connection
+dbDisconnect(con2)
+}
+
+
+```
+# Explorative Data Analysis
+
+##Plotting drug effectiveness
+```{r}
+ggplot(dataset, aes(x=effectiveness)) + geom_bar(stat="count")
+```
+
+##Plotting drug side effects for effectiveness
+```{r}
+ggplot(dataset, aes(x=sideEffects)) + geom_bar(stat="count") + facet_wrap(~effectiveness) + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+```
+
+##Drug effectiveness vs Patient Rating
+```{r}
+ggplot(dataset, aes(x=rating)) + geom_bar(stat="count") + facet_wrap(~effectiveness) + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(dataset, aes(x=effectiveness, rating)) + geom_boxplot()
+```
+
+##Distribution of patient ratings
+```{r}
+hist(dataset$rating)
+
+```
+
+#Statistical Inference
+
+
+```{r}
+library(FSA)
+
+Drugs_summary<-Summarize(dataset$rating ~ dataset$urlDrugName,,digits=3)
+
+head(Drugs_summary)
+```
+
+
+
+```{r}
+qqnorm(dataset$rating)
+qqline(dataset$rating)
+```
+
+
+From the above plots it is clear that the data distribution is not normal
+
+
+## Kruskal Wallis One way analysis of variance
+
+It is a non-parametric equivalent to the one way analysis of variance
+
+### Null Hypothesis
+
+<b>H0= An extremely effective drug means a high rated drug</b>
+
+<b>H1= An extremely effective drug is not necessarily a high rated drug</b>
+
+```{r}
+kruskal.test(dataset$rating~dataset$effectiveness)
+```
+
+
+**Since ,p-value is less than 0.05, we reject the null hypothesis.**
+**Therefore an extremely effective drug is not necessarily a high rated drug.**
+
+
+Create a new variable which is the rating values as an ordered factor
+
+```{r}
+ 
+
+dataset$rating.f = factor(dataset$rating,
+                          ordered=TRUE)
+
+```
+
+
+Bar plots by group
+Note that the bar plots don't show the effect of the blocking variable.
+
+It shows the percentage of ratings for all the drugs in the dataset
+
+```{r}
+library(lattice)
+
+par(mfrow=c(10,10))
+
+drug_rating_plot<-histogram(~ rating.f | urlDrugName,
+          data=dataset,
+          layout=c(1,5)      #  columns and rows of individual plots
+          )
+
+head(drug_rating_plot)
+```
+
+
+
+
+#Conclusion
+Looking at the data analysis, we can observe that there are different ratings provided by the patients for each drug based on the experiences they have with it. Patient can assign the drug effectiveiness varying from 'ineffective' to 'Highly Effective', the side effects from 'No Side effects' to 'Extremely Severe Side Effects' and a rating from 1 to 10. When we tried to make an inference, we observed that an extremely effeective drug doesn't mean a highly rated drug. Therefore, we can conclude that even if a drug is classified as 'Highly Effective' it doesn't necessarily means it's the right drug that can be suggested to a patient, since the patient may not have felt comfortable due to it's side effects.
