@@ -13,9 +13,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 ```
+
+#Introduction
+
 `'Medicine Recommender'` project is designed to work through the data set and identify if we can recommend a medicine to a patient based on the symptoms and the ratings and side effect info of it provided by the patients who previously consumed those drugs. Here, we are trying to identify if there is  a statistical inference we can provide from the given data set of patients provided to us. 
 
-```{r}
+
+#Data
+```{r warning=FALSE}
 train <- read_tsv("drugLibTrain_raw.tsv", col_names = TRUE, cols(
   X1 = col_double(),
   urlDrugName = col_character(),
@@ -41,6 +46,7 @@ test <- read_tsv("drugLibTest_raw.tsv", col_names = TRUE, cols(
 ))
 
 dataset <- full_join(train, test)
+head(dataset)
 
 
 dataset$effectiveness <- factor(dataset$effectiveness, levels=c('Ineffective','Marginally Effective','Moderately Effective','Considerably Effective','Highly Effective'))
@@ -179,12 +185,31 @@ qqline(dataset$rating)
 
 From the above plots it is clear that the data distribution is not normal
 
+## Calculate Confidence Interval 
+
+Given a patient claim that a drug is 'Extremely Effective', with a 95% confidence calculate the probability of a drug having 'No SideEffect'
+
+```{r}
+highlyEffectiveDrugs <- subset(dataset, effectiveness=="Highly Effective")
+noSideEffectDrugs <- subset(highlyEffectiveDrugs, sideEffects=='No Side Effects')
+
+p<- nrow(noSideEffectDrugs)/nrow(highlyEffectiveDrugs)
+n <- nrow(highlyEffectiveDrugs)
+
+
+SE<- sqrt(p * (1-p)/n)
+
+CILower <- p - 1.96 * SE
+CIUpper <- p + 1.96 * SE
+
+```
+
+<b>Result:</b> With 95% confidence, we can confirm that given a drug is rated 'Extremely Effective', we can say that the probability of drug having 'No Side Effect' is `r CILower` and `r CIUpper`
+
 
 ## Kruskal Wallis One way analysis of variance
 
 It is a non-parametric equivalent to the one way analysis of variance
-
-### Null Hypothesis
 
 <b>H0= An extremely effective drug means a high rated drug</b>
 
