@@ -1,5 +1,5 @@
 ---
-title: "606_FinalProject"
+title: "GradStudent_STEM_Impact_606FinalProject"
 author: "SantoshCheruku"
 date: "April 28, 2019"
 output:
@@ -9,7 +9,7 @@ output:
 
 ---
 
-```{css}
+```{css, echo=FALSE}
 .rCode {
 background-color: black;
 color: white;
@@ -18,27 +18,31 @@ color: white;
 
 ```{r, warning=FALSE}
 library(tidyverse)
+library(knitr)
+library(kableExtra)
 ```
 
 #Introduction
-
-I'm researching to find whether the choice of STEM major in graduction have an impact on a graduate salary? I find it important because it helps students in identifying a right course that is in demand, and thus help them make an overall informative decision.
-
-
+Choice of major in graduation has always been a major decision in every student's life. Having a good estimate about the job and salary prospects in a major in future defintely helps students in making an informative decision about his/her grad choice. 
+We have seen numerous articles advising which course to choose and which one would be in demand with prospective employers. 'STEM' which stands for **S**cience **T**echnology **E**ngineering **M**athematics, and has been highlighted to be a great choice in majors to find high paying jobs. </br>
+**In this project, I'm researching to find whether the choice of STEM major in graduation has an impact on a graduate salary? **
 
 #Data
 
-The recent grad list compiled by census.gov has provided us with a list of compiled data of grads during 2010-2012. There are observations made against 173 majors.Each observation represents a major with data mentioning the number of grads who passed, their employement rate, salary ranges etc.</br>
-There are totally 173 observations which each observation representing a major.</br>
-We will be studying two variables, the median salary which is a response variable and course major which is an independent variable also an explantory variable.</br>
-This is an observation study since it's derived from a data which is taken from an observation during a period of time. </br>
-The population of interest is the graduates of United States. And the findings from this analysis can be generalized for the entire population of interest i.e., the graduates. Describe why???And are there any sources of bias???   </br>
+**Data collection:**The recent grad list compiled by census.gov has provided us with a list of compiled data of grads during 2010-2012. There are observations made against 173 majors. </br>
+**Cases:** Each observation represents a major with data mentioning the number of grads who passed, their employement rate, salary ranges etc. There are totally 173 observations which each observation representing a major.</br>
+**Variables:**We will be studying two variables, the median salary which is a response variable and course major which is an independent variable also an explantory variable. This is an observation study since it's derived from a data which is taken from an observation during a period of time. </br>
+**The population of interest** is the graduates of United States. And the findings from this analysis can be generalized for the entire population of interest i.e., the graduates. </br>
+**Causality:** We can use this data to establish a causality between the variables of interest. Since the data has been sampled randomly from a large population of data source.
 
-Scope of inference - causality: Can these data be used to establish causal links between the variables of interest? Explain why or why not.
+Source: https://github.com/fivethirtyeight/data/tree/master/college-majors
+
 
 ```{r block0, class.source="rCode"}
 grads <- read.csv("https://raw.githubusercontent.com/san123i/CUNY/master/Semester1/606/Final%20Project/grad-students.csv")
-head(grads)
+head(grads)%>%
+  kable() %>%
+  kable_styling() %>% scroll_box(width = "800px")
 
 
 summary(grads)
@@ -52,21 +56,21 @@ Let's do an analysis on the number of graduates in each major. </br>
 
 ```{r block1, class.source="rCode"}
 isSTEM <- function(majorCategory){
-    result <- grepl("science|math|engineering|technology|computer|!Social", majorCategory, ignore.case = T)
-    result <- ifelse(result, !grepl("Social", majorCategory, ignore.case = T), result)
-    return(ifelse(result, "STEM","NON-STEM"));
-}
-
-cateogryCount <- function(majorCategory){
-    result <- grepl("science|math|engineering|technology|computer|!Social", majorCategory, ignore.case = T)
+    result <- grepl("science|math|engineering|technology|computer", majorCategory, ignore.case = T)
     result <- ifelse(result, !grepl("Social", majorCategory, ignore.case = T), result)
     return(ifelse(result, "STEM","NON-STEM"));
 }
 ```
-The below plot shows that majority of the graduates fall under 'Education' major type where as the lease are under 'interdiscriplinary' and 'Agriculture & Natural Resources' category. Also there are only 4 major categories which fall under STEM i.e. 'Biology & Life Sciences', 'Computers & Mathematics', 'Engineering' and 'Physical Sciences'.
+The below plot shows that majority of the graduates fall under 'Education' major type where as the least are under 'interdiscriplinary' and 'Agriculture & Natural Resources' category. Also, there are only 4 major categories which fall under STEM i.e. 'Biology & Life Sciences', 'Computers & Mathematics', 'Engineering' and 'Physical Sciences'.
 
 ```{r, class.source="rCode"}
 grads <- grads %>% mutate("Major_Type_STEM"=isSTEM(Major_category))
+
+x <- grads %>% select(Major, Major_category, Major_Type_STEM)
+#x[order(x$Major_Type_STEM),]
+x[order(x$Major_Type_STEM),] %>%
+  kable() %>%
+  kable_styling()
 
 ggplot(grads, aes(x=reorder(Major_category, Grad_total), y = Grad_total, fill=Major_Type_STEM)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs( title = 'Graduates by major category type')
 
@@ -83,35 +87,40 @@ ggplot(list, aes(x=reorder(Major_Type_STEM, Grad_total), y=Grad_total, label=Gra
 
 ##2. Salary data analysis by category
 
-The below plot shows the number of graduates in each category. 
+The below plot shows the grad median salary in each major category. 
 
 ```{r, class.source="rCode"}  
 
-ggplot(grads, aes(Major_category, Grad_median)) + geom_boxplot()  +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(grads, aes(Major_category, Grad_median, fill=Major_Type_STEM)) + geom_boxplot()  +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 
 ggplot(grads, aes(x=Major, y=Grad_median, shape=Major_Type_STEM, colour=Major_Type_STEM)) + geom_point()  + scale_shape_manual(values=c(19, 2))
 ```
 
 
-##3. Average p25, p75 and median salary of each category.
+##3. Average 'p25', 'p75' and 'Median' salary of each category.
 ```{r, class.source="rCode"}  
-ggplot(grads, aes(x=reorder(Major_category, Grad_P25), y = Grad_P25, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '25Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(grads, aes(x=reorder(Major_category, Grad_P25), y = Grad_P25, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = 'a. 25Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 
-ggplot(grads, aes(x=reorder(Major_category, Grad_P75), y = Grad_P75, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = '75Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(grads, aes(x=reorder(Major_category, Grad_P75), y = Grad_P75, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = 'b. 75Perc of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 
-ggplot(grads, aes(x=reorder(Major_category, Grad_median), y = Grad_median, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = 'Median of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(grads, aes(x=reorder(Major_category, Grad_median), y = Grad_median, fill=Major_Type_STEM)) + geom_bar(stat="identity") +labs(title = 'c. Median of Grad salary by Major_category') +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
 
 ##4. Grad Median salaries by STEM or Non-STEM
 ```{r, class.source="rCode"}  
 ggplot(grads, aes(Major_Type_STEM, Grad_median, fill=Major_Type_STEM)) + geom_boxplot()  +  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+
 ```
 
 #Inference
+We are using Analysis of Variance (ANOVA) method to dervie an inference from the Hypothesis. Below are the conditions we evaluated and found to be satisfied. </br>
+a. Independence of cases - The cases provided as per data are independent in nature </br>
+b. Distribution of Residuals are Normal -  The below qqnorm graph displays that residuals are normally distributed without major outliers</br>
+c. Homogentiy of variances</br>
 
 Let's start our inference with a Null Hypothesis test</br>
-H0 <- The median salary for an average graduate in STEM and Non-STEM categories are same </br>
-HA <- The median salary for an average graduate in STEM and non-STEM categories are not same.</br>
+**H0 <- The median salary for an average graduate in STEM and Non-STEM categories are same </br>**
+**HA <- The median salary for an average graduate in STEM and non-STEM categories are not same.</br>**
 
 ```{r}
 grads_anova <- aov(grads$Grad_median ~ grads$Major_Type_STEM)
@@ -120,6 +129,9 @@ summary(grads_anova)
 plot(grads_anova)
 ```
 
-Since the P value is very less than .05, we reject the null hypothesis (H0), and can conclude that average graduate salary for STEM and non-STEM category students is not equal.
+Since the P value is less than .05, we reject the null hypothesis (H0), and can conclude that average graduate salary for STEM and non-STEM category students is not equal. And from the geom plot, we can identify that Median salary from STEM category students is significantly higher than non-STEM categories.
 
 
+#Conclusion
+Using the given data, we were able to do an exploratory analysis and identify a clear pattern/trend that STEM course major students have a median salary higher than non-grad students. And using the ANOVA analysis, we were able to confirm that grad median salaries for both STEM and Non-STEM grad student are NOT equals. Therefore, we can clearly state that grad median salaries are higher for STEM students. </br>
+**Future research:** I believe there are few other factors which can influence the grad salary such as market conditions, number of open job opportunities, type of economies i.e., a developed, emerging or under developed. If I can get access to these datasets, then an even more realistic and robust model can be designed. 
