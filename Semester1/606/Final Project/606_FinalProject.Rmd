@@ -51,9 +51,6 @@ summary(grads)
 
 #Exploratory Data Analysis
 
-##1. Number of graduates in each major
-Let's do an analysis on the number of graduates in each major. </br>
-
 ```{r block1, class.source="rCode"}
 isSTEM <- function(majorCategory){
     result <- grepl("science|math|engineering|technology|computer", majorCategory, ignore.case = T)
@@ -61,9 +58,8 @@ isSTEM <- function(majorCategory){
     return(ifelse(result, "STEM","NON-STEM"));
 }
 ```
-The below plot shows that majority of the graduates fall under 'Education' major type where as the least are under 'interdiscriplinary' and 'Agriculture & Natural Resources' category. Also, there are only 4 major categories which fall under STEM i.e. 'Biology & Life Sciences', 'Computers & Mathematics', 'Engineering' and 'Physical Sciences'.
 
-```{r, class.source="rCode"}
+```{r}
 grads <- grads %>% mutate("Major_Type_STEM"=isSTEM(Major_category))
 
 x <- grads %>% select(Major, Major_category, Major_Type_STEM)
@@ -71,6 +67,15 @@ x <- grads %>% select(Major, Major_category, Major_Type_STEM)
 x[order(x$Major_Type_STEM),] %>%
   kable() %>%
   kable_styling()
+```
+
+
+The below plot shows that majority of the graduates fall under 'Education' major type where as the least are under 'interdiscriplinary' and 'Agriculture & Natural Resources' category. Also, there are only 4 major categories which fall under STEM i.e. 'Biology & Life Sciences', 'Computers & Mathematics', 'Engineering' and 'Physical Sciences'.
+
+##1. Number of graduates in each major
+Let's do an analysis on the number of graduates in each major. </br>
+
+```{r, class.source="rCode"}
 
 ggplot(grads, aes(x=reorder(Major_category, Grad_total), y = Grad_total, fill=Major_Type_STEM)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+ labs( title = 'Graduates by major category type')
 
