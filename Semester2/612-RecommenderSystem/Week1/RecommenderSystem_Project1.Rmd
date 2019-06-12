@@ -1,0 +1,137 @@
+---
+title: "RecommenderSystem_Project_1"
+author: "SantoshCheruku"
+date: "June 5, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+movie_ratings_data <- read.csv("MovieViewers_Ratings_Data_csv.csv", stringsAsFactors = F)
+
+movie_ratings_data
+
+
+sample <- sample(2, nrow(movie_ratings_data), replace=TRUE, prob=c(0.7, 0.3))
+
+training_data <- movie_ratings_data[sample==1,]
+training_data
+
+test_data <- movie_ratings_data[sample==2,]
+test_data
+
+train_matrix <- data.matrix(training_data[,2:6],rownames.force = NA)
+test_matrix <- data.matrix(test_data[,2:6],rownames.force = NA)
+
+#Sum of all elements in the training matrix
+sum_ratings_train <- sum(train_matrix)
+
+#Total number of ratings available in the training matrix
+total_ratings_train <- nrow(train_matrix)*ncol(train_matrix)
+
+avg_rating_train <- round(sum_ratings_train/total_ratings_train, 2)
+
+#Sum of all elements in the test matrix
+sum_ratings_test <- sum(test_matrix)
+
+#Total number of ratings available in the test matrix
+total_ratings_test <- nrow(test_matrix)*ncol(test_matrix)
+
+avg_rating_test <- round(sum_ratings_test/total_ratings_test, 2)
+
+
+#Calculate RMSE for train data
+total_error_sq <- 0
+for(user in 1:nrow(train_matrix)) {
+  for(movie in 1:ncol(train_matrix)) {
+    error <- train_matrix[user, movie] - avg_rating_train
+    sq_error <- error^2
+    total_error_sq <- total_error_sq + sq_error
+  }
+}
+mean_error_train <- total_error_sq/total_ratings_train
+rmse_rawMean_train <- sqrt(mean_error_train)
+ 
+#Calculate RMSE for test data
+total_error_sq <- 0
+for(user in 1:nrow(test_matrix)) {
+  for(movie in 1:ncol(test_matrix)) {
+    error <- test_matrix[user, movie] - avg_rating_test
+    sq_error <- error^2
+    total_error_sq <- total_error_sq + sq_error
+  }
+}
+mean_error_test <- total_error_sq/total_ratings_train
+rmse_rawMean_test <- sqrt(mean_error_test)
+
+#NOW CALCULATE USING BASELINE PREDICTORS
+
+#Calculating movie bias on training
+list_movie_bias_train <- c()
+for(col in 2:ncol(training_data)) {
+	movieRatings <- sum(training_data[,col])
+	value <- as.numeric(movieRatings/nrow(training_data)) - as.numeric(avg_rating_train)
+	list_movie_bias_train[colnames(training_data)[col]] <- value
+} 
+
+#Calculating movie bias on test
+list_movie_bias_test <- c()
+for(col in 2:ncol(test_data)) {
+	movieRatings <- sum(test_data[,col])
+	value <- as.numeric(movieRatings/nrow(test_data)) - as.numeric(avg_rating_test)
+	list_movie_bias_test[colnames(test_data)[col]] <- value
+} 
+
+#Calculating User bias on training
+
+list_user_bias_train <- c()
+for(row in 1:nrow(training_data)) {
+	userRatings <- sum(training_data[row,c(2:ncol(training_data))])
+	value <- (userRatings/(ncol(training_data)-1)) - avg_rating_train
+	list_user_bias_train[training_data[row,1]] <- value
+	} 
+
+#Calculating User bias on test
+	
+list_user_bias_test <- c()
+for(row in 1:nrow(test_data)) {
+	userRatings <- sum(test_data[row,c(2:ncol(test_data))])
+	value <- (userRatings/(ncol(test_data)-1)) - avg_rating_test
+	list_user_bias_test[test_data[row,1]] <- value
+	}
+	 
+#Calculate RMSE for train data
+total_error_sq <- 0
+error <- 0
+sq_error <- 0
+for(row in 1:nrow(training_data)) {
+	for(col in 2:ncol(training_data)) {
+		error <- as.numeric(training_data[row, col]) - avg_rating_train + as.numeric(list_user_bias_train[training_data[row, 1]]) + as.numeric(list_movie_bias_train[colnames(training_data)[col]])
+		sq_error <- error^2
+		total_error_sq <- total_error_sq + sq_error		
+	}
+}
+mean_error_train <- total_error_sq/total_ratings_train
+rmse_baselinePredictor_train <- sqrt(mean_error_train)
+ 
+#Calculate RMSE for test data
+for(row in 1:nrow(test_data)) {
+	for(col in 2:ncol(test_data)) {
+		error <- as.numeric(test_data[row, col]) - avg_rating_test + as.numeric(list_user_bias_test[test_data[row, 1]]) + as.numeric(list_movie_bias_test[colnames(test_data)[col]])
+		sq_error <- error^2
+		total_error_sq <- total_error_sq + sq_error		
+	}
+}
+mean_error_test <- total_error_sq/total_ratings_test
+rmse_baselinePredictor_test <- sqrt(mean_error_test)
+
+
+cat('rmse_rawMean_train ', rmse_rawMean_train)
+cat('rmse_rawMean_test ', rmse_rawMean_test)
+cat('rmse_baselinePredictor_train ', rmse_baselinePredictor_train)
+cat('rmse_baselinePredictor_test ', rmse_baselinePredictor_test)
+```
+
