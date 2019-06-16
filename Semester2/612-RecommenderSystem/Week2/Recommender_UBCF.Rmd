@@ -1,0 +1,17 @@
+---
+title: "Recommender_UBCF"
+author: "SantoshCheruku"
+date: "June 12, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(recommenderlab)
+```
+
+```{r}
+data_package <- data(package = "recommenderlab")
+
+```
+
