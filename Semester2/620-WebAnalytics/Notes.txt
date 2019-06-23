@@ -1,0 +1,4 @@
+How to use NLTK
+------------------
+import nltk
+nltk.download()
