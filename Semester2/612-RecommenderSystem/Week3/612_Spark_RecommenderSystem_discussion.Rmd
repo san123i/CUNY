@@ -1,0 +1,21 @@
+---
+title: "612_Spark_RecommenderSystem_discussion"
+author: "SantoshCheruku"
+date: "June 20, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Summary of interesting points
+
+1.  Spotify has about 40M audio files in its data store and is very huge definitely requiring an automated recommender system
+2.  ALS - Applied Alternate Least Squares method 
+3.  Scaling with Hadoop - Applied implicit factorization, but ran into IO overhead troubles
+4.  Scaling with Spark - Applying Gridify, Half Gridify techniques which run much faster than Hadoop
+5.  Speed: Half gridify is the fastest techniques which delivered results when tested with a huge dataset
+6.  Learnings - PairRDDFunctions to group by particular data and assign nodes to work on it
+7.  Learnings - Better write own or use kryo serializers vs regular java serializers
+8.  Learnings - Running with larger datasets results in failed executors
