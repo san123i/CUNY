@@ -31,11 +31,11 @@ print(len(unique_words))
 common_200_words = counter.most_common(200)
 
 common_200_words_dict = dict(common_200_words)
+
 #Create a graph that shows the relative frequency of these 200 words
 lists = sorted(common_200_words_dict.items(), key=operator.itemgetter(1), reverse=True)
 print(common_200_words_dict)
 keys, values = zip(*lists)
-
 plt.plot(keys, values)
 
 #Does the observed relative frequency of these words follow Zipf’s law? Explain
