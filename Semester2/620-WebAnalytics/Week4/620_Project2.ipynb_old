@@ -16,7 +16,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 3,
+   "execution_count": 1,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -27,7 +27,6 @@
     "import math\n",
     "from networkx.algorithms import bipartite as bi\n",
     "from collections import Counter\n",
-    "import urllib\n",
     "% matplotlib inline"
    ]
   },
@@ -40,65 +39,13 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 4,
+   "execution_count": 3,
    "metadata": {},
    "outputs": [],
    "source": [
-    "pd.data"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 5,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Name: NetworkX\n",
-      "Type: Graph\n",
-      "Number of nodes: 25178\n",
-      "Number of edges: 32785\n",
-      "Average degree:   2.6043\n"
-     ]
-    },
-    {
-     "data": {
-      "text/plain": [
-       "False"
-      ]
-     },
-     "execution_count": 5,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "g=nx.Graph(g)\n",
-    "print(nx.info(g))\n",
-    "\n",
-    "nx.is_connected(g)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 6,
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "False"
-      ]
-     },
-     "execution_count": 6,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
-   "source": [
-    "nx.is_bipartite(g)"
+    "appear = pd.read_csv(\"https://raw.githubusercontent.com/san123i/CUNY/master/Semester2/620-WebAnalytics/Week4/data/out.actor-movie\",\n",
+    "                  header = None, skiprows = 1, sep = \" \").rename(columns = {0: \"movie\", 1: \"actor\"}).drop(2, axis = 1)\n",
+    "appear['appearance'] = appear.groupby(['actor']).actor.transform('count')"
    ]
   },
   {
@@ -110,7 +57,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 815,
+   "execution_count": 4,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -120,7 +67,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 816,
+   "execution_count": 5,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -143,7 +90,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 818,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [
     {
@@ -152,7 +99,7 @@
        "3"
       ]
      },
-     "execution_count": 818,
+     "execution_count": 6,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -163,7 +110,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 819,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [
     {
@@ -191,7 +138,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 820,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [],
    "source": [
