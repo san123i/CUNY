@@ -2,3 +2,5 @@ How to use NLTK
 ------------------
 import nltk
 nltk.download()
+
+Conda forge should be applied if the packages are not available on anaconda package site.
