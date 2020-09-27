@@ -7,24 +7,101 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(corrplot)
 ```
 
-## R Markdown
+## Load datasets
+```{r}
+train <- read.csv("datasets/moneyball-training-data.csv")
+train <- train[c(2:17)]
+summary(train)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+head(train, n=10)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+## Exploratory Data Analysis
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+### Wins by Team
+```{r}
+plot(train$TEAM_BATTING_H, train$TARGET_WINS )
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+par(mfrow=c(2,2))
+hist(train$TEAM_BATTING_H,
+     main = "hits histogram", xlab = "hits (season)",
+     breaks = 20)
+hist(train$TEAM_BATTING_2B,
+     main = "doubles histogram", xlab = "doubles (season)",
+     breaks = 20)
+hist(train$TEAM_BATTING_3B,
+     main = "triples histogram", xlab = "triples (season)",
+     breaks = 20)
+hist(train$TEAM_BATTING_HR,
+     main = "homeruns histogram", xlab = "homeruns (season)",
+     breaks = 20)
+par(mfrow=c(1,1))
+```
+
+
+### Addressing data quality issues
+
+From the summary, we can observe that following variables have a high number of NA or missing values, and we need to address these before we can work on the models.
+
+TEAM_BATTING_SO  - 102</br>
+TEAM_BASERUN_SB  - 131</br>
+TEAM_BASERUN_CS - 772</br>
+TEAM_BATTING_HBP - 2085</br>
+TEAM_PITCHING_SO - 102</br>
+TEAM_FIELDING_DP - 286</br>
+
+TEAM_BATTING_HBP has highest number of missing cases i.e., 2085 (almost 90%). Therefore, we can drop this variable from our dataset.
+```{r}
+# Removing TEAM_BATTING_HBP variable
+ train <- subset(train, select = -c(10))
+```
+
+Now let's measure how many complete observations do we have
+
+```{r}
+sum(complete.cases(train)==TRUE)
+
+sum(complete.cases(train)==FALSE)
+```
+
+## Set mean value to the missing col values in the dataset
+```{r}
+
+train$TEAM_BATTING_SO[is.na(train$TEAM_BATTING_SO)] = mean(train$TEAM_BATTING_SO, na.rm = TRUE)
+train$TEAM_BASERUN_SB[is.na(train$TEAM_BASERUN_SB)] = mean(train$TEAM_BASERUN_SB, na.rm = TRUE)
+train$TEAM_BASERUN_CS[is.na(train$TEAM_BASERUN_CS)] = mean(train$TEAM_BASERUN_CS, na.rm = TRUE)
+train$TEAM_PITCHING_SO[is.na(train$TEAM_PITCHING_SO)] = mean(train$TEAM_PITCHING_SO, na.rm = TRUE)
+train$TEAM_FIELDING_DP[is.na(train$TEAM_FIELDING_DP)] = mean(train$TEAM_FIELDING_DP, na.rm = TRUE)
+
+
+```
+
+We have about 1486 complete observations, which is close to 65%. Therefore, we should try to work with other variables to see if we can increase this as much as possible.
+
+
+We have 2 options, either replace them with a mean or alternate value or identify alias variables which represent them with similar correlation.
+
+
+### Identify highest impacting independent variables
+```{r}
+lm <- lm(formula = train$TARGET_WINS ~ ., data = train)
+summary(lm)
+```
+
+
+### Use covariates
+```{r}
+#cor(train)
+
+cor_train <- cor(train,  use = "na.or.complete")
+corrplot(cor_train)
+```
+

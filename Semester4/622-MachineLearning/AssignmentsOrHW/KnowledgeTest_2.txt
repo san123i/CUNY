@@ -1,0 +1,32 @@
+The data set has only 12 covariates and 1 class variable. There are three classes. If the covariates are known to be highly correlated.
+Of the three parametric methods (LR,NB,LDA/QDA), which will you NOT use?
+https://dataespresso.com/en/2017/10/24/comparison-between-naive-bayes-and-logistic-regression/#:~:text=Na%C3%AFve%20Bayes%20has%20a%20naive,belonging%20to%20a%20certain%20class.
+
+
+
+
+Your intern ran and computed covariance matrices for each of three classes. For one class the covariance matrix is a diagonal matrix and the other two are left diagonal matrix.
+Which of the three parametric methods will you NOT use? And, why not?
+
+
+
+The primary objective of any supervised learner is to compute P(class|data). A classifier that first computes Joint  (i.e.P(class,data)) and then derive P(class|data) is called generative since it can generate new data. On the other hand a classifier that computes P(class|data) directly are called discriminative.
+What does NB compute? Is it a generative or discriminative classifier?
+What about Logistic Regression? is it discriminative or generative classifier? Why?
+https://dataespresso.com/en/2017/10/24/comparison-between-naive-bayes-and-logistic-regression/#:~:text=Na%C3%AFve%20Bayes%20has%20a%20naive,belonging%20to%20a%20certain%20class.
+
+
+Your group specializes in Logistic Regression and NaiveBayes -- Probabilisitic classifiers only. There are other groups that utilize other classifiers.  Your group receives a dataset with a DV (class variable) that is 
+distributed as follows over animal species as follows:
+Mammals=25%
+Birds=25%
+Aquatic Animals = 50%
+Given no other information, which classifier would you choose? And WHY?
+
+
+All else being the same, given any data set, regardless of the number of observation or the dimensionality, which of the two classifiers Logistic vs NaiveBayes do you expect to be faster?
+And why that might be?
+https://medium.com/@sangha_deb/naive-bayes-vs-logistic-regression-a319b07a5d4c#:~:text=If%20the%20data%20set%20follows,was%20generated%20given%20the%20results.
+
+First, Give a concrete example, and then explain how this problem mainfests using that example.
+this is a bonus question  and is for those who scored less than 40 in the KT-01. Sort of a micro makeup

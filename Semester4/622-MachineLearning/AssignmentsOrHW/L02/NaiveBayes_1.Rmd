@@ -1,0 +1,77 @@
+---
+title: "NaiveBayes_1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(naivebayes)
+library(dplyr)
+library(ggplot2)
+library(psych)
+```
+
+
+```{r}
+data <- read.csv('binary.csv', header = T)
+str(data)
+
+#cross tabulation
+xtabs(~admit+rank, data=data)
+
+data$admit <- as.factor(data$admit)
+data$rank <- as.factor(data$rank)
+
+#Visualization
+pairs.panels(data[-1])
+
+data %>% ggplot(aes(x=admit, y=gre, fill=admit)) +
+        geom_boxplot() +
+  ggtitle("Box Plot")
+
+
+data %>% ggplot(aes(x=gpa, y=gre, fill=admit)) +
+        geom_boxplot() +
+  ggtitle("Box Plot")
+
+
+data %>% ggplot(aes(x=gre,  fill=admit)) +
+        geom_density(alpha=0.8, color='black') +
+  ggtitle("Density Plot")
+
+
+data %>% ggplot(aes(x=gpa,  fill=admit)) +
+        geom_density(alpha=0.8, color='black') +
+  ggtitle("Density Plot")
+
+```
+
+
+```{r}
+set.seed(1234)
+
+ind <- sample(2, nrow(data), replace = T, prob=c(0.8,0.2))
+train <- data[ind ==1,]
+test <- data[ind==2,]
+
+```
+
+
+```{r}
+#Naive bayes 
+model <- naive_bayes(admit ~ ., data=train)
+
+train %>% filter(admit== "0") %>% summarise(mean(gre),sd(gre))
+
+plot(model)
+```
+
+
+```{r}
+p <- predict(model, data=train, type='prob')
+
+head(cbind(p, train))
+```

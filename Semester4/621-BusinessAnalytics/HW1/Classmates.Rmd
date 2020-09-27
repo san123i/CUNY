@@ -1,0 +1,49 @@
+---
+title: "HW1"
+author: "Team 1"
+date: "September 13, 2020"
+output: html_document
+---
+
+Loading the data
+```{r import}
+library(RCurl)
+
+git_dir <- 'https://raw.github.com/odonnell31/data621-HW1/master/data'
+moneyball.train = read.csv(paste(git_dir, "/moneyball-training-data.csv", sep=""))
+moneyball.eval = read.csv(paste(git_dir, "/moneyball-evaluation-data.csv", sep = ""))
+```
+
+Exploring the data
+
+See a summary of each column in the training set
+```{r training_data_summary}
+# view a summary of all columns
+summary(moneyball.train)
+```
+
+For types of hits, see a histogram of each
+```{r hits_histograms}
+par(mfrow=c(2,2))
+hist(moneyball.train$TEAM_BATTING_H,
+     main = "hits histogram", xlab = "hits (season)",
+     breaks = 20)
+hist(moneyball.train$TEAM_BATTING_2B,
+     main = "doubles histogram", xlab = "doubles (season)",
+     breaks = 20)
+hist(moneyball.train$TEAM_BATTING_3B,
+     main = "triples histogram", xlab = "triples (season)",
+     breaks = 20)
+hist(moneyball.train$TEAM_BATTING_HR,
+     main = "homeruns histogram", xlab = "homeruns (season)",
+     breaks = 20)
+par(mfrow=c(1,1))
+```
+
+```{r}
+pairs(~ TARGET_WINS + TEAM_BATTING_H + TEAM_BATTING_2B
+      + TEAM_BATTING_3B + TEAM_BATTING_HR, data = moneyball.train)
+```
+
+
+

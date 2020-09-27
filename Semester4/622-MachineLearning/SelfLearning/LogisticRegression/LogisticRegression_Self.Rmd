@@ -1,0 +1,50 @@
+---
+title: "622_LogisticRegression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+trainData <- read.csv("datasets/titanic/train.csv")
+testData <-  read.csv("datasets/titanic/test.csv")
+str(trainData)
+summary(trainData)
+
+```
+
+
+## Fixing missing data
+
+```{r}
+# Age data is missing, therefore try filling in
+trainData$Age[is.na(trainData$Age)] = mean(trainData$Age, na.rm = TRUE)
+testData$Age[is.na(testData$Age)] = mean(testData$Age, na.rm = TRUE)
+
+#Select interested variables
+trainData <- subset(trainData, select=c("Survived","Pclass","Sex","Age","SibSp","Parch","Fare"))
+
+str(trainData)
+
+# Convert the gender into a factor and then numeric
+trainData$Sex <- as.factor(trainData$Sex)
+testData$Sex <- as.factor(testData$Sex)
+
+trainData$Sex = as.numeric(trainData$Sex)
+testData$Sex = as.numeric(testData$Sex) 
+
+# Exploratory Data Analysis
+
+
+# Build model 
+firstModel = glm(Survived~., data = trainData, family = binomial)
+summary(firstModel)
+
+# Step 5: Revise Model
+
+updatedModel = glm(Survived ~ . - Parch - Fare, data = trainData, family = binomial)
+summary(updatedModel)
+
+```

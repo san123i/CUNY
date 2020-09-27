@@ -1,0 +1,10 @@
+1) What is null deviance in the context of Logistic Regression?
+
+2) How can we use null deviance?
+
+3) Can the Null Deviance be negative? 
+
+4) Why is Logistic Regression, a classifier called regression?
+
+5) Our group just completed a logistic run and generated all the betas. Now, our clients send us a revised dataset where all the labels are flipped from 0 to 1 and 1 to 0, and with NO other change. What should we do now?
+   Should we re-run and estimate the betas again? Explain.
