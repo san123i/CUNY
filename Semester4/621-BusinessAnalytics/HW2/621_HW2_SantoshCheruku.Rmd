@@ -1,0 +1,216 @@
+---
+title: "621_HW2_SantoshCheruku"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+
+library(ggplot2)
+library(caret)
+library(pROC)
+```
+
+**1. Download the classification output data set (attached in Blackboard to the assignment).**
+```{r}
+set.seed(1234)
+data <- read.csv('classification-output-data.csv', header=T)
+str(data)
+```
+
+**2. Use the table() function to get the raw confusion matrix for this scored dataset. Make sure you understand the output. In particular, do the rows represent the actual or predicted class? The columns?**
+
+```{r}
+
+confusionMatrixTable <- table(data$scored.class, data$class)
+
+confusionMatrixTable
+
+
+```
+
+**3. Write a function that takes the data set as a dataframe, with actual and predicted classifications identified, and returns the accuracy of the predictions.**
+
+```{r}
+func_accuracy <- function(data) {
+  confusionMatrixTable <- table(data$scored.class, data$class)
+  TP <- confusionMatrixTable[1]
+  
+  TN <- confusionMatrixTable[4]
+  
+  FP <- confusionMatrixTable[3]
+  
+  FN <- confusionMatrixTable[2]
+  
+  accuracy <- (TP + TN) / (TP + TN + FP + FN)
+  return(accuracy)
+}
+func_accuracy(data)
+
+```
+
+**4. Write a function that takes the data set as a dataframe, with actual and predicted classifications identified, and returns the classification error rate of the predictions.**
+
+```{r}
+func_class_errorRate <- function(data) {
+  confusionMatrixTable <- table(data$scored.class, data$class)
+  FP <- confusionMatrixTable[3]
+  
+  FN <- confusionMatrixTable[2]
+  
+  classificationErrorRate <- (FP+FN)/sum(confusionMatrixTable)
+  return(classificationErrorRate)
+}
+
+# Verify that you get an accuracy and an error rate that sums to one.
+(func_accuracy(data) + func_class_errorRate(data))
+```
+
+
+**5. Write a function that takes the data set as a dataframe, with actual and predicted classifications identified, and returns the precision of the predictions.**
+
+```{r}
+  func_precision <- function(data) {
+  confusionMatrixTable <- table(data$scored.class, data$class)
+  TP <- confusionMatrixTable[1]
+  
+  FP <- confusionMatrixTable[3]
+  
+  precision <- TP / (TP + FP)
+  return(precision)
+  }
+func_precision(data)
+
+```
+
+**6. Write a function that takes the data set as a dataframe, with actual and predicted classifications identified, and returns the sensitivity of the predictions. Sensitivity is also known as recall.**
+
+```{r}
+func_sensitivty <- function(data) {
+  confusionMatrixTable <- table(data$scored.class, data$class)
+  TP <- confusionMatrixTable[1]
+  
+  FN <- confusionMatrixTable[2]
+  
+  sensitivity <- (TP) / (TP + FN)
+  return(sensitivity)
+}
+func_sensitivty(data)
+
+```
+
+**7. Write a function that takes the data set as a dataframe, with actual and predicted classifications identified, and returns the specificity of the predictions.**
+
+```{r}
+func_specificity <- function(data) {
+  confusionMatrixTable <- table(data$scored.class, data$class)
+  
+  TN <- confusionMatrixTable[4]
+  
+  FP <- confusionMatrixTable[3]
+  
+  
+  specificity <- (TN) / (TN + FP)
+  return(specificity)
+}
+func_specificity(data)
+```
+
+**8. Write a function that takes the data set as a dataframe, with actual and predicted classifications identified, and returns the F1 score of the predictions.**
+
+```{r}
+func_f1Score <- function(data) { val <- 2 * func_precision(data) *  func_sensitivty(data) / (func_precision(data) + func_sensitivty(data))
+return(val)
+}
+
+```
+
+**9. Before we move on, let’s consider a question that was asked: What are the bounds on the F1 score? Show that the F1 score will always be between 0 and 1. (Hint: If 0 < 𝑎 < 1 and 0 < 𝑏 < 1 then 𝑎𝑏 < 𝑎.)**
+```{r}
+func_f1Score(data)
+```
+The F1Score is bound within 0 to 1, because the values of precision and sensitivity are always less than 1, hence the multiplication of two lower bound number always results in less than 1 and as well as less than their sum.
+
+
+
+**10. Write a function that generates an ROC curve from a data set with a true classification column (class in our example) and a probability column (scored.probability in our example). Your function should return a list that includes the plot of the ROC curve and a vector that contains the calculated area under the curve (AUC). Note that I recommend using a sequence of thresholds ranging from 0 to 1 at 0.01 intervals.**
+
+```{r}
+func_roc_curve <- function(data) {
+  confusionMatrix <- table(data$scored.class, data$class)
+  df <- data.frame(i=NA,TPR=NA,FPR=NA)
+  val <- 0.0
+  for(i in c(1:99)) {
+    val <- val + 0.01
+    data$score_newsclass <- as.numeric(data$scored.probability>val)
+    confusionMatrix <- table(data$score_newsclass, data$class)
+    
+    TP <- confusionMatrix[1]
+    
+    TN <- confusionMatrix[4]
+    
+    FP <- confusionMatrix[3]
+    
+    FN <- confusionMatrix[2]
+    
+    FPR <- FP / (FP + TN)
+    TPR <- TP / (TP + FN)
+    df <- rbind(df, c(val,TPR, FPR))
+  }
+  df <- na.omit(df)
+  
+  #Plot the values
+  plot <- ggplot(df, aes(x=FPR, y=TPR)) + 
+          geom_point() + 
+          geom_line(col="red") + 
+          geom_abline(intercept = 0, slope = 1) +
+          labs(title="Receiver Operator Curve", x = "FPR", y = "TPR")
+  
+
+  # Calculate the AUC 
+  a <- abs(diff(df$FPR))
+  b <- df$TPR
+  auc <- sum(a*b)
+  
+  return(list(plot, auc))
+}
+
+func_roc_curve(data)[[1]]
+func_roc_curve(data)[[2]]
+
+```
+
+**11. Use your created R functions and the provided classification output data set to produce all of the classification metrics discussed above.**
+
+```{r}
+func_accuracy(data)
+func_class_errorRate(data)
+func_precision(data)
+func_sensitivty(data)
+func_specificity(data)
+func_f1Score(data)
+```
+
+
+**12. Investigate the caret package. In particular, consider the functions confusionMatrix, sensitivity, and specificity. Apply the functions to the data set. How do the results compare with your own functions?**
+
+Both the caret package as well as Rcode written function, have generated similar results.
+```{r}
+confusionMatrix(confusionMatrixTable)
+
+
+```
+
+**13. Investigate the pROC package. Use it to generate an ROC curve for the data set. How do the results compare with your own functions?**
+
+Both the functions generated similar ROC curves.
+```{r}
+plot(roc(data$class, data$scored.probability), main="ROC Curve")
+
+```

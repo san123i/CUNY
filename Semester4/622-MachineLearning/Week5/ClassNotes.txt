@@ -1,0 +1,16 @@
+#How do you calculate the initial point - using PCA?
+
+# How do you choose K value?
+
+# When is KNN preferred?
+
+# Are there any assumptions for KNN?
+Normalization is a prereq
+
+#Why can't we use it for regression when I know what the closer values are to my element?
+
+
+KNN is an instance based classifier - not a probability based
+There is no training in KNN
+Better to go with K as odd to avoid stalemate
+It's a lazy learner

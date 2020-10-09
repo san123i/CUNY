@@ -1,0 +1,110 @@
+---
+title: "622_HW1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(naivebayes)
+library(class)
+library(gmodels)
+```
+
+```{r}
+df <- read.csv('HW1.csv', header = TRUE)
+df$label <- as.factor(df$label)
+df$Y <- as.factor(df$Y)
+
+summary(df)
+
+str(df)
+
+```
+
+
+#Explorative Data Analysis
+```{r}
+
+df %>% ggplot(aes(x=label)) +
+        geom_bar() +
+  ggtitle("Bar Plot")
+
+
+df %>% ggplot(aes(x=Y)) +
+        geom_bar() +
+  ggtitle("Bar Plot")
+
+df %>% ggplot(aes(x=X)) +
+        geom_bar() +
+  ggtitle("Bar Plot")
+
+
+ggplot() + geom_point(data = df, aes(x = Y, y = X, color = label)) 
+
+pairs(df)
+```
+
+#Split the data to train and test
+```{r}
+set.seed(1234)
+
+ind <- sample(2, nrow(df), replace = T, prob=c(0.7,0.3))
+train <- df[ind ==1,]
+test <- df[ind==2,]
+
+```
+
+#NaiveBayes Classifier
+```{r}
+nb_model <- naive_bayes(label~., data=df)
+plot(nb_model)
+summary(nb_model)
+p <- predict(nb_model, data=train, type='prob')
+
+
+p1 <- predict(nb_model, train)
+(tab1 <- table(p1, train$label))
+1-sum(diag(tab1))/sum(tab1)
+
+
+p2 <- predict(nb_model, test)
+(tab2 <- table(p2, test$label))
+1-sum(diag(tab2))/sum(tab2)
+
+```
+
+
+#Logistic Regression
+```{r}
+
+lm_model <- glm(label~., data=train, family = binomial)
+summary(lm_model)
+predict(lm_model, newdata=test)
+
+```
+
+
+#KNN - 3
+```{r}
+train_knn <- train[,c(1,2)]
+test_knn <- test[,c(1,2)]
+
+train_labels <- train[,3]
+test_labels <- test[,3]
+
+train_knn$Y = as.numeric(train_knn$Y)
+test_knn$Y = as.numeric(test_knn$Y)
+
+test_pred <- knn(train = train_knn, test = test_knn,cl = train_labels, k=3)
+CrossTable(x=test_labels, y =test_pred, prop.chisq = FALSE)
+
+```
+
+
+#KNN - 5
+```{r}
+
+test_pred <- knn(train = train_knn, test = test_knn,cl = train_labels, k=5)
+CrossTable(x=test_labels, y =test_pred, prop.chisq = FALSE)
+
+```

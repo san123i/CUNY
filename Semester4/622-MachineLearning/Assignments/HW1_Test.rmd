@@ -1,0 +1,19 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+data <- read.csv('HW1_Test.xlsx', header = T)
+#Naive bayes 
+model <- naive_bayes(admit ~ ., data=train)
+
+train %>% filter(admit== "0") %>% summarise(mean(gre),sd(gre))
+
+plot(model)
+```

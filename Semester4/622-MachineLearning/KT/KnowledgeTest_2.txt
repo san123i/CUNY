@@ -1,0 +1,67 @@
+DONE - The data set has only 12 covariates and 1 class variable. There are three classes. If the covariates are known to be highly correlated.
+We cannot use Naive Bayes(NB) since it has a strong assumption that variables are ﻿conditionally independent.﻿﻿﻿﻿﻿
+
+
+
+DONE - Your intern ran and computed covariance matrices for each of three classes. For one class the covariance matrix is a diagonal matrix and the other two are left diagonal matrix.
+Which of the three parametric methods (LR, NB, LDA) will you NOT use? And, why not?
+If the covariance matrix is diagonal, it means there is no correlation. But this doesn't seem to be the case for all the classes, which means the covariance is not same amongst all the classes.Therefore, LDA is not a good fit because it has the assumption of common covariance amongst the classes.
+
+DONE - The primary objective of any supervised learner is to compute P(class|data). A classifier that first computes Joint  (i.e.P(class,data)) and then derive P(class|data) is called generative since it can generate new data. On the other hand a classifier that computes P(class|data) directly are called discriminative.
+
+What does NB compute? Is it a generative or discriminative classifier?
+What about Logistic Regression? is it discriminative or generative classifier? Why?
+
+NB is a generative classifier since it first computes the joint probability to derive the P(class|data) i.e., p(class|data)=p(data|class).p(class)/p(data). Here it is generating new data here i.e.., p(data|class) which doesn't exist earlier hence it is generative.﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿
+
+Where as Logistic Regression is a discriminative classifier since it distinguishes outputs based on the input data probability, rather than generating new data.
+
+DONE - Your group specializes in Logistic Regression and NaiveBayes -- Probabilisitic classifiers only. There are other groups that utilize other classifiers.  Your group receives a dataset with a DV (class variable) that is  distributed as follows over animal species as follows:
+Mammals=25%
+Birds=25%
+Aquatic Animals = 50%
+Given no other information, which classifier would you choose? And WHY?
+
+If we have to pick only between NaiveBayes(NB) and LogisticRegression(LR), then for this case I would prefer to go with NB classifier because of 2 reasons.
+
+One is that though NB  has conditional independence as assumption, it is still provides better output even in cases where there is a collinearity to certain extent. Since we do not have much idea about independent variables, NB is preferred here.
+
+Second, since we are dealing with a multi class dependent variable, and Logistic Regression (LR) will have to underlyingly have to implement more ops to retreive the result when compared to NB which uses a conditional probability, hence I believe NB is preferred.
+
+
+DONE - All else being the same, given any data set, regardless of the number of observation or the dimensionality, which of the two classifiers Logistic vs NaiveBayes do you expect to be faster?
+And why that might be?	
+
+NaiveBayes will be preferred in this condition.  Naive Bayes is fast because it calculates the prior probability values that do not change and that can be stored and reused, which is efficient in terms of computing. Also, when calculating the probability of data i.e., the denominator can be ignored and not computed since it is irrelevant when computing probability for different classes.  
+
+The assumptions applied by NB for conditionally independent data, allows it to employ these methods and hence it is faster in converging to a result.  
+
+DONE - First, Give a concrete example, and then explain how this problem mainfests using that example.
+this is a bonus question  and is for those who scored less than 40 in the KT-01. Sort of a micro makeup
+
+Assume we have a school of 1000 members comprising both students, teachers and admin, and the dataset has 6 variables against each observation where each observation represents a member. So when there is an ask to find the probability of a chosen member being student, given he satisfies 6 variables in the model. ThenP(D=Student|X=X1, X2, X3, X4, X5, X6) = { P(X1|Student) * P(X2|Student) * P(X3|Student) *P (X4|Student) * P(X5|Student) * P(X6|Student) * P(Student) } / P(X=X1, X2, X3, X4, X5, X6)Here the P(Student) can be calculated from given data, and P(X=X1, X2, X3, X4, X5, X6) need not be computed for each class since the value is same for each.The class which receives the highest probability will be picked by the NB. 
+I implemented below for a larger dataset, I ran NB vs LR against a dataset of 5.8 Million records, and tried to generate a model. NB was able to develop a model in short time based on training dataset, where as Linear Regression(LR) implemented through glm(family=binomial) took time and ended with an error due to lack of needed computation power. So I believe if you do not have much knowledge about the future dataset, it's better to go by NB since they converge faster than Linear Regression.
+
+> data <- read.csv('data/flights.csv',header = T)
+
+> nrow(data)
+
+5819079 
+
+> set.seed(1234)
+
+> ind <- sample(2, nrow(data), replace = T, prob=c(0.6,0.4))
+
+> train <- data[ind ==1,]
+
+> test <- data[ind==2,]
+
+> library(naivebayes)
+
+naivebayes 0.9.7 loaded
+
+> model <- naive_bayes(TARGET ~ ORIGIN_AIRPORT , data=train)
+
+> lr_model <- glm(TARGET ~ ORIGIN_AIRPORT, data = train, family = binomial)
+
+Error: cannot allocate vector of size 16.3 Gb
