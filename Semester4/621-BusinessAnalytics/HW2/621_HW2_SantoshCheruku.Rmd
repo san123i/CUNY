@@ -26,6 +26,8 @@ str(data)
 
 **2. Use the table() function to get the raw confusion matrix for this scored dataset. Make sure you understand the output. In particular, do the rows represent the actual or predicted class? The columns?**
 
+Rows represent the predicted values, and the columsn represent the actual values.
+And I will be considering 1 as positive case.
 ```{r}
 
 confusionMatrixTable <- table(data$scored.class, data$class)
@@ -40,13 +42,13 @@ confusionMatrixTable
 ```{r}
 func_accuracy <- function(data) {
   confusionMatrixTable <- table(data$scored.class, data$class)
-  TP <- confusionMatrixTable[1]
+  TP <- confusionMatrixTable[4]
   
-  TN <- confusionMatrixTable[4]
+  TN <- confusionMatrixTable[1]
   
-  FP <- confusionMatrixTable[3]
+  FP <- confusionMatrixTable[2]
   
-  FN <- confusionMatrixTable[2]
+  FN <- confusionMatrixTable[3]
   
   accuracy <- (TP + TN) / (TP + TN + FP + FN)
   return(accuracy)
@@ -60,14 +62,19 @@ func_accuracy(data)
 ```{r}
 func_class_errorRate <- function(data) {
   confusionMatrixTable <- table(data$scored.class, data$class)
-  FP <- confusionMatrixTable[3]
+  TP <- confusionMatrixTable[4]
   
-  FN <- confusionMatrixTable[2]
+  TN <- confusionMatrixTable[1]
+  
+  FP <- confusionMatrixTable[2]
+  
+  FN <- confusionMatrixTable[3]
+  
   
   classificationErrorRate <- (FP+FN)/sum(confusionMatrixTable)
   return(classificationErrorRate)
 }
-
+func_class_errorRate(data)
 # Verify that you get an accuracy and an error rate that sums to one.
 (func_accuracy(data) + func_class_errorRate(data))
 ```
@@ -78,9 +85,14 @@ func_class_errorRate <- function(data) {
 ```{r}
   func_precision <- function(data) {
   confusionMatrixTable <- table(data$scored.class, data$class)
-  TP <- confusionMatrixTable[1]
+  TP <- confusionMatrixTable[4]
   
-  FP <- confusionMatrixTable[3]
+  TN <- confusionMatrixTable[1]
+  
+  FP <- confusionMatrixTable[2]
+  
+  FN <- confusionMatrixTable[3]
+  
   
   precision <- TP / (TP + FP)
   return(precision)
@@ -94,9 +106,14 @@ func_precision(data)
 ```{r}
 func_sensitivty <- function(data) {
   confusionMatrixTable <- table(data$scored.class, data$class)
-  TP <- confusionMatrixTable[1]
+  TP <- confusionMatrixTable[4]
   
-  FN <- confusionMatrixTable[2]
+  TN <- confusionMatrixTable[1]
+  
+  FP <- confusionMatrixTable[2]
+  
+  FN <- confusionMatrixTable[3]
+  
   
   sensitivity <- (TP) / (TP + FN)
   return(sensitivity)
@@ -111,9 +128,14 @@ func_sensitivty(data)
 func_specificity <- function(data) {
   confusionMatrixTable <- table(data$scored.class, data$class)
   
-  TN <- confusionMatrixTable[4]
+  TP <- confusionMatrixTable[4]
   
-  FP <- confusionMatrixTable[3]
+  TN <- confusionMatrixTable[1]
+  
+  FP <- confusionMatrixTable[2]
+  
+  FN <- confusionMatrixTable[3]
+  
   
   
   specificity <- (TN) / (TN + FP)
@@ -150,14 +172,14 @@ func_roc_curve <- function(data) {
     val <- val + 0.01
     data$score_newsclass <- as.numeric(data$scored.probability>val)
     confusionMatrix <- table(data$score_newsclass, data$class)
+    TP <- confusionMatrix[4]
     
-    TP <- confusionMatrix[1]
+    TN <- confusionMatrix[1]
     
-    TN <- confusionMatrix[4]
+    FP <- confusionMatrix[2]
     
-    FP <- confusionMatrix[3]
-    
-    FN <- confusionMatrix[2]
+    FN <- confusionMatrix[3]
+  
     
     FPR <- FP / (FP + TN)
     TPR <- TP / (TP + FN)
@@ -200,11 +222,12 @@ func_f1Score(data)
 
 **12. Investigate the caret package. In particular, consider the functions confusionMatrix, sensitivity, and specificity. Apply the functions to the data set. How do the results compare with your own functions?**
 
-Both the caret package as well as Rcode written function, have generated similar results.
+Both the caret package as well as Rcode written function, have generated similar results for Sensitivity and Specifictiy.
 ```{r}
-confusionMatrix(confusionMatrixTable)
-
-
+matrix <- confusionMatrix(confusionMatrixTable, positive ='1')
+matrix
+matrix$byClass[['Sensitivity']]
+matrix$byClass[['Specificity']]
 ```
 
 **13. Investigate the pROC package. Use it to generate an ROC curve for the data set. How do the results compare with your own functions?**
