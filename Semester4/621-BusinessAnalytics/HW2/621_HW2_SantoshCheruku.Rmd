@@ -237,3 +237,5 @@ Both the functions generated similar ROC curves.
 plot(roc(data$class, data$scored.probability), main="ROC Curve")
 
 ```
+
+Link to RMD file: https://github.com/san123i/CUNY/blob/master/Semester4/621-BusinessAnalytics/HW2/621_HW2_SantoshCheruku.Rmd
