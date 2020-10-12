@@ -1,0 +1,202 @@
+---
+title: "622_HW1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r echo=TRUE, warning=FALSE}
+library(naivebayes)
+library(class)
+library(gmodels)
+library(tidyverse)
+library(caret)
+library(pROC)
+library(kableExtra)
+
+```
+
+```{r echo=TRUE}
+df <- read.csv('HW1.csv', header = TRUE)
+df$label <- as.factor(df$label)
+df$Y <- as.factor(df$Y)
+
+summary(df)
+
+str(df)
+
+head(df)
+
+```
+
+
+## Explorative Data Analysis
+</br>
+
+```{r echo=TRUE}
+
+df %>% ggplot(aes(x=label)) +
+        geom_bar() +
+  ggtitle("Label distribution Plot")
+
+
+df %>% ggplot(aes(x=Y)) +
+        geom_bar() +
+  ggtitle("Y distribution Plot")
+
+df %>% ggplot(aes(x=X)) +
+        geom_bar() +
+  ggtitle("X distribution Plot")
+
+
+ggplot() + geom_point(data = df, aes(x = Y, y = X, color = label), size=3) + ggtitle("Scatter Plot b/w X and Y")
+
+```
+
+
+## **Correlation variables**
+
+```{r echo=TRUE}
+
+pairs(df)
+
+```
+
+## **Split the data**
+
+```{r echo=TRUE}
+set.seed(1234)
+
+ind <- sample(2, nrow(df), replace = T, prob=c(0.7,0.3))
+train <- df[ind ==1,]
+test <- df[ind==2,]
+
+train
+
+test
+
+```
+
+```{r}
+gather_metrics_func <- function(datatype, model_metrics_df, algoName, predict, df) {
+cm <- confusionMatrix(predict, df$label)
+accuracy <- round(cm$overall[['Accuracy']],4)
+TPR <- cm$byClass[['Sensitivity']]
+TNR <- cm$byClass[['Specificity']]
+FPR <- 1 - TNR
+FNR <- 1 - TPR
+AUC <- round(auc(df$label, c(predict)),4)
+model_metrics_df <- rbind(model_metrics_df,c(datatype, algoName, AUC, accuracy, TPR, FPR, TNR, FNR))
+model_metrics_df <- na.omit(model_metrics_df)
+return(model_metrics_df)
+}
+
+```
+
+
+## **NaiveBayes Classifier**
+
+```{r echo=TRUE}
+nb_model <- naive_bayes(label~., data=df)
+#plot(nb_model)
+summary(nb_model)
+
+```
+
+## NB ability to learn (against Train data)
+```{r}
+trainPredict <- predict(nb_model, train)
+
+#ConfusionMatrix on Train data
+ConfusionMatrix <- table(trainPredict, train$label)
+ConfusionMatrix
+accuracy <- sum(diag(ConfusionMatrix))/sum(ConfusionMatrix)
+accuracy 
+
+model_metrics_df <- data.frame(Data=NA, Algo=NA, AUC=NA, ACCURACY=NA,TPR=NA,FPR=NA,TNR=NA,FNR=NA)
+
+model_metrics_df <- gather_metrics_func('Train', model_metrics_df, 'NB',trainPredict, train)
+
+```
+Since the model is successfully predicting values on training dataset more than 50% accuracy, we can say that it is learning.
+
+## NB ability to generalize (against Test data)
+```{r}
+testPredict <- predict(nb_model, test)
+
+#ConfusionMatrix on Test data
+ConfusionMatrix <- table(testPredict, test$label)
+ConfusionMatrix
+accuracy <- sum(diag(ConfusionMatrix))/sum(ConfusionMatrix)
+accuracy 
+
+model_metrics_df <- gather_metrics_func('Test', model_metrics_df, 'NB',testPredict, test)
+model_metrics_df
+```
+Since the model is successfully predicting values on test dataset(i.e., new data/unseen data) more than training set accuracy, we can say that it is generalizable.
+
+## **Logistic Regression**
+
+```{r echo=TRUE}
+
+lm_model <- glm(label~., data=train, family=binomial(link="logit"))
+summary(lm_model)
+predict_lr_train <- predict(lm_model, newdata=train, type = "response")
+predict_lr_train<- ifelse(predict_lr_train<0.5,"BLACK","BLUE" )
+#predict_lr_train<- ifelse(predict_lr_train<0.5,"BLUE","BLACK" )
+predict_lr_train <- as.factor(predict_lr_train)
+predict_lr_train
+
+model_metrics_df <- gather_metrics_func('Train', model_metrics_df, 'LR',predict_lr_train, train)
+model_metrics_df
+
+predict_lr_test <- predict(lm_model, newdata=test, type = "response")
+predict_lr_test<- ifelse(predict_lr_test<0.5,"BLACK","BLUE" )
+predict_lr_test <- as.factor(predict_lr_test)
+predict_lr_test
+model_metrics_df <- gather_metrics_func('Test', model_metrics_df, 'LR',predict_lr_test, test)
+model_metrics_df
+confusionMatrix(predict_lr_train, train$label)
+confusionMatrix(predict_lr_test, test$label)
+
+```
+
+
+## **KNN - 3**
+
+```{r echo=TRUE}
+train_knn <- train[,c(1,2)]
+test_knn <- test[,c(1,2)]
+
+train_labels <- train[,3]
+test_labels <- test[,3]
+
+train_knn$Y = as.numeric(train_knn$Y)
+test_knn$Y = as.numeric(test_knn$Y)
+
+test_pred <- knn(train = train_knn, test = test_knn,cl = train_labels, k=3)
+model_metrics_df <- gather_metrics_func('Train_Test', model_metrics_df, 'KNN_3',test_pred, test)
+
+CrossTable(x=test_labels, y =test_pred, prop.chisq = FALSE)
+
+```
+
+
+## **KNN - 5**
+
+```{r echo=TRUE}
+
+test_pred <- knn(train = train_knn, test = test_knn,cl = train_labels, k=5)
+model_metrics_df <- gather_metrics_func('Train_Test', model_metrics_df, 'KNN_5',test_pred, test)
+CrossTable(x=test_labels, y =test_pred, prop.chisq = FALSE)
+
+```
+
+
+```{r}
+model_metrics_df %>% kbl() %>% kable_styling()
+
+```

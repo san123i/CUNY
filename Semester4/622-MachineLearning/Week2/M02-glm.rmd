@@ -26,8 +26,8 @@ We assume data will be in csv format.
 ```{r MainCode}
 unixpath<-"/home/data/ML.Data/heart.csv"
 unixecolipath<-"/home/data/ML.Data/ecoli.csv"
-path<-"C://CUNY/GIT/CUNY_NEW/CUNY/Semester4/622-MachineLearning/datasets/heart.csv"
-ecolipath<-"C://CUNY/GIT/CUNY_NEW/CUNY/Semester4/622-MachineLearning/datasets/ecoli.csv"
+path<-"../datasets/heart.csv"
+ecolipath<-"../datasets/ecoli.csv"
 heart<-read.csv(path,header=TRUE,sep=',',stringsAsFactors=FALSE)
 ecoli<-read.csv(ecolipath,head=T,sep=',',stringsAsFactors=F)
 ```
