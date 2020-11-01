@@ -1,0 +1,28 @@
+What is SVM linear in? 
+SVM is a linear classifier. It creates a linear hyperplane separating the observations into 2 sets of classes.
+
+
+2) Your business unit has given you a dataset asking you to detect animal species: The observations have to be classified into either a mammal, aquatic, birds, amphibian. And your Chief Data Scientist is asking you to explain why you cannot use SVM cannot be used out of the box?
+SVM out of the box best works for binary classification i.e., 2 class dependent variable, but here we have a multiclass dependent variable. Therefore, I suggest we not use SVM out of the box for this case.
+
+SVM requires a lot of data to train and it is computationally expensive. The derivations are not necessarily easy to grasp. However, SVM is one of the easiest classifiers to explain and fastest in scoring once the model is trained! Explain why?
+SVM identifies the support vectors or observations from the dataset that defines the margins. When it identifies the margins, all it has to do it measure the new observations against this margin and categorize the observations. Therefore, when a new observation comes in, SVM easily classifies the observation. 
+
+
+To combat over-fitting, penalization is often used. There are two kinds of penalization: Lasso (L-1) and Ridge (L-2). Ridge Regularization is function of quadratic in betas and Lasso is linear in betas. Consquently, Lasso can also be used as a tool for feature selection (i.e drive the beta to zero). If your Chief DataScience Officer asks you to reduce the complexity of the model, using penalization, will you choose Lasso or Ridge regularization?
+It depends how we view the model complexity. If the requirement is to reduce the complexity of the model where the model is less sensitive, then I would prefer to go with Ridge regression. Because in Ridge regression, using the coefficient square, we end up reducing the overall coefficient values where the model becomes robust and not overfitted.
+But Lasso on the other hand, helps in identifying the useful and irrelevant parameters, there by helping us eliminate the unnecessary params from the model. In another way, this is also helping us reduce the model complexity since we have lesser number of params to worry about. 
+
+
+
+Is it possible to penalize kNN? Explain?
+I'm not really sure, Professor. Also, I couldn't find any references when I searched for it. But here is my take on this.
+Penalizing is done reduce the variance in the model and make it robust for generalization. KNN works on the model of nearest neighbors. Therefore if we intend to make it more robust, then K value should be higher than what is identified to be optimized value.
+
+
+
+
+
+According the DSC Policies, Logistic Regression, NB, LDA/QDA, kNN, Tree, SVM are the ONLY approved classifers, in your company. If robustness to outliers is the ONLY criteria you are allowed to use to select a classifier, which one would you choose? (this is a bonus question for those who have scored less in one of the earlier KTs and will not be graded for students who have performed well in the other two K-Ts.
+Answer: I would choose SVM since it is robust to Outliers due to the fact that it considers only few observations to identify the margins.
+Soft margin.

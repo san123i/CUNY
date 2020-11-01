@@ -1,0 +1,85 @@
+---
+title: "621_HW3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# load required packages
+library(ggplot2)
+library(dplyr)
+#library(tidyr)
+library(corrplot)
+library(MASS)
+library(caret)
+library(RCurl)
+```
+
+```{r import}
+# Loading the data
+
+git_dir <- 'https://raw.githubusercontent.com/Sizzlo/Data621/main'
+train_df = read.csv(paste(git_dir, "/crime-training-data_modified.csv", sep=""))
+test_df = read.csv(paste(git_dir, "/crime-evaluation-data_modified.csv", sep = ""))
+head(train_df)
+```
+
+# Data Exploration & Preparation
+
+See a summary of each column in the train_df set
+```{r train_dfing_data_summary}
+# view a summary of all columns
+summary(train_df)
+```
+
+```{r}
+# Correlations 
+cor_train = cor(train_df,  use = "na.or.complete")
+corrplot(cor_train)
+```
+
+```{r}
+pairs(~ target + zn + indus
+      + chas + nox + rm + age + dis + rad + tax + ptratio + lstat + medv, data = train_df)
+```
+```{r}
+# look at the structure of the variables
+str(train_df)
+str(test_df)
+```
+
+The summary() function for the training and testing data sets indicates that there are no missing values in the data. 
+The response variable "target" is binary with 1 indicates crime rate is above median cirme rate and 0 indicates crime rate is not above median crime rate. 
+
+Let's observe how the target variable is effected by other factors:
+1. The plot of "target" against "age" shows target equalling one (above median crime rate) increases as the proportion of owner-occupied units built prior to 1940 increaases; the boxplot further shows that a larger mean of proportions of owner-occupied units built prior to 1940 is assoicated with higher crime rate.
+2. Plots of crime rate against pupil-teacher ratio indicate higher crime rate "1" is associated with higher pupil-teacher ratio.
+
+```{r}
+par(mfrow=c(2,2))
+# plot response variable "target" against predictor variable "age" 
+plot(train_df$age,train_df$target)
+boxplot(age ~ target, train_df )
+
+# plot response variable "target" against predictor variable "ptratio"
+plot(train_df$ptratio,train_df$target)
+boxplot(ptratio ~ target, train_df)
+```
+
+
+```{r}
+# preliminary exploration glm models
+fit <- glm(formula = target ~ ., family = binomial(link = logit), data = train_df)
+summary(fit)
+
+#Remove some irrelevant variables identified using the p value
+fit2 <- glm(formula = target ~ nox+age+dis+rad+tax+ptratio+medv, family = binomial(link = logit), data = train_df)
+summary(fit2)
+
+predict_fit2 <- predict(fit2, newdata = test_df, type='response')
+predict_fit2<- ifelse(predict_fit2>0.5, "1","0")
+```
