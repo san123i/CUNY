@@ -3,9 +3,8 @@ title: "HW3"
 author: "Team 1"
 date: "October 25, 2020"
 output: 
-  prettydoc::html_pretty:
-    theme: cayman
-    toc: true
+  pdf_document: 
+    latex_engine: xelatex
 ---
 
 # 1. Data Exploration
@@ -199,7 +198,7 @@ summary(step_all_preds)
 train_df$preds = ifelse(step_all_preds$fitted.values > 0.5, 1, 0)
 train_df$pred_proba = step_all_preds$fitted.values
 # look at confusion matrix
-cm = confusionMatrix(as_factor(train_df$preds), as_factor(train_df$target), positive = "1")
+cm <- confusionMatrix(as_factor(train_df$preds), as_factor(train_df$target), positive = "1")
 cm
 ```
 
@@ -212,3 +211,11 @@ hist(step_all_preds$fitted.values, main= "Histogram of Predicted Probabilities",
 proc = roc(train_df$target, train_df$pred_proba)
 plot(proc, asp=NA, legacy.axes=TRUE, print.auc=TRUE, xlab="Specificity")
 ```
+
+# Conclusion
+Using the above defined steps where using stepAIC and confusionMatrix we can derive at the model that has below specifications </br>
+Sensitivity : 0.9563          </br>
+Specificity : 0.9831 </br>
+Accuracy: .97 </br>
+Precision: 0.9821 </br>
+AUC: .989
