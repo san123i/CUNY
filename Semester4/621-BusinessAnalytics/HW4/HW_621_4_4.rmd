@@ -1,0 +1,130 @@
+---
+title: "Untitled"
+author: "Tony Mei"
+date: "11/21/2020"
+output: html_document
+---
+```{r echo=FALSE}
+# load required packages
+library(ggplot2)
+library(dplyr)
+library(corrplot)
+library(MASS)
+library(caret)
+library(RCurl)
+library(pROC)
+library(RCurl)
+library(haven)
+library(kableExtra)
+```
+```{r import}
+# Loading the data
+git_dir <- 'https://raw.githubusercontent.com/odonnell31/DATA621-HW4/main/data'
+#class_data = read.csv(paste(git_dir, "/classification-output-data.csv", sep=""))
+train_df = read.csv(paste(git_dir, "/insurance_training_data.csv", sep=""))
+test_df = read.csv(paste(git_dir, "/insurance-evaluation-data.csv", sep = ""))
+head(train_df, 2)
+```
+## Data Exploration & Preparation
+See a summary of each column in the train_df set
+```{r train_dfing_data_summary}
+# view a summary of all columns
+summary(train_df)
+```
+Look at the data type of each variable
+```{r}
+# data type of predictors
+str(train_df)
+```
+Look at the relationship between TARGET_FLAG and some of the numerical variables.
+```{r}
+par(mfrow=c(1,2))
+# plot response variable "target" against predictor variable "age" and "car_age"
+boxplot(AGE ~ TARGET_FLAG, train_df, 
+        main="Target vs Age",
+        xlab="Target",
+        ylab="Age") 
+boxplot(CAR_AGE ~ TARGET_FLAG, train_df, 
+        main="Target vs Car Age",
+        xlab="Target",
+        ylab="Car Age")
+```
+Look at the distribution of some numerical variables.
+```{r}
+h <- hist(train_df$AGE)
+text(h$mids,h$counts,labels=h$counts)
+```
+```{r}
+h <- hist(train_df$MVR_PTS)
+text(h$mids,h$counts,labels=h$counts)
+```
+```{r}
+numeric = function(input) {
+  out = sub("\\$", "", input)
+  out = as.numeric(sub(",", "", out))
+  return(out)
+}
+train_df = as.tbl(train_df) %>% 
+  mutate_at(c("INCOME","HOME_VAL","BLUEBOOK","OLDCLAIM"),
+            numeric)
+#check data
+summary(train_df) %>% kable() %>% kable_styling()
+```
+```{r}
+train_df$AGE[is.na(train_df$AGE)] <- mean(train_df$AGE, na.rm=TRUE)
+train_df$YOJ[is.na(train_df$YOJ)] <- mean(train_df$YOJ, na.rm=TRUE)
+train_df$HOME_VAL[is.na(train_df$HOME_VAL)] <- mean(train_df$HOME_VAL, na.rm=TRUE)
+train_df$CAR_AGE[is.na(train_df$CAR_AGE)] <- mean(train_df$CAR_AGE, na.rm=TRUE)
+train_df$INCOME[is.na(train_df$INCOME)] <- mean(train_df$INCOME, na.rm=TRUE)
+#get complete cases
+train_df <- train_df[complete.cases(train_df),]
+train_df2<-train_df
+train_df2<-train_df2[-c(1)]
+```
+```{r}
+# preliminary exploration with one predictor
+#model 1
+model1 <- glm(formula = TARGET_FLAG ~ AGE, family = binomial(), data = train_df2)
+summary(model1)
+#model 2
+model2 <- glm(formula = TARGET_FLAG ~ .- TARGET_AMT, family = binomial(), data = train_df2)
+summary(model2)
+```
+Binary Logistic Regression Model with more variables
+```{r}
+# model 3
+model3 = glm(TARGET_FLAG ~ AGE +
+                  CAR_AGE +
+                  MVR_PTS +
+                  YOJ +
+                  CLM_FREQ +
+                  TIF, family = binomial(), data = train_df2)
+summary(model3)
+```
+### 2) Multiple Linear Regression
+Multiple Linear Regression models with many variables
+```{r}
+#1 1st model
+MLR_all_vars = lm(TARGET_AMT ~ AGE +
+                  CAR_AGE +
+                  MVR_PTS +
+                  YOJ +
+                  CLM_FREQ +
+                  TIF, data = train_df2)
+summary(MLR_all_vars)
+```
+```{r}
+#2 2nd model
+MLR_all_vars = lm(TARGET_AMT ~ ., data = train_df2)
+summary(MLR_all_vars)
+```
+Using model2 because of the lower AIC out of the three models
+```{r}
+# step_BLR prediction on test
+test_df<-test_df[-c(1)]
+test_preds_BLR = round(predict(model2, newdata=test_df, type='response'))
+test_df$TARGET_FLAG = test_preds_BLR
+test_preds_MLR = predict(MLR_all_vars, newdata=test_df)
+test_df$TARGET_AMT = test_preds_MLR
+# write out evaluation data with predictions
+write.csv(test_df, 'eval_with_preds.csv')

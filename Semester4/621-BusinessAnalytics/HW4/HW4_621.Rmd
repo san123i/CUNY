@@ -1,0 +1,223 @@
+---
+title: "Homework 4"
+author: "Team 1"
+date: "November 8, 2020"
+#output: html_document
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# 1. Data Exploration
+
+The auto insurance training dataset has 26 variables and 8161 observations. Of the variables, 24 of them are predictors for two responses: TARGET_FLAG and TARGET_AMT is numerical. 
+
+To explore the training data:
+- used the summary function to see means, medians, and quartiles of predictors
+- used str function to see the data type of each predictor
+- explored TARGET_FLAG in relation to some other variables such as AGE and CAR_AGE
+- looked at distribution of some numerical variables such as AGE and MVR_PTS
+
+From the summary function, the TARGET_FLAG is binary and 26% of the 8161 records were accidents.
+
+# 2. Data Preparation
+
+This data was prepared to build both a binary logistic model and a multiple linear regression model. The binary logisitc model was used to predict the TARGET_FLAG response variable and the multiple linear regression model was used to predict the TARGET_AMT variable.
+
+We want to train the multiple linear regression model on records that actually have a valid TARGET_AMT variable, so its training dataset is a subset of the full dataset where TARGET_FLAG is 1.
+
+We made dummy variable columns for all variables that had NA (AGE, YOJ, CAR_AGE) and then filled those columns with their median values.
+
+The training dataset for the binary logistic regression model was labeled train_df. The training dataset for the multiple linear regression model was titled train_amt_df.
+
+# 3. Build Models
+
+First, we built two models using most predictors as numerics. Then we used the step AIC function to find the best variables for each model.
+
+One model was a Binary Logistic Regression model for the TARGET_FLAG response titled step_BLR.
+The second model was a Multiple Linear Regression for the TARGET_AMT response titled MLR_all_vars.
+
+# 4. Select Models
+
+To finally select a model, we used Stepwise AIC (both backward and forward) to do model selection and ended with a Binary Logistic 7661.4. 
+
+# Appendix
+
+## Import Libraries and Data
+
+```{r echo=FALSE}
+# load required packages
+library(ggplot2)
+library(dplyr)
+library(corrplot)
+library(MASS)
+library(caret)
+library(RCurl)
+library(pROC)
+library(RCurl)
+library(haven)
+
+
+library(ggplot2)
+library(dplyr)
+#library(tidyr)
+library(corrplot)
+library(MASS)
+library(caret)
+library(RCurl)
+library(tidyverse)
+library(pROC)
+library(kableExtra)
+library(RCurl)
+```
+
+```{r import}
+# Loading the data
+git_dir <- 'https://raw.githubusercontent.com/odonnell31/DATA621-HW4/main/data'
+#class_data = read.csv(paste(git_dir, "/classification-output-data.csv", sep=""))
+train_df = read.csv(paste(git_dir, "/insurance_training_data.csv", sep=""))
+test_df = read.csv(paste(git_dir, "/insurance-evaluation-data.csv", sep = ""))
+head(train_df, 2)
+```
+
+## Data Exploration & Preparation
+
+See a summary of each column in the train_df set
+```{r train_dfing_data_summary}
+# view a summary of all columns
+summary(train_df)
+```
+
+Look at the data type of each variable
+```{r}
+# data type of predictors
+str(train_df)
+```
+
+## Corr analysis
+```{r}
+# Correlations 
+#cor_train <- cor(train_df)
+#corrplot(cor_train)
+
+# Correlation
+train_df_2 <- train_df[,!names(train_df) %in% c("PARENT1","MSTATUS","EDUCATION","JOB","CAR_USE","SEX","RED_CAR", "CAR_TYPE","INCOME","OLDCLAIM","HOME_VAL","BLUEBOOK","REVOKED","URBANICITY")]
+
+a <- cor(train_df_2, use="complete.obs")
+a
+
+corrplot(a, method="circle") 
+
+```
+Look at the relationship between TARGET_FLAG and some of the numerical variables.
+```{r}
+par(mfrow=c(1,2))
+# plot response variable "target" against predictor variable "age" and "car_age"
+boxplot(AGE ~ TARGET_FLAG, train_df, 
+        main="Target vs Age",
+        xlab="Target",
+        ylab="Age") 
+boxplot(CAR_AGE ~ TARGET_FLAG, train_df, 
+        main="Target vs Car Age",
+        xlab="Target",
+        ylab="Car Age")
+```
+
+Look at the distribution of some numerical variables.
+```{r}
+h <- hist(train_df$AGE)
+text(h$mids,h$counts,labels=h$counts)
+```
+
+```{r}
+h <- hist(train_df$MVR_PTS)
+text(h$mids,h$counts,labels=h$counts)
+```
+
+Check for NA's
+```{r}
+has_NA = names(which(sapply(train_df, anyNA)))
+has_NA
+```
+
+Check test_df for NA's
+```{r}
+has_NA_test = names(which(sapply(test_df, anyNA)))
+has_NA_test
+```
+
+Since we see our test_df has NAs for the same variables as test, we need to come up with a way to handle making predictions on records that have these values as NA. We will create an "_NA" columns as dummy variables for AGE, YOJ, and CAR_AGE, 1 marking them as NA and 0 if they have a value.
+
+```{r}
+for (col in has_NA)
+{
+   new_col = (paste(col,"_NA", sep=""))
+   train_df[,new_col] = as.numeric(is.na(train_df[,col]))
+   test_df[,new_col] = as.numeric(is.na(test_df[,col]))
+   # fill missing numerics with median value
+   train_df[,col][is.na(train_df[,col])] = median(train_df[,col], na.rm=TRUE)
+   test_df[,col][is.na(test_df[,col])] = median(test_df[,col], na.rm=TRUE)
+}
+```
+
+
+Create train_amt_df dataframe for multiple linear regression model
+```{r}
+train_amt_df <- subset(train_df, TARGET_AMT > 0)
+summary(train_amt_df$TARGET_FLAG)
+```
+
+
+
+## Modeling
+
+
+### 1) Binary Logistic Regression
+
+```{r}
+# preliminary exploration with one predictor
+model1 <- glm(formula = TARGET_FLAG ~ AGE, family = binomial(), data = train_df)
+summary(model1)
+```
+
+Binary Logistic Regression Model with more variables
+```{r}
+BLR_all_vars = glm(TARGET_FLAG ~ AGE +
+                  CAR_AGE +
+                  MVR_PTS +
+                  YOJ +
+                  CLM_FREQ +
+                  TIF, family = binomial(), data = train_df)
+summary(BLR_all_vars)
+```
+
+Step through AIC scores to find best model
+```{r}
+step_BLR = stepAIC(BLR_all_vars)
+summary(step_BLR)
+```
+
+### 2) Multiple Linear Regression
+
+Multiple Linear Regression models with many variables
+```{r}
+MLR_all_vars = lm(TARGET_AMT ~ AGE +
+                  CAR_AGE +
+                  MVR_PTS +
+                  YOJ +
+                  CLM_FREQ +
+                  TIF, data = train_amt_df)
+summary(MLR_all_vars)
+```
+
+```{r}
+# step_BLR prediction on test
+test_preds_BLR = round(predict(step_BLR, newdata=test_df, type='response'))
+test_df$TARGET_FLAG = test_preds_BLR
+test_preds_MLR = predict(MLR_all_vars, newdata=test_df)
+test_df$TARGET_AMT = test_preds_MLR
+
+# write out evaluation data with predictions
+write.csv(test_df, 'eval_with_preds.csv')
+
+```
