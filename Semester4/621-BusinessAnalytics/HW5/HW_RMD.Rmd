@@ -1,0 +1,215 @@
+---
+title: "HW5"
+author: "Team 1"
+date: "Nov 25, 2020"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+---
+
+# 1. Data Exploration
+
+In this homework assignment, you will explore, analyze and model a data set containing information on approximately 12,000 commercially available wines. The variables are mostly related to the chemical properties of the wine being sold. The response variable is the number of sample cases of wine that were purchased by wine distribution companies after sampling a wine. These cases would be used to provide tasting samples to restaurants and wine stores around the United States. The more sample cases purchased, the more likely is a wine to be sold at a high end restaurant. A large wine manufacturer is studying the data in order to predict the number of wine cases ordered based upon the wine characteristics. If the wine manufacturer can predict the number of cases, then that manufacturer will be able to adjust their wine offering to maximize sales.Your objective is to build a count regression model to predict the number of cases of wine that will be sold given certain properties of the wine. HINT: Sometimes, the fact that a variable is missing is actually predictive of the target. You can only use the variables given to you (or variables that you derive from the variables provided). Below is a short description of the variables of interest in the data set:
+
+
+# 2. Data Preparation
+
+
+
+
+# 3. Build Models
+ 
+
+# 4. Select Models
+
+
+# Appendix
+
+
+# Library
+
+```{r warning=FALSE, message=FALSE}
+# load required packages
+library(ggplot2)
+library(dplyr)
+#library(tidyr)
+library(corrplot)
+library(MASS)
+library(caret)
+library(RCurl)
+library(tidyverse)
+library(pROC)
+library(kableExtra)
+library(RCurl)
+```
+
+```{r import}
+# Loading the data
+
+git_dir <- 'https://raw.githubusercontent.com/Sizzlo/Data621/main'
+train_df = read.csv(paste(git_dir, "/wine-evaluation-data.csv", sep=""))
+test_df = read.csv(paste(git_dir, "/wine-training-data.csv", sep = ""))
+head(train_df)
+```
+
+# Data Exploration & Preparation
+
+## Summary of data
+See a summary of each column in the train_df set
+```{r train_dfing_data_summary}
+# view a summary of all columns
+summary(train_df)
+```
+
+## Structure of the data
+```{r}
+str(train_df)
+str(test_df)
+```
+
+
+
+## NA check
+```{r}
+has_NA = names(which(sapply(train_df, anyNA)))
+has_NA
+```
+There are no NAs observed
+
+
+The summary() function for the training and testing data sets indicates that there are no missing values in the data. 
+The response variable "target" is binary with 1 indicates crime rate is above median cirme rate and 0 indicates crime rate is not above median crime rate. 
+
+Let's observe how the target variable is effected by other factors: </br>
+1. The plot of "target" against "age" shows target equalling one (above median crime rate) increases as the proportion of owner-occupied units built prior to 1940 increaases; the boxplot further shows that a larger mean of proportions of owner-occupied units built prior to 1940 is assoicated with higher crime rate.</br>
+2. Plots of crime rate against pupil-teacher ratio indicate higher crime rate "1" is associated with higher pupil-teacher ratio.
+
+## Plotting
+```{r}
+par(mfrow=c(2,2))
+# plot response variable "target" against predictor variable "age" 
+plot(train_df$age,train_df$target)
+boxplot(age ~ target, train_df )
+
+# plot response variable "target" against predictor variable "ptratio"
+plot(train_df$ptratio,train_df$target)
+boxplot(ptratio ~ target, train_df)
+```
+
+## Corr analysis
+```{r}
+# Correlations 
+cor_train <- cor(train_df,  use = "na.or.complete")
+corrplot(cor_train)
+```
+
+```{r}
+pairs(~ target + zn + indus
+      + chas + nox + rm + age + dis + rad + tax + ptratio + lstat + medv, data = train_df)
+```
+
+
+## Converting to factors
+```{r}
+train_df$chas = as.factor(train_df$chas)
+train_df$rad = as.factor(train_df$rad)
+```
+
+```{r warning=FALSE, message=FALSE}
+
+model_metrics_df <- data.frame(Model=NA, AIC=NA, Null.Deviance=NA, Resid.Deviance=NA)
+
+
+gather_metrics_func <- function(type, model_metrics_df, modelSummary) {
+aic <- round(modelSummary$aic,4)
+nullDeviance <- round(modelSummary$null.deviance, 4)
+residDeviance <- round(modelSummary$df.residual, 4)
+
+model_metrics_df <- rbind(model_metrics_df,c(type, aic, nullDeviance, residDeviance))
+model_metrics_df <- na.omit(model_metrics_df)
+return(model_metrics_df)
+}
+```
+
+
+# Modeling
+
+
+## Binary Logistic Regression
+We are running Binary Logistic regression model with three 3 different set of parameters
+
+### Modelling with Target ~ Age
+
+```{r}
+# preliminary exploration glm models
+model1 <- glm(formula = target ~ age, family = binomial(), data = train_df)
+summary(model1)
+model_metrics_df <- gather_metrics_func('target ~ age', model_metrics_df, model1)
+```
+
+
+### Modelling with Target ~ ptratio
+
+```{r}
+# preliminary exploration glm models
+model2 <- glm(formula = target ~ ptratio , family = binomial(), data = train_df)
+summary(model2)
+model_metrics_df <- gather_metrics_func('target ~ ptratio', model_metrics_df, model2)
+```
+
+### Modelling with Target ~ .(every other variable)
+```{r}
+all_preds = glm(target ~ ., family = binomial, data = train_df)
+summary(all_preds)
+model_metrics_df <- gather_metrics_func('target ~ .', model_metrics_df, all_preds)
+
+```
+
+## Comparing different models performance
+```{r}
+
+model_metrics_df %>% kbl() %>% kable_styling()
+
+```
+
+
+Looking at the table, we can identify on a high level that 3rd model that includes all 
+the parameters is better suited. Therefore, let's come up with a confusion matrix for 3rd model that includes all the parameters.
+```{r}
+
+train_df$preds = ifelse(all_preds$fitted.values > 0.5, 1, 0)
+# look at confusion matrix
+cm = confusionMatrix(as_factor(train_df$preds), as_factor(train_df$target), positive = "1")
+cm
+```
+
+## Using StepAIC 
+Using the MASS package provided 'stepAIC' lets try to further refine the available models within it 
+```{r}
+step_all_preds = stepAIC(all_preds)
+summary(step_all_preds)
+
+train_df$preds = ifelse(step_all_preds$fitted.values > 0.5, 1, 0)
+train_df$pred_proba = step_all_preds$fitted.values
+# look at confusion matrix
+cm <- confusionMatrix(as_factor(train_df$preds), as_factor(train_df$target), positive = "1")
+cm
+```
+
+```{r}
+hist(step_all_preds$fitted.values, main= "Histogram of Predicted Probabilities", xlab="Predicted Probabilities")
+```
+
+# Plotting ROC 
+```{r}
+proc = roc(train_df$target, train_df$pred_proba)
+plot(proc, asp=NA, legacy.axes=TRUE, print.auc=TRUE, xlab="Specificity")
+```
+
+# Conclusion
+Using the above defined steps where using stepAIC and confusionMatrix we can derive at the model that has below specifications </br>
+Sensitivity : 0.9563          </br>
+Specificity : 0.9831 </br>
+Accuracy: .97 </br>
+Precision: 0.9821 </br>
+AUC: .989
